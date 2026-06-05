@@ -9,7 +9,7 @@ export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
     if (pathname.startsWith('/admin')) {
         const { sessionClaims } = await auth();
-        const role = sessionClaims?.metadata?.role
+        const role = (sessionClaims?.metadata as { role?: string })?.role
 
         if (!role || !['admin', 'operator'].includes(role as string)) {
            return NextResponse.redirect(new URL('/', req.url))
