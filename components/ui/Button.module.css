@@ -70,6 +70,15 @@
 }
 .secondary:hover { background: rgba(0, 0, 0, 0.04); }
 
+/* glass — frosted white over imagery (Figma: white 0.3 + 7px blur) */
+.glass {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  color: var(--base-1);
+}
+.glass:hover { background: rgba(255, 255, 255, 0.45); }
+
 /* ── SIZES ── */
 /* md — px16 py10, 14px, radius 12, icon 20 (cards, Ask Lala) */
 .md {

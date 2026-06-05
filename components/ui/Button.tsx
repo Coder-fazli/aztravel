@@ -2,7 +2,7 @@ import Link from 'next/link'
 import ArrowIcon from './ArrowIcon'
 import styles from './Button.module.css'
 
-type Variant = 'primary' | 'white' | 'secondary'
+type Variant = 'primary' | 'white' | 'secondary' | 'glass'
 type Size    = 'md' | 'lg' | 'xl'
 
 type Props = {

@@ -1,0 +1,29 @@
+/* Figma Section 06: px 152, py 80, gap 56, flex col, white */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 56px;
+  padding: 80px 152px;
+  background: var(--base-1);
+}
+
+/* horizontal slider — 3 cards fit + the 4th peeks; scrollable */
+.slider {
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;            /* Firefox */
+  -ms-overflow-style: none;         /* IE/Edge */
+}
+.slider::-webkit-scrollbar { display: none; }
+
+.track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+}
+
+@media (max-width: 480px) {
+  .section { padding: 40px 24px; gap: 32px; }
+}

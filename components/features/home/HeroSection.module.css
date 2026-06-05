@@ -276,54 +276,93 @@
   left: 50%;
 }
 
+/* watermark hidden on desktop (mobile-only element) */
+.welcomeMark { display: none; }
+
 /* ============================================================
-   MOBILE BREAKPOINT — Figma mobile hero (390px, h≈639)
+   MOBILE / TABLET BREAKPOINT — EXACT Figma mobile hero (390px)
+   The navbar is position:fixed (~108px), so the photo runs under it
+   and the content is offset down by the navbar height — same pattern
+   as the desktop hero. Figma photo-relative coords + 108px navbar.
    ============================================================ */
-@media (max-width: 480px) {
-  /* FIXED hero — content panel scrolls up over it */
+@media (max-width: 900px) {
+  /* photo runs full-bleed under the fixed navbar; 639 photo + 108 navbar */
   .hero {
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
-    height: 600px;
-    z-index: 0;
+    height: 747px;
   }
 
-  /* title — Figma: x=24, smaller font, 3-4 lines */
+  /* title — Figma: 132px into the photo, Heading 03 40/44 white, w317 */
   .titleArea {
-    left: 24px;
-    top: 140px;
-    width: 320px;
+    left: 49px;
+    top: 240px;
+    width: 317px;
   }
   .title {
-    font-size: 34px;
-    line-height: 40px;
+    font-size: 40px;
+    line-height: 44px;
     width: 100%;
   }
 
-  /* explore button below title */
+  /* explore button — Figma: 40px gap below the title */
   .exploreBtn {
-    left: 24px;
-    top: 320px;
+    left: 49px;
+    top: 412px;
   }
 
-  /* decorative pointer — smaller, beside button */
+  /* decorative pointer scribble — beside the button */
   .pointer {
-    left: 180px;
-    top: 322px;
-    width: 130px;
-    height: 60px;
+    left: 203px;
+    top: 401px;
+    width: 136px;
+    height: 85px;
   }
 
-  /* hide desktop-only chrome on mobile */
-  .verticalIndicator { display: none; }
+  /* SLIDE INDICATORS — 4 straight vertical lines on the left (Figma x24) */
+  .verticalIndicator {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: absolute;
+    left: 24px;
+    top: 240px;
+    bottom: auto;
+    z-index: 5;
+  }
+  .vLine {
+    width: 2px;
+    height: 50px;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.45);
+  }
+  .activeVLine { background: #fff; }
+
+  /* desktop nav arrows are NOT part of the mobile hero */
   .arrows { display: none; }
 
-  /* scroll down — bottom left */
+  /* SCROLL DOWN — Figma pill + label */
   .scrollDown {
-    left: 24px;
-    top: auto;
-    bottom: 32px;
+    display: flex;
+    left: 49px;
+    top: 559px;
+    bottom: auto;
+  }
+
+  /* "Welcome to Azerbaijan" watermark — white, clipped at the band bottom */
+  .welcomeMark {
+    display: block;
+    position: absolute;
+    left: -45px;
+    top: 658px;
+    font-family: var(--font-family);
+    font-weight: 700;
+    font-size: 112px;
+    line-height: 134px;
+    color: rgba(255, 255, 255, 0.22);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
   }
 }

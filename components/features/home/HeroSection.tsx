@@ -82,6 +82,9 @@ export default function HeroSection() {
         <span className={styles.scrollText}>Scroll down</span>
       </div>
 
+      {/* MOBILE watermark — "Welcome to Azerbaijan" peeks at the bottom */}
+      <span className={styles.welcomeMark} aria-hidden="true">Welcome to Azerbaijan</span>
+
       {/* NAVIGATION ARROWS — right side */}
       <div className={styles.arrows}>
         <button className={styles.arrowBtn} onClick={prev} aria-label="Previous">
