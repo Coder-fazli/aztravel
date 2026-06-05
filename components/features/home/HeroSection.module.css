@@ -1,0 +1,329 @@
+.hero {
+  position: relative;
+  width: 100%;
+  height: 810px;
+  overflow: hidden;
+}
+
+/* ── BACKGROUND SLIDE ── */
+.slideBg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: opacity 0.8s ease;
+}
+
+.slideOverlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-hero);
+  z-index: 1;
+}
+
+/* ── TITLE AREA — changes per slide ── */
+/* Figma: x=232, y=235, width=752 */
+.titleArea {
+  position: absolute;
+  left: 232px;
+  top: 235px;
+  width: 752px;
+  z-index: 2;
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--base-1);
+  width: 752px;
+}
+
+/* ── EXPLORE BUTTON — STATIC position ── */
+/* Figma: Button at x=232, y=515 (235+280), size 134x52 */
+.exploreBtn {
+  position: absolute;
+  left: 232px;
+  top: 515px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: var(--primary-12);
+  border-radius: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  cursor: pointer;
+  border: none;
+  overflow: hidden;
+  text-decoration: none;
+  transition: background 0.2s;
+  z-index: 2;
+}
+
+.exploreBtn:hover {
+  background: var(--primary-hover);
+}
+
+.exploreBtn img {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.exploreBtn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── DECORATIVE POINTER ── */
+/* Figma: sits to the right of the Explore button */
+/* Figma: layer 180x79, rotation -164.68deg, AABB center at ~(690, 554) */
+.pointer {
+  position: absolute;
+  left: 437px;
+  top: 514px;
+  width: 180px;
+  height: 79px;
+  z-index: 2;
+  pointer-events: none;
+  transform: rotate(164.68deg) scaleY(-1);
+  transform-origin: center center;
+}
+
+.pointer img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ── VERTICAL INDICATORS (left) ── */
+.verticalIndicator {
+  position: absolute;
+  left: 151px;
+  top: 235px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2;
+}
+
+.vLine {
+  width: 1px;
+  height: 77px;
+  background: rgba(255, 255, 255, 0.3);
+  transition: background 0.3s;
+}
+
+.vLine.activeVLine {
+  background: var(--base-1);
+}
+
+/* ── SCROLL DOWN ── */
+/* Figma: x=232, y=611, gap-12px, flex items-center */
+.scrollDown {
+  position: absolute;
+  left: 232px;
+  top: 611px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+}
+
+/* Figma: 24x49px, overflow-hidden — uses animated GIF */
+.scrollPill {
+  width: 24px;
+  height: 49px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.scrollPill img {
+  position: absolute;
+  /* Figma: h-116.62%, left -66.67%, top -8.12%, w-233.33% */
+  height: 116.62%;
+  left: -66.67%;
+  top: -8.12%;
+  width: 233.33%;
+  max-width: none;
+  display: block;
+}
+
+/* Figma: Poppins Regular 12px, line-height 18px, tracking 0.2px, white */
+.scrollText {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  white-space: nowrap;
+}
+
+/* ── NAVIGATION ARROWS ── */
+.arrows {
+  position: absolute;
+  right: 152px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 2;
+}
+
+.arrowBtn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border-top: 1px solid rgba(255, 255, 255, 0.66);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 22px 25px rgba(0, 0, 0, 0.23);
+  flex-shrink: 0;
+  background: none;
+}
+
+/* background image — zooms on hover */
+.arrowBg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  transition: width 0.3s ease, height 0.3s ease;
+  border-radius: 50%;
+}
+
+.arrowBtn:hover .arrowBg {
+  width: 142px;
+  height: 142px;
+}
+
+/* overlay — darkens on hover */
+.arrowBgOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  transition: background 0.3s ease;
+  z-index: 1;
+}
+
+.arrowBtn:hover .arrowBgOverlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* arrow icons container — clips the sliding arrows */
+.arrowIcons {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 2;
+  border-radius: 50%;
+}
+
+/* first arrow — visible at center by default */
+.arrowIcon1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--base-1);
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+/* second arrow — hidden outside right by default */
+.arrowIcon2 {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 80px);
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--base-1);
+  font-size: 18px;
+  transition: transform 0.3s ease, left 0.3s ease;
+}
+
+/* on hover: first slides out left, second slides in from right */
+.arrowBtn:hover .arrowIcon1 {
+  transform: translate(calc(-50% - 80px), -50%);
+}
+
+.arrowBtn:hover .arrowIcon2 {
+  left: 50%;
+}
+
+/* ============================================================
+   MOBILE BREAKPOINT — Figma mobile hero (390px, h≈639)
+   ============================================================ */
+@media (max-width: 480px) {
+  /* FIXED hero — content panel scrolls up over it */
+  .hero {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 600px;
+    z-index: 0;
+  }
+
+  /* title — Figma: x=24, smaller font, 3-4 lines */
+  .titleArea {
+    left: 24px;
+    top: 140px;
+    width: 320px;
+  }
+  .title {
+    font-size: 34px;
+    line-height: 40px;
+    width: 100%;
+  }
+
+  /* explore button below title */
+  .exploreBtn {
+    left: 24px;
+    top: 320px;
+  }
+
+  /* decorative pointer — smaller, beside button */
+  .pointer {
+    left: 180px;
+    top: 322px;
+    width: 130px;
+    height: 60px;
+  }
+
+  /* hide desktop-only chrome on mobile */
+  .verticalIndicator { display: none; }
+  .arrows { display: none; }
+
+  /* scroll down — bottom left */
+  .scrollDown {
+    left: 24px;
+    top: auto;
+    bottom: 32px;
+  }
+}

@@ -1,0 +1,110 @@
+/* Figma: base-3 bg, rounded 24px, 368px wide */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 368px;
+  background: var(--base-3);
+  border-radius: 24px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Figma: image area 400px tall */
+.imgWrap {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Figma: px 24, py 32, gap 24, centered */
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 24px;
+  width: 100%;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Figma: Heading 05 — Poppins Bold 24/28, black */
+.name {
+  font-family: var(--font-family);
+  font-size: var(--h5-size);
+  font-weight: var(--h5-weight);
+  line-height: var(--h5-line);
+  color: var(--base-13);
+}
+
+/* Figma: Poppins Regular 14/22, base-9, opacity 0.8 */
+.desc {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-9);
+  opacity: 0.8;
+}
+
+/* Figma: links row — Poppins Medium 14/22, #141414, underlined, gap 12 */
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.links a {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-12);
+  text-decoration: underline;
+  opacity: 0.8;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.links a:hover { opacity: 1; }
+
+/* Figma: primary button — px16 py10, rounded 12, white bold 14, arrow 20 */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--primary-12);
+  border-radius: 12px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.cta:hover { background: var(--primary-hover); }
+
+.cta svg { width: 20px; height: 20px; }

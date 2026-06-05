@@ -1,0 +1,111 @@
+/* Figma Section 11: px 152, py 80 */
+.section {
+  padding: 80px 152px;
+  background: var(--base-1);
+}
+
+/* Figma: flex-wrap, gap 16, justify center, items center */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ── SHORTCUT PILL ── */
+/* Figma: bg base-3, rounded 24, px32 py24, gap 10, w 368, overflow clip */
+.pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 368px;
+  padding: 24px 32px;
+  border-radius: 24px;
+  background: var(--base-3);
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+/* Figma hover: blurred #4845EF trapezoid with a steeply slanted leading
+   edge (top leads) sweeps in from the left — reads as a top-left -> bottom-
+   right diagonal fill. Soft glowing edges, smooth + slow. */
+.pill::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: 0;
+  width: 160%;
+  background: #4845ef;
+  filter: blur(18px);                                  /* soft glow edge */
+  transform: translateX(-140%) skewX(-28deg);          /* steep diagonal edge */
+  transform-origin: center;
+  transition: transform 0.95s cubic-bezier(0.4, 0, 0.2, 1);  /* smooth + slow */
+  z-index: 0;
+}
+
+.pill:hover::before {
+  transform: translateX(-8%) skewX(-28deg);
+}
+
+/* Figma hover: purple glow shadow */
+.pill:hover {
+  box-shadow: 0px 24px 54px rgba(72, 69, 239, 0.5);
+  transform: translateY(-2px);
+}
+
+/* icon 38px — turns white on hover via filter */
+.icon {
+  position: relative;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: filter 0.3s ease;
+}
+
+.pill:hover .icon img {
+  filter: brightness(0) invert(1);
+}
+
+/* Figma: Heading 04 Medium — Poppins Medium 30/34, black -> white on hover */
+.label {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-family);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 34px;
+  color: var(--base-13);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.pill:hover .label {
+  color: var(--base-1);
+}
+
+/* ============================================================
+   MOBILE — pills stack full width
+   ============================================================ */
+@media (max-width: 480px) {
+  .section { padding: 40px 24px; }
+
+  .pill {
+    width: 100%;
+    padding: 18px 24px;
+  }
+  .label { font-size: 22px; line-height: 28px; }
+  .icon { width: 30px; height: 30px; }
+}

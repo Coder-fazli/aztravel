@@ -1,0 +1,343 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar.transparent {
+  background: transparent;
+}
+
+.navbar.solid {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ── TOP BAR ── */
+/* Figma: py-8px, px-152px, bg rgba(255,255,255,0.1) */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 152px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.navbar.solid .topBar {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.topLinks {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Figma: Poppins Regular 10px, line-height 16px, tracking 0.3px, white, underlined */
+.topLink {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.3px;
+  color: var(--base-1);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.navbar.solid .topLink { color: var(--base-8); }
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topRightItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Figma: icon 16x16px */
+.topRightItem img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Figma: Poppins Bold 10px, line-height 16px, tracking 0.3px, underlined */
+.topRightItem p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.3px;
+  color: var(--base-1);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.navbar.solid .topRightItem p { color: var(--base-8); }
+
+/* ── MAIN NAV ── */
+/* Figma: py-32px, px-152px */
+.mainNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 152px;
+}
+
+/* ── LOGO ── */
+/* Figma: total 138x44px = icon (44x44) + text (87x30) */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.logoIcon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+.logoText {
+  width: 87px;
+  height: 30px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ── MENU LIST ── */
+/* Figma: border rgba(255,255,255,0.3), rounded 16px, padding 4px, gap 4px */
+.menuList {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+}
+
+.navbar.solid .menuList {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+/* ── MENU ITEM ── */
+/* Figma: px-16px, py-8px, rounded-14px, backdrop-blur-12px */
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+/* Figma Normal: Poppins Medium 14px, weight 500, white */
+.menuItem p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  white-space: nowrap;
+  transition: font-weight 0s;
+}
+
+.navbar.solid .menuItem p { color: var(--base-13); }
+
+/* Figma Hover: bg rgba(255,255,255,0.17), Poppins Bold weight 700 */
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.17);
+}
+
+.menuItem:hover p {
+  font-weight: 700;
+}
+
+/* Figma Active: same as hover */
+.menuItem.active {
+  background: rgba(255, 255, 255, 0.17);
+}
+
+.menuItem.active p {
+  font-weight: 700;
+}
+
+/* Solid navbar overrides */
+.navbar.solid .menuItem:hover,
+.navbar.solid .menuItem.active {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.navbar.solid .menuItem:hover p,
+.navbar.solid .menuItem.active p {
+  color: var(--base-13);
+  font-weight: 700;
+}
+
+/* ── RIGHT BUTTONS ── */
+/* Figma: px-16px, py-8px, rounded 14px, backdrop-blur 12px, bg rgba(255,255,255,0.17) */
+.rightBtns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.langBtn,
+.aiBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.17);
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  color: var(--base-1);
+  transition: background 0.2s;
+}
+
+.navbar.solid .langBtn,
+.navbar.solid .aiBtn {
+  background: rgba(0, 0, 0, 0.07);
+  color: var(--base-13);
+}
+
+/* icon 20x20px (smaller badge) */
+.langBtn img,
+.aiBtn img,
+.langBtn svg,
+.aiBtn svg {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Poppins Bold 13px */
+.langBtn p,
+.aiBtn p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.2px;
+  color: inherit;
+  white-space: nowrap;
+}
+
+/* ── HAMBURGER (mobile only) ── */
+.hamburger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-12);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.burgerBar {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--base-1);
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.burgerOpen1 { transform: translateY(6px) rotate(45deg); }
+.burgerHide  { opacity: 0; }
+.burgerOpen3 { transform: translateY(-6px) rotate(-45deg); }
+
+/* ── MOBILE DRAWER ── */
+.drawer {
+  display: none;
+  flex-direction: column;
+  background: var(--base-1);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.drawerOpen {
+  max-height: 420px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.drawerItem {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--base-13);
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+}
+
+.drawerActive {
+  font-weight: 700;
+  color: var(--primary-12);
+}
+
+/* ============================================================
+   MOBILE BREAKPOINT — Figma mobile (390px) navbar
+   ============================================================ */
+@media (max-width: 480px) {
+  /* top bar: tighter padding, smaller */
+  .topBar { padding: 8px 16px; }
+  .topLinks { gap: 12px; }
+  /* keep only Terms link visible to save space */
+  .topLinks .topLink:first-child,
+  .topLinks .topLink:last-child { display: none; }
+  .topRight { gap: 12px; }
+
+  /* main row: tight padding */
+  .mainNav { padding: 16px; }
+
+  /* logo: icon only, hide wordmark */
+  .logoText { display: none; }
+
+  /* hide desktop menu list */
+  .menuList { display: none; }
+
+  /* right side: globe + AI icon (no label) + hamburger */
+  .rightBtns { gap: 8px; }
+  .aiLabel { display: none; }   /* AI button shows icon only */
+  .aiBtn { padding: 10px; }
+  .langBtn { padding: 8px 10px; }
+
+  .hamburger { display: flex; }
+
+  .drawer { display: flex; }
+}

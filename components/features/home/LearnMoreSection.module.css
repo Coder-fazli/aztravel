@@ -1,0 +1,23 @@
+/* Figma Section 04: px 152, py 80, gap 56, flex col */
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  align-items: flex-start;
+  padding: 80px 152px;
+  background: var(--base-1);
+  overflow: hidden;
+}
+
+/* Figma: 3 cards, gap 16 */
+.cards {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .section { padding: 40px 24px; gap: 32px; }
+  .cards { flex-direction: column; }
+}

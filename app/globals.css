@@ -1,26 +1,129 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
+/* ============================================================
+   DESIGN TOKENS — collected from Figma variables
+   Do NOT hardcode colors/fonts in components — use these.
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── COLORS (Figma named variables) ── */
+  --base-1:        #ffffff;   /* Base/base-1  — white */
+  --base-3:        #f5f5f5;   /* Base/base-3  — light card bg */
+  --base-4:        #f0f0f0;   /* Base/base-4  — light card bg alt */
+  --base-5:        #d9d9d9;   /* Base/base-5  — borders */
+  --base-8:        #595959;   /* Base/base-8  — muted grey text */
+  --base-9:        #454545;   /* Base/base-9  — card body text */
+  --base-12:       #141414;   /* Base/base-12 — near-black card */
+  --base-13:       #000000;   /* Base/base-13 — black */
+  --neutral-1:     #ffffff;   /* Neutral/neutral-1 */
+  --static-white:  #ffffff;   /* Static white */
+  --primary-12:    #f07054;   /* Primary/primary-12 — primary orange */
+  --primary-13:    #ef6445;   /* Primary/primary-13 — logo / darker orange */
+  --primary-hover: #e05a3e;   /* hover state for primary buttons */
+
+  /* ── SECONDARY / ERROR (Figma) ── */
+  --secondary-13: #4845ef;    /* Secondary/secondary-13 — indigo */
+  --error-13:     #c74244;    /* Error/error-13 — red */
+
+  /* ── MAP CATEGORY COLORS (legend) ── */
+  --cat-medical:   #4caf50;   /* Medical   — green */
+  --cat-touristic: #6c5ce7;   /* Touristic — purple-blue */
+  --cat-both:      #f07054;   /* Both      — orange */
+
+  /* ── semantic aliases ── */
+  --color-text:        var(--base-13);
+  --color-text-muted:  var(--base-8);
+  --color-bg:          var(--base-1);
+  --color-primary:     var(--primary-12);
+
+  /* ── GLASS / OVERLAY (raw rgba reused across designs) ── */
+  --nav-glass:          rgba(255, 255, 255, 0.10);
+  --nav-item-active:    rgba(255, 255, 255, 0.17);
+  --nav-border:         rgba(255, 255, 255, 0.30);
+  --overlay-hero:       rgba(0, 0, 0, 0.35);
+  --overlay-card:       rgba(0, 0, 0, 0.44);
+  --overlay-card-hover: rgba(0, 0, 0, 0.64);
+
+  /* ── SHADOW (Figma Shadow 1) ── */
+  --shadow-1: 0px 54px 54px -20px rgba(0, 0, 0, 0.11);
+
+  /* ── TYPOGRAPHY (Figma named text styles) ── */
+  --font-family: 'Poppins', sans-serif;
+
+  /* Heading/Bold/Heading 03 */
+  --h3-size: 40px;  --h3-line: 44px;  --h3-spacing: 0;     --h3-weight: 700;
+  /* Heading/Bold/Heading 04 */
+  --h4-size: 30px;  --h4-line: 34px;  --h4-spacing: 0;     --h4-weight: 700;
+  /* Heading/Bold/Heading 05 */
+  --h5-size: 24px;  --h5-line: 28px;  --h5-spacing: 0;     --h5-weight: 700;
+  /* Body/Body Regular */
+  --body-size: 16px; --body-line: 24px; --body-spacing: 0.2px; --body-weight: 400;
+  /* Caption/Caption Bold */
+  --caption-size: 14px; --caption-line: 22px; --caption-spacing: 0.2px; --caption-weight: 700;
+  /* Caption/Caption Medium */
+  --caption-md-weight: 500;
+  /* Small/Small Regular & Bold */
+  --small-size: 12px; --small-line: 18px; --small-spacing: 0.2px;
+  /* Tiny/Tiny Regular */
+  --tiny-size: 10px; --tiny-line: 16px; --tiny-spacing: 0.3px;
+
+  /* ── LAYOUT ── */
+  --content-padding: 152px;
+  --content-max:     1136px;
+  --radius-card:     24px;
+  --radius-btn:      14px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── TYPOGRAPHY UTILITY CLASSES ── */
+.t-h3 {
+  font: var(--h3-weight) var(--h3-size)/var(--h3-line) var(--font-family);
+  letter-spacing: var(--h3-spacing);
+}
+.t-h4 {
+  font: var(--h4-weight) var(--h4-size)/var(--h4-line) var(--font-family);
+  letter-spacing: var(--h4-spacing);
+}
+.t-h5 {
+  font: var(--h5-weight) var(--h5-size)/var(--h5-line) var(--font-family);
+  letter-spacing: var(--h5-spacing);
+}
+.t-body {
+  font: var(--body-weight) var(--body-size)/var(--body-line) var(--font-family);
+  letter-spacing: var(--body-spacing);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── RESET ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  font-family: var(--font-family);
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }

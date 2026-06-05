@@ -1,0 +1,86 @@
+/* Reusable section headline: faint watermark + title + subtitle + SEE MORE.
+   Used by Sections 01, 04, 06, 08, 09. */
+.headline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* faint giant watermark behind */
+.watermark {
+  position: absolute;
+  left: 0;
+  top: -120px;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 210px;
+  line-height: 185px;
+  color: var(--base-13);
+  opacity: 0.04;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.texts {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 666px;
+}
+
+/* Figma: Heading 03 Bold — 40/44, black */
+.title {
+  font-family: var(--font-family);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 44px;
+  color: var(--base-13);
+}
+
+/* Figma: Body Regular — 16/24, #595959 */
+.subtitle {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-8);
+}
+
+/* SEE MORE — Figma: Body Regular 16, black, arrow 24 */
+.seeMore {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: gap 0.2s ease;
+}
+
+.seeMore:hover { gap: 12px; }
+
+@media (max-width: 480px) {
+  .headline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .watermark { font-size: 84px; line-height: 80px; top: -40px; }
+  .texts { width: 100%; }
+  .title { font-size: 28px; line-height: 32px; }
+}

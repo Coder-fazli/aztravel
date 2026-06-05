@@ -1,0 +1,25 @@
+{
+    "nav": {
+      "home": "Home",
+      "tours": "Tours",
+      "hotels": "Hotels",
+      "events": "Events",
+      "shops": "Shops",
+      "blog": "Blog",
+      "evisa": "E-Visa",
+      "map": "Explore Map"
+    },
+    "home": {
+      "heroTitle": "Enjoy exploring Azerbaijan and its nature!",
+      "heroCta": "Explore Now",
+      "welcome": "Welcome to Azerbaijan",
+      "welcomeSub": "365 Days With Azerbaijan!"
+    },
+    "common": {
+      "seeMore": "See More",
+      "bookNow": "Book Now",
+      "loading": "Loading...",
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  }

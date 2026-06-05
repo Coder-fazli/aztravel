@@ -1,0 +1,140 @@
+/* Figma Section 03: px 152, banner inside */
+.section {
+  padding: 0 152px;
+  background: var(--base-1);
+}
+
+/* Figma: black banner, rounded 32, px 64 py 56, gap 72, overflow clip */
+.banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 72px;
+  padding: 56px 64px;
+  background: var(--base-13);
+  border-radius: 32px;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* striped circular pattern — top-right, behind robot */
+.stripes {
+  position: absolute;
+  top: -36px;
+  left: 596px;
+  width: 567px;
+  height: 567px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ── LEFT CONTENT ── */
+.content {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: flex-start;
+  z-index: 1;
+}
+
+/* Figma: Heading 02 — Poppins Regular 60/60, white; "Lala!" bold */
+.title {
+  font-family: var(--font-family);
+  font-size: 60px;
+  font-weight: 400;
+  line-height: 60px;
+  color: var(--base-1);
+}
+
+.title b { font-weight: 700; }
+
+/* Figma: Caption Regular 14/22, white, tracking 0.2; some words bold */
+.desc {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+}
+
+.desc b { font-weight: 700; }
+
+/* Figma: white button, px16 py10, rounded 12, black bold 14, arrow 20 */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--base-1);
+  border-radius: 12px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.cta:hover { background: #ededed; }
+
+.cta svg { width: 20px; height: 20px; }
+
+/* ── ROBOT ── */
+.robot {
+  position: relative;
+  width: 384px;
+  height: 384px;
+  flex-shrink: 0;
+  z-index: 1;
+  object-fit: contain;
+}
+
+/* white decorative curved arrow pointing at the button */
+.curveArrow {
+  position: absolute;
+  left: 372px;
+  top: 361px;
+  width: 226px;
+  height: 79px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ============================================================
+   MOBILE — stacked: text top, robot bottom
+   ============================================================ */
+@media (max-width: 480px) {
+  .section { padding: 0 24px; }
+
+  .banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 32px 24px;
+  }
+
+  .stripes {
+    top: auto;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 460px;
+    height: 460px;
+  }
+
+  .title { font-size: 32px; line-height: 36px; }
+
+  .robot {
+    width: 240px;
+    height: 240px;
+    align-self: center;
+  }
+
+  .curveArrow { display: none; }
+}

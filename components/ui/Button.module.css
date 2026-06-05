@@ -1,0 +1,109 @@
+/* ============================================================
+   BUTTON — from Figma Button component
+   variants: primary | white | secondary
+   sizes:    md | lg | xl
+   includes the Figma "shine" gloss sweep on hover
+   ============================================================ */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 14px;
+  font-family: var(--font-family);
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* ── SHINE / GLOSS SWEEP (Figma white streak) ── */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60px;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.btn:hover::before {
+  left: 130%;
+}
+
+/* keep label + icons above the shine */
+.btn > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── VARIANTS ── */
+.primary {
+  background: var(--primary-12);
+  color: var(--base-1);
+}
+.primary:hover { background: var(--primary-hover); }
+
+.white {
+  background: var(--base-1);
+  color: var(--base-13);
+}
+.white:hover { background: #ededed; }
+
+.secondary {
+  background: transparent;
+  color: var(--base-13);
+  border: 1px solid var(--base-5);
+}
+.secondary:hover { background: rgba(0, 0, 0, 0.04); }
+
+/* ── SIZES ── */
+/* md — px16 py10, 14px, radius 12, icon 20 (cards, Ask Lala) */
+.md {
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  border-radius: 12px;
+}
+.md .icon { width: 20px; height: 20px; }
+
+/* lg — px20 py14, 16px, radius 14, icon 24 (hero View blog / Explore) */
+.lg {
+  padding: 14px 20px;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  border-radius: 14px;
+}
+.lg .icon { width: 24px; height: 24px; }
+
+/* xl — px32 py18, 20px, radius 20, icon 24 (Figma Size L) */
+.xl {
+  padding: 18px 32px;
+  font-size: 20px;
+  line-height: 24px;
+  border-radius: 20px;
+  gap: 12px;
+}
+.xl .icon { width: 24px; height: 24px; }
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

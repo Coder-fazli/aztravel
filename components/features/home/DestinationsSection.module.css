@@ -1,0 +1,269 @@
+/* Figma Section 02: px 152, py 80, relative, watermark overflow */
+.section {
+  position: relative;
+  padding: 80px 152px;
+  background: var(--base-1);
+  overflow: hidden;
+}
+
+/* ── WATERMARK "Places to visit" ── */
+/* Figma: ~1475px wide, 210px font, bleeds full width above the section */
+.watermark {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 210px;
+  letter-spacing: 0;
+  line-height: 1;
+  color: #000;
+  opacity: 0.05;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── HEADLINE ROW ── */
+.headline {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  z-index: 1;
+}
+
+/* Figma: Poppins Regular 40/44, black, width 666 — only "in one place." is bold */
+.title {
+  font-family: var(--font-family);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 44px;
+  color: var(--base-13);
+  width: 666px;
+}
+
+.title b {
+  font-weight: 700;
+}
+
+/* orange curved decorative arrow — Figma: 245x139 */
+.curveArrow {
+  width: 245px;
+  height: 139px;
+  margin-top: 12px;
+  margin-right: 220px;
+  flex-shrink: 0;
+  display: block;
+  transform: scaleY(-1);
+}
+
+/* ── CONTENT ── */
+/* Figma: map (611 frame, ~702 with label overhang) left, card slider right */
+.content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 40px;
+  z-index: 1;
+}
+
+/* ── MAP — exact Figma export (702x659, includes markers + legend) ── */
+/* show at natural 702px so the map region renders at its true 611px */
+.mapWrap {
+  position: relative;
+  width: 702px;
+  flex-shrink: 0;
+}
+
+.mapImg {
+  display: block;
+  width: 702px;
+  height: auto;
+}
+
+/* legend top-left */
+.legend {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotMedical   { background: var(--cat-medical); }
+.dotTouristic { background: var(--cat-touristic); }
+.dotBoth      { background: var(--cat-both); }
+
+/* ── MARKERS ── */
+.marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.markerLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2px;
+}
+
+.markerName {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  color: var(--base-13);
+  white-space: nowrap;
+}
+
+.markerCat {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--base-8);
+  white-space: nowrap;
+}
+
+/* connecting line from label to dot on the map */
+.markerLine {
+  width: 1.5px;
+  border-radius: 1px;
+}
+
+.markerDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--base-1);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+/* line color matches category */
+.lineMedical   { background: var(--cat-medical); }
+.lineTouristic { background: var(--cat-touristic); }
+.lineBoth      { background: var(--cat-both); }
+
+/* ── CARD SLIDER ── */
+.slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* inner wrapper sized to the card — arrows anchor to ITS edges */
+.sliderInner {
+  position: relative;
+  width: 368px;
+}
+
+.sliderViewport {
+  width: 368px;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.sliderTrack {
+  display: flex;
+  /* subtle overshoot — slides slightly past then settles back */
+  transition: transform 0.6s cubic-bezier(0.4, 1.15, 0.6, 1);
+}
+
+/* nav arrows — Figma: 56px, glass white 0.7, blur 7, border base-5,
+   vertically centered on the 400px image (top 172) */
+.navBtn {
+  position: absolute;
+  top: 172px;
+  width: 56px;
+  height: 56px;
+  border-radius: 66px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  border: 1px solid var(--base-5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--base-13);
+  z-index: 3;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.navBtn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.05);
+}
+
+.navBtn svg { width: 24px; height: 24px; }
+
+/* centred on the card's left / right edges (half overlapping) */
+.navPrev { left: -28px; }
+.navNext { right: -28px; }
+
+/* ============================================================
+   MOBILE BREAKPOINT — stack map over slider
+   ============================================================ */
+@media (max-width: 480px) {
+  .section { padding: 40px 24px; }
+
+  .watermark { font-size: 84px; top: 8px; }
+
+  .headline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .title { font-size: 26px; line-height: 32px; width: 100%; }
+  .curveArrow { display: none; }
+
+  .content {
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  /* map full width, scaled to fit */
+  .mapWrap { width: 100%; }
+  .mapImg { width: 100%; }
+
+  /* slider full width, card scales down */
+  .slider { width: 100%; }
+  .sliderInner { width: 100%; max-width: 320px; margin: 0 auto; }
+  .sliderViewport { width: 100%; }
+  .navPrev { left: -16px; }
+  .navNext { right: -16px; }
+}

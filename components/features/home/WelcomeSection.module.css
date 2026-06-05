@@ -1,0 +1,112 @@
+/* Figma Section 01: flex column, gap 56px, px 152px, py 80px */
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  align-items: center;
+  padding: 80px 152px;
+  background: var(--base-1);
+  overflow: hidden;
+}
+
+/* ── HEADLINE ROW ── */
+.headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1136px;
+}
+
+.headTexts {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 666px;
+}
+
+/* Figma: Poppins Bold 40px, lh 44, black */
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 44px;
+  color: var(--base-13);
+}
+
+/* Figma: Poppins Regular 16px, lh 24, tracking 0.2, var(--base-8) */
+.subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-8);
+}
+
+/* SEE MORE — Figma: Poppins Regular 16px, black, gap 8px, arrow 24px */
+.seeMore {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.seeMore img {
+  width: 24px;
+  height: 24px;
+}
+
+/* ── CONTENT GRID ── */
+/* Figma: flex gap 16px — left tall card + right column */
+.content {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 1136px;
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 752px;
+}
+
+.topRow {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+/* ============================================================
+   MOBILE BREAKPOINT — stack everything
+   ============================================================ */
+@media (max-width: 480px) {
+  .section { padding: 40px 24px; gap: 32px; }
+
+  .headline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    max-width: 100%;
+  }
+  .headTexts { width: 100%; }
+  .title { font-size: 28px; line-height: 32px; }
+
+  .content {
+    flex-direction: column;
+    max-width: 100%;
+  }
+  .rightCol { width: 100%; }
+  .topRow { flex-direction: column; }
+}

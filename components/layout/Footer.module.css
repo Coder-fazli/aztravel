@@ -1,0 +1,169 @@
+/* Figma: bg black, px-152px, shadow 0 54 54 -20 rgba(0,0,0,0.11) */
+.footer {
+  background: var(--base-13);
+  padding: 64px 152px 0;
+  box-shadow: 0px 54px 54px -20px rgba(0, 0, 0, 0.11);
+  width: 100%;
+}
+
+/* Figma: content flex items-start justify-between, gap-32px between content and bottom */
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── MAIN CONTENT ROW ── */
+.content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* ── LOGO COLUMN ── */
+/* Figma: w-271px, gap-16px */
+.logoCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 271px;
+  flex-shrink: 0;
+}
+
+/* Figma: w-112px, h-44px */
+.logoImg {
+  width: 112px;
+  height: 44px;
+  display: block;
+  object-fit: contain;
+}
+
+/* Figma: Poppins Regular 12px, line-height 18px, tracking 0.2px, white */
+.tagline {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+}
+
+/* ── LINKS SECTION ── */
+/* Figma: w-753px, gap-24px, flex items-start */
+.links {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 753px;
+}
+
+/* ── MENU COLUMN ── */
+/* Figma: flex-1, gap-16px */
+.menuCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Figma: Poppins Bold 12px, line-height 18px, tracking 0.2px, white */
+.menuTitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+}
+
+/* Figma: gap-16px */
+.menuItems {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Figma: Poppins Regular 10px, line-height 16px, tracking 0.3px, white, opacity 0.89 */
+.menuItems a {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.3px;
+  color: var(--base-1);
+  opacity: 0.89;
+  text-decoration: none;
+  display: block;
+  transition: opacity 0.2s;
+}
+
+.menuItems a:hover {
+  opacity: 1;
+}
+
+/* ── BOTTOM BAR ── */
+/* Figma: border-t rgba(255,255,255,0.3), py-16px, flex justify-between */
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  width: 100%;
+}
+
+/* Figma: Poppins Regular 10px, line-height 16px, tracking 0.3px, white, no-wrap */
+.copyright {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0.3px;
+  color: var(--base-1);
+  white-space: nowrap;
+}
+
+/* Figma: gap-8px, icons 16x16px */
+.socials {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.socialIcon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.socialIcon:hover {
+  opacity: 1;
+}
+
+.socialIcon img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ============================================================
+   MOBILE BREAKPOINT — Figma mobile footer (simplified)
+   ============================================================ */
+@media (max-width: 480px) {
+  .footer { padding: 48px 24px 0; position: relative; z-index: 1; }
+
+  /* Figma mobile: hide the 5 link columns, keep logo + bottom bar */
+  .content { flex-direction: column; gap: 24px; }
+  .links { display: none; }
+  .logoCol { width: 100%; }
+
+  .bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
+}

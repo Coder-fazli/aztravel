@@ -1,0 +1,154 @@
+/* Figma: rounded 24px, overflow clip, image + 0.44 dark overlay */
+.card {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cardBg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center center;
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Figma hover: image zooms ~1.63x (368px -> 600px) */
+.card:hover .cardBg {
+  transform: scale(1.63);
+}
+
+/* Figma default: rgba(0,0,0,0.44) -> hover 0.64 */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-card);
+  transition: background 0.4s ease;
+}
+
+.card:hover .overlay {
+  background: var(--overlay-card-hover);
+}
+
+/* ── ICON BUTTON (top-right) ── */
+/* Figma: white bg, 44x44, rounded 16px, at top 16 right 16 */
+.iconBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: var(--base-1);
+  color: var(--base-13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.iconBtn:hover {
+  transform: scale(1.08);
+}
+
+.arrowSvg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.35s ease;
+}
+
+/* Figma hover: arrow rotates -45deg (right -> up-right) */
+.card:hover .arrowSvg {
+  transform: rotate(-45deg);
+}
+
+/* ── TEXT (bottom center) ── */
+.text {
+  position: absolute;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+  width: 304px;
+  z-index: 2;
+  transition: transform 0.35s ease;
+}
+
+/* Figma: Poppins Bold 30px, lh 34, white */
+.name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 34px;
+  color: var(--base-1);
+}
+
+/* Figma: Poppins Regular 12px, lh 18, white opacity 0.8 */
+.desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  opacity: 0.8;
+}
+
+/* larger desc variant for tall Summer card — Figma uses 16px */
+.descLarge {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* ── EXPLORE BUTTON (hidden, slides up on hover) ── */
+/* Figma: var(--primary-12), px16 py10, rounded 12, white bold 14 */
+.exploreBtn {
+  position: absolute;
+  left: 50%;
+  bottom: -60px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--primary-12);
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  white-space: nowrap;
+  text-decoration: none;
+  opacity: 0;
+  z-index: 2;
+  transition: bottom 0.35s ease, opacity 0.35s ease;
+}
+
+.card:hover .exploreBtn {
+  bottom: 24px;
+  opacity: 1;
+}
+
+.card:hover .text {
+  transform: translateX(-50%) translateY(-48px);
+}
+
+/* ── MOBILE: full-width stacked cards ── */
+@media (max-width: 480px) {
+  .card {
+    width: 100% !important;
+    height: 320px !important;
+  }
+  .descLarge { font-size: 14px; line-height: 22px; }
+}

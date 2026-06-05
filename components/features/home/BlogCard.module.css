@@ -1,0 +1,144 @@
+/* Figma bloq card: rounded 24, overflow clip, w 368, flex col */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 368px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--base-1);
+  text-decoration: none;
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+
+/* hover: card lifts with shadow */
+.card:hover {
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+/* ── IMAGE AREA (230px, rounded top) ── */
+.imgWrap {
+  position: relative;
+  width: 100%;
+  height: 230px;
+  overflow: hidden;
+  border-radius: 24px 24px 0 0;
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+/* hover: image zooms */
+.card:hover .img {
+  transform: scale(1.08);
+}
+
+/* ── BADGES (date + read time) ── */
+/* Figma: at top 184, left 16 (date) / 151 (read) */
+.badges {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  display: flex;
+  gap: 8px;
+  z-index: 1;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+/* date badge — secondary-13 (#4845ef) */
+.badgeDate { background: var(--secondary-13); }
+/* read badge — error-13 (#c74244) */
+.badgeRead { background: var(--error-13); }
+
+.badge svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--base-1);
+}
+
+/* Figma: Poppins Medium 12/18, white, tracking 0.2 */
+.badge span {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  white-space: nowrap;
+}
+
+/* ── TEXT AREA ── */
+/* Figma: bg white, p 32, gap 24 */
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+  width: 100%;
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Figma: Heading 06 Bold — 20/24, black */
+.title {
+  font-family: var(--font-family);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  color: var(--base-13);
+}
+
+/* Figma: Caption Regular — 14/22, #454545, opacity 0.8 */
+.desc {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-9);
+  opacity: 0.8;
+}
+
+/* SEE MORE — text + arrow; hover pushes arrow to the right edge */
+.seeMore {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+  width: 100%;
+  transition: gap 0.3s ease;
+}
+
+.card:hover .seeMore {
+  justify-content: space-between;
+}
+
+.seeMore svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+@media (max-width: 480px) {
+  .card { width: 100%; }
+}
