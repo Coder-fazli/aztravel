@@ -1,0 +1,117 @@
+/* Figma Section 08 "Box": 368×300, SQUARE corners, no gap — full-width strip */
+.card {
+  position: relative;
+  flex-shrink: 0;
+  display: block;
+  width: 368px;
+  height: 300px;
+  overflow: hidden;
+  text-decoration: none;
+  scroll-snap-align: start;
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.card:hover .img { transform: scale(1.06); }
+
+/* dark overlay — Figma rgba(0,0,0,0.44) */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.44);
+  transition: background 0.35s ease;
+}
+.card:hover .overlay { background: rgba(0, 0, 0, 0.55); }
+
+/* top-right white arrow button — 44px, radius 16 */
+.iconBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: var(--base-1);
+  color: var(--base-13);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+.arrow { transition: transform 0.35s ease; }
+
+/* centred text — Figma: top 164, w304, gap 12 */
+.text {
+  position: absolute;
+  left: 32px;
+  top: 164px;
+  width: 304px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  z-index: 2;
+  transition: top 0.35s ease;
+}
+
+/* Heading 05 Bold 24/28, white */
+.title {
+  font-family: var(--font-family);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  color: var(--base-1);
+}
+
+/* Small Regular 12/18, white 80% */
+.desc {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  opacity: 0.8;
+}
+
+/* "Explore" — hidden below, slides up on hover */
+.exploreBtn {
+  position: absolute;
+  left: 50%;
+  bottom: -52px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--primary-12);
+  color: var(--base-1);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  opacity: 0;
+  z-index: 2;
+  overflow: hidden;
+  transition: bottom 0.35s ease, opacity 0.35s ease;
+}
+
+/* hover interactions only on hover-capable devices (clean on touch) */
+@media (hover: hover) {
+  .card:hover .arrow { transform: rotate(-45deg); }
+  .card:hover .text { top: 132px; }
+  .card:hover .exploreBtn { bottom: 24px; opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .card { width: 300px; }
+}

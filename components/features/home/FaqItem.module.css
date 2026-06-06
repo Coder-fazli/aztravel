@@ -1,0 +1,83 @@
+/* Figma FAQ item: white, rounded 24, p24, gap 64, items-start */
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 64px;
+  width: 100%;
+  padding: 24px;
+  background: var(--base-1);
+  border: none;
+  border-radius: 24px;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+}
+
+/* open: soft drop shadow (Figma 0 33 22 rgba 0.07) */
+.item.open {
+  box-shadow: 0px 33px 22px rgba(0, 0, 0, 0.07);
+}
+
+.text {
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Body Medium 16/24, black, tracking 0.2 */
+.question {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+}
+
+/* smoothly expanding answer (grid-rows 0fr → 1fr) */
+.answerWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s ease;
+}
+.item.open .answerWrap {
+  grid-template-rows: 1fr;
+}
+.answerInner {
+  overflow: hidden;
+}
+
+/* Caption Regular 14/22, #595959; 12px gap below the question when open */
+.answer {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-8);
+  padding-top: 12px;
+}
+
+/* plus / minus icon */
+.icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--base-13);
+}
+.icon svg { width: 24px; height: 24px; display: block; }
+
+/* the vertical bar collapses + rotates → plus becomes minus */
+.vBar {
+  transform-origin: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.item.open .vBar {
+  transform: rotate(90deg);
+  opacity: 0;
+}
+
+@media (max-width: 900px) {
+  .item { gap: 16px; padding: 20px; }
+}

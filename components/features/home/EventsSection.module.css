@@ -1,0 +1,59 @@
+/* Figma Section 07: px 152, py 72, gap 56, flex col, white */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 56px;
+  padding: 72px 152px;
+  background: var(--base-1);
+}
+
+/* headline row — title + SEE MORE */
+.headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Heading 03 Regular 40/44, black — only "events" is bold */
+.title {
+  font-family: var(--font-family);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 44px;
+  color: var(--base-13);
+  width: 666px;
+}
+.title b { font-weight: 700; }
+
+.seeMore {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* events grid — 2 columns (560 + 16 + 560 = 1136), wraps */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .section { padding: 56px 24px; gap: 32px; }
+  .headline { flex-direction: column; align-items: flex-start; gap: 16px; }
+  /* Figma mobile: Heading 04 — 30/34 */
+  .title { width: 100%; font-size: 30px; line-height: 34px; }
+  .grid { flex-direction: column; }
+}

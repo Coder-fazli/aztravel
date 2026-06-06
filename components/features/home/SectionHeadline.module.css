@@ -8,11 +8,12 @@
   width: 100%;
 }
 
-/* faint giant watermark behind */
+/* faint giant watermark behind — Figma: left -152 (bleeds to section edge),
+   top -90, 210/185, opacity 0.04, natural width */
 .watermark {
   position: absolute;
-  left: 0;
-  top: -120px;
+  left: -152px;
+  top: -90px;
   font-family: var(--font-family);
   font-weight: 700;
   font-size: 210px;

@@ -8,7 +8,10 @@
 
 @media (max-width: 900px) {
   .scrollContent {
-    /* hero is in normal flow now — no offset needed */
-    margin-top: 0;
+    /* start below the fixed hero (747px), then scroll up over it */
+    margin-top: 747px;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
   }
 }

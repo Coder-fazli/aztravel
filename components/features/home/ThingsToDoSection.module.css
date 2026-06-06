@@ -1,0 +1,37 @@
+/* Figma Section 08: pt 80, gap 56, flex col, white.
+   Headline is padded; the tile strip runs full-bleed edge to edge. */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding-top: 80px;
+  background: var(--base-1);
+  overflow: hidden;
+}
+
+/* headline keeps the 152px page gutters */
+.headWrap {
+  position: relative;
+  padding: 0 152px;
+}
+
+/* full-width edge-to-edge slider — square tiles touching, no gap */
+.slider {
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.slider::-webkit-scrollbar { display: none; }
+
+.track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+}
+
+@media (max-width: 480px) {
+  .section { padding-top: 40px; gap: 32px; }
+  .headWrap { padding: 0 24px; }
+}

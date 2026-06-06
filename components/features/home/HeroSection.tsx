@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import styles from './HeroSection.module.css'
 
@@ -35,11 +35,22 @@ export default function HeroSection() {
   const prev = () => setActive(i => (i - 1 + slides.length) % slides.length)
   const next = () => setActive(i => (i + 1) % slides.length)
 
+  // finger swipe (mobile) — drag left = next, right = prev
+  const touchX = useRef<number | null>(null)
+  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0].clientX }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current === null) return
+    const dx = e.changedTouches[0].clientX - touchX.current
+    if (dx <= -50) next()
+    else if (dx >= 50) prev()
+    touchX.current = null
+  }
+
   const prevBg = slides[(active - 1 + slides.length) % slides.length].bg
   const nextBg = slides[(active + 1) % slides.length].bg
 
   return (
-    <section className={styles.hero}>
+    <section className={styles.hero} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
 
       {/* FULLSCREEN BACKGROUND */}
       <img src={slides[active].bg} alt="" className={styles.slideBg} />

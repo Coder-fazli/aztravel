@@ -123,11 +123,29 @@
 /* ============================================================
    MOBILE
    ============================================================ */
-@media (max-width: 480px) {
-  .section { height: auto; min-height: 520px; padding: 64px 0; }
-  .content { width: 100%; padding: 0 24px; gap: 28px; }
-  .airplane { width: 64px; height: 64px; }
-  .heading { font-size: 34px; line-height: 38px; }
+@media (max-width: 900px) {
+  /* Figma mobile: content 342, top 48, gap 40 */
+  .content {
+    width: 342px;
+    max-width: calc(100% - 48px);
+    padding-top: 48px;
+    gap: 40px;
+  }
+  .airplane { width: 56px; height: 56px; }
+  /* Figma mobile heading: 40/44 */
+  .heading { font-size: 40px; line-height: 44px; }
+  /* Figma mobile subtitle: 12/18 */
+  .subtitle { font-size: 12px; line-height: 18px; }
   .scribbleLeft, .scribbleRight { display: none; }
-  .buttons { flex-wrap: wrap; justify-content: center; }
+
+  /* buttons stack vertically and fill the width */
+  .buttons {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 16px;
+  }
+
+  /* watermark smaller on mobile (Figma ~129px) */
+  .watermark { font-size: 129px; line-height: 114px; top: 588px; }
 }

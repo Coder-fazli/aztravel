@@ -1,0 +1,21 @@
+/* Figma Section 09: bg #f5f5f5, px 152, py 80, gap 56, flex col */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 56px;
+  padding: 80px 152px;
+  background: var(--base-3);
+}
+
+/* FAQ list — gap 8 */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .section { padding: 40px 24px; gap: 32px; }
+}

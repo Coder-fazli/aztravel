@@ -135,13 +135,17 @@
   transition: bottom 0.35s ease, opacity 0.35s ease;
 }
 
-.card:hover .exploreBtn {
-  bottom: 24px;
-  opacity: 1;
-}
+/* hover-reveal only on devices that actually hover (not touch),
+   so on mobile the button stays hidden and never collides with the title */
+@media (hover: hover) {
+  .card:hover .exploreBtn {
+    bottom: 24px;
+    opacity: 1;
+  }
 
-.card:hover .text {
-  transform: translateX(-50%) translateY(-48px);
+  .card:hover .text {
+    transform: translateX(-50%) translateY(-48px);
+  }
 }
 
 /* ── MOBILE: full-width stacked cards ── */

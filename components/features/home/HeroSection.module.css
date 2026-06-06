@@ -286,11 +286,15 @@
    as the desktop hero. Figma photo-relative coords + 108px navbar.
    ============================================================ */
 @media (max-width: 900px) {
-  /* photo runs full-bleed under the fixed navbar; 639 photo + 108 navbar */
+  /* FIXED/static hero — the content panel scrolls up over it.
+     747 = 639 photo + 108 navbar overlap. */
   .hero {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 747px;
+    z-index: 0;
   }
 
   /* title — Figma: 132px into the photo, Heading 03 40/44 white, w317 */
