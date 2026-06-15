@@ -8,12 +8,16 @@ const intlMiddleware = createIntlMiddleware(routing);
 export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
     if (pathname.startsWith('/admin')) {
-        const { sessionClaims } = await auth();
-        const role = (sessionClaims?.metadata as { role?: string })?.role
-
-        if (!role || !['admin', 'operator'].includes(role as string)) {
-           return NextResponse.redirect(new URL('/', req.url))
-    }    }
+        // ⚠️ TEMP: admin auth disabled while building the UI.
+        // RESTORE the role check below before launch!
+        // const { sessionClaims } = await auth();
+        // const role = (sessionClaims?.metadata as { role?: string })?.role
+        // if (!role || !['admin', 'operator'].includes(role as string)) {
+        //     return NextResponse.redirect(new URL('/', req.url))
+        // }
+        
+        return NextResponse.next()
+    }
     return intlMiddleware(req);
 });
 

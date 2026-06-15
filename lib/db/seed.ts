@@ -1,5 +1,6 @@
 import { connectDb } from './connect'
 import Location from './models/Location'
+import Banner from './models/Banner'
 
 
 async function seed(){
@@ -53,8 +54,36 @@ async function seed(){
       },
     ])
     console.log('Locations seeded successfully')
+
+    await Banner.deleteMany({});
+    await Banner.insertMany([
+      {
+        key: 'blog-event-blue',
+        title:    { en: 'Join the event now and dont miss your chance!' },
+        subtitle: { en: 'Join teeth tent growth staircase sky invested win ladder building. Needle ensure die responsible streamline.' },
+        variant: 'blue',
+        buttons: [
+          { label: { en: 'Join now' },   href: '/events' },
+          { label: { en: 'Learn more' }, href: '/about' },
+        ],
+        status: 'active',
+      },
+      {
+        key: 'blog-event-orange',
+        title:    { en: 'Join the event now and dont miss your chance!' },
+        subtitle: { en: 'Join teeth tent growth staircase sky invested win ladder building. Needle ensure die responsible streamline.' },
+        variant: 'orange',
+        buttons: [
+          { label: { en: 'Join now' },   href: '/events' },
+          { label: { en: 'Learn more' }, href: '/about' },
+        ],
+        status: 'active',
+      },
+    ])
+    console.log('Banners seeded successfully')
+
     process.exit(0)
-   
+
 }
 
  seed();

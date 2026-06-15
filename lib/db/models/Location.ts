@@ -6,7 +6,7 @@ const i18n = {
     ar: { type: String, default: '' },
 }
 
-const LocationSchema = new Schema({
+export const LocationSchema = new Schema({
       name: i18n,
       slug: { type: String, required: true, unique: true },
       region: String,

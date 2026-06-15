@@ -1,0 +1,98 @@
+/* Reusable promo banner — Figma blue (1:6842) & orange (1:6901) boxes */
+.banner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  border-radius: 24px;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* decorative swirl on the left (shared with Get in touch) */
+.swirl {
+  position: absolute;
+  left: -175px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 567px;
+  height: 567px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  opacity: 0.45;
+}
+
+.texts {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.title {
+  font-family: var(--font-family);
+  font-weight: 700;
+  color: var(--base-1);
+}
+
+.subtitle {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  opacity: 0.9;
+}
+
+.buttons {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+
+/* glass "Learn more" button — same in both variants */
+.btnGlass {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  color: var(--base-1);
+}
+
+/* ── BLUE variant: centred, title 30/34, orange primary button ── */
+.blue { background: var(--secondary-13); gap: 40px; align-items: center; }
+.blue .texts { align-items: center; text-align: center; gap: 24px; }
+.blue .title { font-size: 30px; line-height: 34px; }
+.blue .btnPrimary { background: var(--primary-12); color: var(--base-1); }
+
+/* ── ORANGE variant: left-aligned, title 24/28, white primary button ── */
+.orange { background: var(--primary-13); gap: 32px; align-items: flex-start; }
+.orange .texts { align-items: flex-start; text-align: left; gap: 16px; }
+.orange .title { font-size: 24px; line-height: 28px; }
+.orange .btnPrimary { background: var(--base-1); color: var(--base-13); }
+
+@media (max-width: 480px) {
+  .banner { padding: 32px; border-radius: 20px; }
+  .blue .title, .orange .title { font-size: 22px; line-height: 28px; }
+  .buttons { flex-wrap: wrap; }
+}

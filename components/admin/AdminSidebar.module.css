@@ -1,0 +1,100 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 264px;
+  height: 100vh;
+  background: var(--base-1);
+  border-right: 1px solid #ececf0;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  gap: 24px;
+}
+
+/* brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+.brandMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary-12);
+  color: #fff;
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 14px;
+}
+.brandName {
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--base-13);
+}
+
+/* nav */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  overflow-y: auto;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--base-8);
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.item:hover { background: #f5f5f7; color: var(--base-13); }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c9c9d1;
+  flex-shrink: 0;
+  transition: background 0.18s ease;
+}
+
+.active {
+  background: var(--primary-12);
+  color: #fff;
+}
+.active:hover { background: var(--primary-12); color: #fff; }
+.active .dot { background: #fff; }
+
+/* help card */
+.help {
+  border-radius: 16px;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--secondary-13), #6d6bf7);
+  color: #fff;
+}
+.helpTitle {
+  font-family: var(--font-family);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.helpText {
+  font-family: var(--font-family);
+  font-size: 12px;
+  line-height: 18px;
+  opacity: 0.9;
+}

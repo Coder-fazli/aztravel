@@ -63,7 +63,7 @@ export default function Navbar() {
         {/* LOGO — icon (44x44) + text wordmark (87x30, hidden on mobile) */}
         <Link href="/" className={styles.logo}>
           <img src="/images/nav-logo-icon.svg" alt="Azerbaijan Travel" className={styles.logoIcon} />
-          <img src="/images/nav-logo-text.svg" alt="" className={styles.logoText} />
+          <img src={transparent ? '/images/nav-logo-text.svg' : '/images/nav-logo-text-dark.svg'} alt="" className={styles.logoText} />
         </Link>
 
         {/* MENU — desktop */}

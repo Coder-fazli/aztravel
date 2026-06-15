@@ -1,0 +1,319 @@
+/* Single blog post — Figma "Event detail" desktop (752 centred column) */
+.page {
+  background: var(--base-1);
+}
+
+.article {
+  max-width: 752px;
+  margin: 0 auto;
+  padding: 180px 24px 0;       /* clears navbar + breathing room above the title */
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ── header ── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.titleRow {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* hand-drawn curve pointer to the left of the title */
+.curve {
+  position: absolute;
+  left: -195px;          /* more gap from the content */
+  top: 4px;
+  width: 130px;
+  height: 74px;
+  pointer-events: none;
+  /* flipped vertically + angled so the tip points right toward the content */
+  transform: scaleY(-1) rotate(12deg);
+}
+
+.title {
+  font-family: var(--font-family);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 44px;
+  color: var(--base-13);
+}
+
+.meta {
+  display: flex;
+  gap: 24px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--base-8);
+}
+.metaItem svg { width: 24px; height: 23px; color: var(--secondary-13); }
+.metaIcon { width: 24px; height: 24px; }
+
+.hero {
+  width: 100%;
+  height: 372px;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+/* ── text blocks ── */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.h2 {
+  font-family: var(--font-family);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  color: var(--base-13);
+}
+
+.p {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-9);
+}
+.p b { font-weight: 700; color: var(--base-13); }
+
+/* ── bullet list ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.li {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: var(--secondary-13);
+}
+
+/* ── quote callout ── */
+.quote {
+  border-left: 4px solid var(--secondary-13);
+  background: var(--secondary-4);
+  border-radius: 24px;
+  padding: 32px;
+}
+.quote p {
+  font-family: var(--font-family);
+  font-size: 20px;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 28px;
+  color: var(--base-13);
+}
+
+/* ── video ── */
+.video {
+  position: relative;
+  width: 100%;
+  height: 372px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+.video img { width: 100%; height: 100%; object-fit: cover; }
+.play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.play:hover { transform: scale(1.08); }
+.play svg { width: 26px; height: 26px; color: var(--primary-12); margin-left: 3px; }
+
+/* ── gallery ── */
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.galleryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/* 3 per row — (full width − 2 gaps) / 3 */
+.galleryGrid img {
+  width: calc((100% - 16px) / 3);
+  height: 199px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* ── share ── */
+.share {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 8px;
+}
+.shareLabel {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--base-13);
+}
+.shareIcons { display: flex; gap: 8px; }
+.shareIcons a {
+  width: 24px;
+  height: 24px;
+  color: var(--secondary-13);
+  transition: opacity 0.2s ease;
+}
+.shareIcons a:hover { opacity: 0.7; }
+.shareIcons svg { width: 24px; height: 24px; }
+
+/* ── reviews (full width) ── */
+.reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: flex-start;
+  padding: 56px 152px 80px;
+  margin-top: 40px;
+  background: #f5f5f5;
+}
+.reviewsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.reviewsTitles { display: flex; flex-direction: column; gap: 16px; max-width: 666px; }
+.reviewsTitle {
+  font-family: var(--font-family);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 34px;
+  color: var(--base-13);
+}
+.reviewsSub {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-8);
+}
+.addReview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--base-13);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.addReview svg { width: 24px; height: 24px; }
+
+.reviewCards { display: flex; gap: 16px; width: 100%; }
+.reviewCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+  background: var(--base-1);
+  border-radius: 32px;
+  box-shadow: 0 56px 34px -30px rgba(0, 0, 0, 0.1);
+}
+.reviewText {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  color: var(--base-9);
+}
+.client { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.clientName { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.clientName b {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  color: var(--base-13);
+}
+.clientName span {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--base-9);
+}
+.stars { display: flex; gap: 4px; flex-shrink: 0; }
+.stars svg { width: 18px; height: 18px; color: #ffb323; }
+
+/* ── related blogs (full width) ── */
+.related {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  align-items: flex-start;
+  padding: 80px 152px;
+  margin-top: 40px;
+}
+.relatedCards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+/* ── mobile ── */
+@media (max-width: 480px) {
+  .article { padding: 150px 24px 0; gap: 32px; }
+  .title { font-size: 28px; line-height: 34px; }
+  .curve { display: none; }
+  .hero, .video { height: 220px; }
+  .galleryGrid img { width: calc(50% - 4px); height: 160px; }
+  .related { padding: 40px 24px; gap: 32px; }
+  .relatedCards { flex-direction: column; }
+  .reviews { padding: 40px 24px; gap: 32px; }
+  .reviewsHead { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .reviewsTitle { font-size: 24px; line-height: 30px; }
+  .reviewCards { flex-direction: column; }
+}

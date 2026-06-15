@@ -1,0 +1,216 @@
+/* Figma Blog hero: slider 1136×510, radius 40, centred in 1440 (px 152) */
+.section {
+  position: relative;
+  /* top offset clears the fixed navbar + a little breathing room */
+  padding: 150px 152px 0;
+  background: var(--base-1);
+  overflow: hidden;            /* clips the peeking slide at the page edge */
+}
+
+.viewport {
+  position: relative;
+  width: 1136px;
+  height: 510px;
+  overflow: visible;           /* lets the next slide peek into the gutter */
+}
+
+.track {
+  display: flex;
+  gap: 16px;
+  height: 100%;
+  /* shift one slide-width (1136) + gap (16) per index */
+  transform: translateX(calc(var(--i, 0) * -1152px));
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── single slide ── */
+.slide {
+  position: relative;
+  flex: 0 0 1136px;
+  width: 1136px;
+  height: 510px;
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* ── content block: left 64, vertically centred, 592 wide ── */
+.content {
+  position: absolute;
+  left: 64px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 592px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+  z-index: 2;
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Heading 03 Bold — 40/44, white */
+.title {
+  font-family: var(--font-family);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 44px;
+  color: var(--base-1);
+}
+
+/* Body Regular — 16/24, white, opacity .8, tracking .2 */
+.desc {
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  opacity: 0.8;
+}
+
+/* ── View blog button — primary, radius 14, padding 14/20 ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: var(--primary-12);
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.2px;
+  color: var(--base-1);
+  text-decoration: none;
+  transition: background 0.25s ease;
+}
+
+.btn:hover { background: var(--primary-hover); }
+
+.btnArrow {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  transition: transform 0.25s ease;
+}
+
+.btn:hover .btnArrow { transform: translateX(4px); }
+.btnArrow svg { width: 24px; height: 24px; }
+
+/* ── prev / next round buttons ── */
+.nav {
+  position: absolute;
+  right: 64px;
+  top: 215px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 16px;
+  z-index: 3;
+}
+
+.navBtn {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.66);
+  border-radius: 72px;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25), 0 22px 25px rgba(0, 0, 0, 0.23);
+  overflow: hidden;
+}
+
+.navBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.navBtn svg {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  z-index: 1;
+}
+
+/* ── progress indicator (bottom-left) ── */
+.indicator {
+  position: absolute;
+  left: 64px;
+  bottom: 33px;
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+}
+
+.bar,
+.barActive {
+  height: 4px;
+  border-radius: 4px;
+  transition: background 0.3s ease, width 0.3s ease;
+}
+
+.bar {
+  width: 24px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.barActive {
+  width: 48px;
+  background: var(--base-1);
+}
+
+/* ── mobile (Figma: 310-wide card, 40px side margins, content at bottom) ── */
+@media (max-width: 480px) {
+  .section { padding: 140px 40px 0; overflow: hidden; }
+  .viewport { width: 100%; height: 510px; }
+  .slide { flex-basis: 100%; width: 100%; border-radius: 32px; }
+  /* one slide-width + 16px gap per index */
+  .track { gap: 16px; transform: translateX(calc(var(--i, 0) * (-100% - 16px))); }
+
+  /* content anchored to the bottom; heading + button only */
+  .content {
+    left: 24px;
+    right: 24px;
+    top: auto;
+    bottom: 64px;
+    width: auto;
+    transform: none;
+    gap: 20px;
+  }
+  .title { font-size: 24px; line-height: 30px; }
+  .desc { display: none; }            /* no paragraph on mobile */
+  .btn { padding: 12px 20px; }
+
+  .nav { display: none; }             /* no round nav arrows on mobile */
+
+  .indicator { bottom: 24px; left: 24px; }
+  .bar { width: 18px; }
+  .barActive { width: 32px; }
+}

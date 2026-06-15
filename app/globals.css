@@ -21,6 +21,7 @@
   --primary-hover: #e05a3e;   /* hover state for primary buttons */
 
   /* ── SECONDARY / ERROR (Figma) ── */
+  --secondary-4: #f4f4fe;     /* Secondary/secondary-4 — pale indigo (quote bg) */
   --secondary-8: #8886f5;     /* Secondary/secondary-8 — light indigo (dividers) */
   --secondary-13: #4845ef;    /* Secondary/secondary-13 — indigo */
   --error-13:     #c74244;    /* Error/error-13 — red */
