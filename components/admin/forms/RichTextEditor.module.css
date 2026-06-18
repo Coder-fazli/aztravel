@@ -1,0 +1,125 @@
+.wrap {
+  border: 1px solid var(--base-3, #e2e2e2);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── sticky top toolbar ── */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  background: #fafafa;
+  border-bottom: 1px solid var(--base-3, #e2e2e2);
+}
+
+.sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px 4px;
+  background: var(--base-3, #e2e2e2);
+}
+
+.btn {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--base-9, #333);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn:hover { background: var(--base-2, #eee); }
+.btn:disabled { opacity: 0.35; cursor: default; }
+.btnActive {
+  background: var(--primary-2, #e7f0ff);
+  border-color: var(--primary-5, #9cbcf5);
+  color: var(--primary-7, #1f5fd6);
+}
+
+/* ── editor scroll area ── */
+.editor {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ── the editable surface / content typography ── */
+.prose {
+  padding: 16px 18px;
+  min-height: 280px;
+  outline: none;
+  font-family: var(--font-family, inherit);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--base-9, #222);
+}
+.prose:focus { outline: none; }
+
+.prose h1 { font-size: 1.9em; font-weight: 700; margin: 0.6em 0 0.3em; }
+.prose h2 { font-size: 1.5em; font-weight: 700; margin: 0.6em 0 0.3em; }
+.prose h3 { font-size: 1.25em; font-weight: 600; margin: 0.6em 0 0.3em; }
+.prose p { margin: 0.6em 0; }
+.prose ul { list-style: disc; padding-left: 1.4em; margin: 0.6em 0; }
+.prose ol { list-style: decimal; padding-left: 1.4em; margin: 0.6em 0; }
+.prose blockquote {
+  border-left: 3px solid var(--primary-5, #9cbcf5);
+  padding-left: 1em;
+  margin: 0.8em 0;
+  color: var(--base-7, #666);
+  font-style: italic;
+}
+.prose pre {
+  background: #1e1e1e;
+  color: #eee;
+  padding: 12px 14px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+.prose code { font-family: var(--font-geist-mono, monospace); }
+.prose a { color: var(--primary-7, #1f5fd6); text-decoration: underline; }
+.prose img,
+.prose :global(.editor-image) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0.6em 0;
+}
+.prose mark { background: #fff3a3; padding: 0 2px; border-radius: 2px; }
+.prose hr { border: none; border-top: 1px solid var(--base-3, #ddd); margin: 1.2em 0; }
+
+/* placeholder text (TipTap Placeholder extension) */
+.prose :global(p.is-editor-empty:first-child::before) {
+  content: attr(data-placeholder);
+  color: var(--base-6, #aaa);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ── floating bubble menu on text selection ── */
+.bubble {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: #1f2430;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+.bubble .btn { color: #fff; height: 28px; min-width: 28px; }
+.bubble .btn:hover { background: rgba(255, 255, 255, 0.12); }
+.bubble .btnActive { background: rgba(255, 255, 255, 0.2); border-color: transparent; color: #fff; }

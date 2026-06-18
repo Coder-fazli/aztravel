@@ -1,30 +1,63 @@
 .form {
+  display: block;
+}
+
+/* WordPress-style: wide content column + fixed meta sidebar */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.main {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 0; /* let the editor shrink instead of overflowing */
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.sidebar {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
+  position: sticky;
+  top: 16px;
 }
 
-.group {
+/* big title input across the top of the main column */
+.titleInput {
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px solid #eef0f3;
+  border-radius: 14px;
+  background: var(--base-1);
+  font-family: var(--font-family);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--base-13);
+  outline: none;
+}
+.titleInput:focus { border-color: var(--primary-12); }
+.titleInput::placeholder { color: var(--base-6, #b6bcc6); font-weight: 500; }
+
+/* card wrapper used for content + each sidebar box */
+.panel {
   background: var(--base-1);
   border: 1px solid #eef0f3;
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
-.legend {
+.panelLabel {
   font-family: var(--font-family);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--base-13);
-  padding: 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--base-8);
 }
 
 .field {
@@ -38,13 +71,8 @@
   font-weight: 500;
   color: var(--base-8);
 }
-
-.row { display: flex; gap: 14px; }
-.row .field { flex: 1; }
-
 .field input,
-.field select,
-.field textarea {
+.field select {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #e4e4ec;
@@ -54,16 +82,19 @@
   font-size: 14px;
   color: var(--base-13);
   outline: none;
-  resize: vertical;
 }
 .field input:focus,
-.field select:focus,
-.field textarea:focus { border-color: var(--primary-12); }
+.field select:focus { border-color: var(--primary-12); }
 
-.actions { display: flex; gap: 12px; align-items: center; }
+.actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 2px;
+}
 .submit {
-  height: 44px;
-  padding: 0 28px;
+  flex: 1;
+  height: 42px;
   border: none;
   border-radius: 12px;
   background: var(--primary-12);
@@ -83,6 +114,8 @@
   text-decoration: none;
 }
 
-@media (max-width: 900px) {
-  .grid { grid-template-columns: 1fr; }
+/* stack on smaller screens */
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
 }

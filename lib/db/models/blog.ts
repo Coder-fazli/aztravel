@@ -1,22 +1,23 @@
 import mongoose, { Schema } from 'mongoose'
-
-const i18n = {
-    en: { type: String, required: true },
-    es: { type: String, default: '' },
-    ar: { type: String, default: '' },
-  }
+import { routing } from '@/i18n/routing'
 
 export const BlogSchema = new Schema({
-    title: i18n,
-    slug: i18n,
-    excerpt: i18n,
-    content: i18n,
+    locale: { type: String, enum: [...routing.locales], 
+    required: true },
+    title: { type: String, required: true },
+    slug: { type: String, required: true },
+    // excerpt + content store TipTap JSON documents (rich text), not plain strings.
+    excerpt: { type: Schema.Types.Mixed, default: null },
+    content: { type: Schema.Types.Mixed, default: null },
+
+    translationGroupId: { type: String, required: true },
+
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     coverImage: String,
     images: [String],
     tags: [String],
     category: [String],
-    status:      { type: String, enum: ['draft','published'], default: 'draft' },
+    status:  { type: String, enum: ['draft','published'], default: 'draft' },
     readTime: Number,
     publishedAt: Date,
     views: { type: Number, default: 59 },
@@ -25,11 +26,9 @@ export const BlogSchema = new Schema({
  {timestamps: true}
 )
 
-  BlogSchema.index({ 'slug.en': 1 }, { unique: true })
-  BlogSchema.index({ 'slug.es': 1 }, { unique: true, sparse:
-  true })
-  BlogSchema.index({ 'slug.ar': 1 }, { unique: true, sparse:
-  true })
+  BlogSchema.index({ locale: 1, slug: 1 }, { unique: true })
+  BlogSchema.index({ translationGroupId: 1, locale: 1 }, {
+  unique: true })
   BlogSchema.index({ status: 1 })
   BlogSchema.index({ category: 1 })
   BlogSchema.index({ publishedAt: -1 })

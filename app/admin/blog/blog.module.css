@@ -50,3 +50,46 @@
   margin-left: 16px;
 }
 .delete { color: #d14343; }
+
+/* ── translation indicators (✓ exists / + add) ── */
+.transWrap {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.transPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+/* language already translated */
+.transHave {
+  background: #e3f8ee;
+  color: #1a9b63;
+  border: 1px solid #bff0d6;
+}
+.transHave::before { content: '✓'; font-size: 11px; }
+
+/* language missing → clickable "add" pill */
+.transAdd {
+  background: #fff;
+  color: var(--primary-12, #4f7cf6);
+  border: 1px dashed var(--primary-12, #9cbcf5);
+  cursor: pointer;
+}
+.transAdd::before { content: '+'; font-size: 13px; font-weight: 800; }
+.transAdd:hover {
+  background: var(--primary-12, #4f7cf6);
+  color: #fff;
+  border-style: solid;
+  border-color: var(--primary-12, #4f7cf6);
+}
