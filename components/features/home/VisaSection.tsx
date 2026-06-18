@@ -1,4 +1,4 @@
-import Button from '@/components/ui/Button'
+import Button from '@/components/ui/AppButton'
 import styles from './VisaSection.module.css'
 
 /* Home Section 05 — "Get your Azerbaijan visa online"

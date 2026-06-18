@@ -5,6 +5,7 @@ import DeleteBlogButton from '@/components/admin/DeleteBlogButton'
 import styles from '../admin.module.css'
 import table from './blog.module.css'
 import { getAllBlogs, getBlogGroupsMap } from '@/lib/actions/content'
+import { postUrl } from '@/lib/postUrl'
 
 // Flag emoji + language name per locale. (Note: language ≠ country, but flags
 // read well as tabs. Swap the flags if you prefer 🇺🇸 for en / a different
@@ -16,14 +17,22 @@ const LABELS: Record<string, string> = {
 }
 
 
+const STATUSES = [
+  ['all', 'All'],
+  ['published', 'Published'],
+  ['draft', 'Drafts'],
+] as const
+
 export default async function AdminBlogList({ searchParams }: {
-          searchParams: Promise<{ lang?: string }> 
+          searchParams: Promise<{ lang?: string; status?: string }>
        }) {
-  
-  const { lang } = await searchParams
+
+  const { lang, status } = await searchParams
   const active = (routing.locales.includes(lang as any) ? lang : routing.defaultLocale) as string
-  
-  const posts = await getAllBlogs(active as any)
+  const activeStatus = (['all', 'published', 'draft'].includes(status ?? '') ? status : 'all') as string
+
+  const all = await getAllBlogs(active as any)
+  const posts = activeStatus === 'all' ? all : all.filter((p: any) => p.status === activeStatus)
   const groups = await getBlogGroupsMap()
 
   const otherLocales = routing.locales.filter((l) => l !== active)
@@ -33,22 +42,31 @@ export default async function AdminBlogList({ searchParams }: {
       <AdminTopbar title="Blog" breadcrumb="Admin / Blog"
   />
 
-        {/* ── language tabs ── */}
-        <div style={{ display: 'flex', gap: 8, marginBottom:
-  16 }}>
-          {routing.locales.map((code) => (
-            <Link
-              key={code}
-              href={`/admin/blog?lang=${code}`}
-              className={styles.primaryBtn}
-              style={{
-                opacity: active === code ? 1 : 0.5,
-                fontWeight: active === code ? 700 : 400,
-              }}
-            >
-              {LABELS[code] ?? code}
-            </Link>
-          ))}
+        {/* ── filter bar: language + status segmented controls ── */}
+        <div className={table.filters}>
+          <div className={table.segment}>
+            {routing.locales.map((code) => (
+              <Link
+                key={code}
+                href={`/admin/blog?lang=${code}&status=${activeStatus}`}
+                className={`${table.segBtn} ${active === code ? table.segActive : ''}`}
+              >
+                {LABELS[code] ?? code}
+              </Link>
+            ))}
+          </div>
+
+          <div className={table.segment}>
+            {STATUSES.map(([val, label]) => (
+              <Link
+                key={val}
+                href={`/admin/blog?lang=${active}&status=${val}`}
+                className={`${table.segBtn} ${activeStatus === val ? table.segActive : ''}`}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className={styles.pageHead}>
@@ -122,6 +140,12 @@ export default async function AdminBlogList({ searchParams }: {
                     <td>{p.publishedAt ? new
   Date(p.publishedAt).toLocaleDateString() : '—'}</td>
                     <td className={table.right}>
+                      <a
+                        href={postUrl(p.locale, p.slug)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={table.action}
+                      >View</a>
                       <Link href={`/admin/blog/${p._id}`}
   className={table.action}>Edit</Link>
                       <DeleteBlogButton id={p._id} className={`${table.action} ${table.delete}`} />

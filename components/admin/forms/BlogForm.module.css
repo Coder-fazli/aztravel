@@ -23,6 +23,9 @@
   gap: 20px;
   position: sticky;
   top: 16px;
+  /* sit above the editor's sticky toolbar so SEO/cover modals (rendered
+     inside this sidebar's stacking context) appear over it */
+  z-index: 60;
 }
 
 /* big title input across the top of the main column */
@@ -113,6 +116,24 @@
   color: var(--base-8);
   text-decoration: none;
 }
+
+.viewLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--primary-12, #4f7cf6);
+  border-radius: 10px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-12, #4f7cf6);
+  text-decoration: none;
+  background: #fff;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.viewLink:hover { background: var(--primary-12, #4f7cf6); color: #fff; }
 
 /* stack on smaller screens */
 @media (max-width: 1000px) {

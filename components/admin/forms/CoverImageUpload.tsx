@@ -1,22 +1,33 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import styles from './CoverImageUpload.module.css'
+import MediaLibrary from '@/components/admin/MediaLibrary'
 
 type Props = {
   /** hidden input name the resulting URL submits under (e.g. "coverImage") */
   name: string
   /** existing image URL (for edit) */
   defaultValue?: string
+  /** input name for the alt text (e.g. "coverImageAlt") */
+  altName?: string
+  defaultAlt?: string
   onChange?: () => void
 }
 
-export default function CoverImageUpload({ name, defaultValue = '', onChange }: Props) {
+export default function CoverImageUpload({
+  name,
+  defaultValue = '',
+  altName,
+  defaultAlt = '',
+  onChange,
+}: Props) {
   const [url, setUrl] = useState(defaultValue)
+  const [alt, setAlt] = useState(defaultAlt)
   const [uploading, setUploading] = useState(false)
   const [drag, setDrag] = useState(false)
   const [error, setError] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [libOpen, setLibOpen] = useState(false)
 
   const upload = useCallback(
     async (file: File) => {
@@ -50,12 +61,6 @@ export default function CoverImageUpload({ name, defaultValue = '', onChange }: 
     if (file) upload(file)
   }
 
-  const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    e.target.value = ''
-    if (file) upload(file)
-  }
-
   const remove = () => {
     setUrl('')
     onChange?.()
@@ -67,15 +72,35 @@ export default function CoverImageUpload({ name, defaultValue = '', onChange }: 
       <input type="hidden" name={name} value={url} readOnly />
 
       {url ? (
-        <div className={styles.preview}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={url} alt="cover" />
-          <button type="button" className={styles.remove} onClick={remove} title="Remove image">×</button>
-        </div>
+        <>
+          {/* click the image → open the library to replace */}
+          <div className={styles.preview} onClick={() => setLibOpen(true)} title="Click to replace">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt={alt || 'cover'} />
+            <div className={styles.overlay}><span>Click to replace</span></div>
+            <button
+              type="button"
+              className={styles.remove}
+              onClick={(e) => { e.stopPropagation(); remove() }}
+              title="Remove image"
+            >×</button>
+          </div>
+
+          {/* alt text (SEO / accessibility) */}
+          {altName && (
+            <input
+              name={altName}
+              className={styles.alt}
+              value={alt}
+              onChange={(e) => { setAlt(e.target.value); onChange?.() }}
+              placeholder="Alt text — describe the image"
+            />
+          )}
+        </>
       ) : (
         <div
           className={`${styles.zone} ${drag ? styles.drag : ''}`}
-          onClick={() => inputRef.current?.click()}
+          onClick={() => setLibOpen(true)}
           onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
           onDragLeave={() => setDrag(false)}
           onDrop={onDrop}
@@ -84,16 +109,21 @@ export default function CoverImageUpload({ name, defaultValue = '', onChange }: 
             <span>Uploading…</span>
           ) : (
             <>
-              <span className={styles.icon}>⬆</span>
-              <span>Drag &amp; drop an image, or <b>click to browse</b></span>
-              <span className={styles.hint}>PNG, JPG, WEBP · up to 5&nbsp;MB</span>
+              <span className={styles.icon}>🖼</span>
+              <span><b>Choose from Media Library</b></span>
+              <span className={styles.hint}>or drag &amp; drop an image to upload</span>
             </>
           )}
         </div>
       )}
 
       {error && <span className={styles.error}>{error}</span>}
-      <input ref={inputRef} type="file" accept="image/*" hidden onChange={onPick} />
+
+      <MediaLibrary
+        open={libOpen}
+        onClose={() => setLibOpen(false)}
+        onSelect={(u) => { setUrl(u); onChange?.() }}
+      />
     </div>
   )
 }

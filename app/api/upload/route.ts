@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import { randomUUID } from 'crypto'
+import { connectDb } from '@/lib/db/connect'
+import Media from '@/lib/db/models/Media'
 
 // Local-disk image upload → /public/uploads, returns the public URL.
 //
@@ -34,6 +36,22 @@ export async function POST(request: Request) {
   await mkdir(uploadDir, { recursive: true })
   await writeFile(path.join(uploadDir, filename), buffer)
 
-  // Public URL (files in /public are served from the root).
-  return NextResponse.json({ url: `/uploads/${filename}` })
+  const url = `/uploads/${filename}` // files in /public are served from root
+
+  // Record it in the media library.
+  await connectDb()
+  const doc = await Media.create({
+    url,
+    filename: file.name,
+    mime: file.type,
+    size: file.size,
+  })
+
+  return NextResponse.json({
+    id: String(doc._id),
+    url,
+    filename: file.name,
+    mime: file.type,
+    size: file.size,
+  })
 }

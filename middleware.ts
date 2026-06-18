@@ -7,15 +7,26 @@ const intlMiddleware = createIntlMiddleware(routing);
 
 export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
+
+    // These must NOT be localized by next-intl (it would rewrite e.g.
+    // /api/upload → /en/api/upload, or /sign-in → /en/sign-in, and break them).
+    if (
+        pathname.startsWith('/api') ||
+        pathname.startsWith('/sign-in') ||
+        pathname.startsWith('/sign-up')
+    ) {
+        return NextResponse.next()
+    }
+
     if (pathname.startsWith('/admin')) {
-        // ⚠️ TEMP: admin auth disabled while building the UI.
-        // RESTORE the role check below before launch!
-        // const { sessionClaims } = await auth();
-        // const role = (sessionClaims?.metadata as { role?: string })?.role
-        // if (!role || !['admin', 'operator'].includes(role as string)) {
-        //     return NextResponse.redirect(new URL('/', req.url))
-        // }
-        
+        const { sessionClaims } = await auth();
+
+        // signed in but not an admin/operator → bounce home
+        const role = (sessionClaims?.metadata as { role?: string })?.role
+        if (!['admin', 'operator'].includes(role ?? '')) {
+            return NextResponse.redirect(new URL('/', req.url))
+        }
+
         return NextResponse.next()
     }
     return intlMiddleware(req);

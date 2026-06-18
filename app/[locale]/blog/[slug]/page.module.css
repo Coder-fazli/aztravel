@@ -132,6 +132,34 @@
   color: var(--base-13);
 }
 
+/* ── rich-text article body (rendered from TipTap JSON) ── */
+.body {
+  font-family: var(--font-family);
+  color: var(--base-9);
+}
+.body h1 { font-size: 30px; line-height: 36px; font-weight: 700; color: var(--base-13); margin: 0.8em 0 0.4em; }
+.body h2 { font-size: 24px; line-height: 28px; font-weight: 700; color: var(--base-13); margin: 0.8em 0 0.4em; }
+.body h3 { font-size: 20px; line-height: 26px; font-weight: 600; color: var(--base-13); margin: 0.8em 0 0.4em; }
+.body p { font-size: 16px; line-height: 24px; letter-spacing: 0.2px; margin: 0.7em 0; }
+.body ul { list-style: disc; padding-left: 1.4em; margin: 0.7em 0; }
+.body ol { list-style: decimal; padding-left: 1.4em; margin: 0.7em 0; }
+.body li { margin: 0.3em 0; }
+.body a { color: var(--secondary-13); text-decoration: underline; }
+.body img { max-width: 100%; height: auto; border-radius: 16px; margin: 1em 0; }
+.body blockquote {
+  border-left: 4px solid var(--secondary-13);
+  background: var(--secondary-4);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin: 1em 0;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--base-13);
+}
+.body mark { background: #fff3a3; padding: 0 2px; border-radius: 2px; }
+.body pre { background: #1e1e1e; color: #eee; padding: 14px 16px; border-radius: 10px; overflow-x: auto; margin: 1em 0; }
+.body hr { border: none; border-top: 1px solid var(--base-5); margin: 1.4em 0; }
+
 /* ── video ── */
 .video {
   position: relative;

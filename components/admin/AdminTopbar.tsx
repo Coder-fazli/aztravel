@@ -1,3 +1,4 @@
+import { UserButton } from '@clerk/nextjs'
 import styles from './AdminTopbar.module.css'
 
 type Props = {
@@ -15,8 +16,8 @@ export default function AdminTopbar({ title, breadcrumb }: Props) {
 
       <div className={styles.actions}>
         <input className={styles.search} type="text" placeholder="Search…" />
-        {/* User menu (Clerk) goes here — backend step */}
-        <span className={styles.avatar} aria-hidden="true">A</span>
+        {/* Clerk user menu — avatar + dropdown with Sign out */}
+        <UserButton />
       </div>
     </header>
   )

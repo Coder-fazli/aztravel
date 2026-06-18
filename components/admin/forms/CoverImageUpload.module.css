@@ -25,6 +25,7 @@
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e4e4ec;
+  cursor: pointer;
 }
 .preview img {
   width: 100%;
@@ -32,6 +33,34 @@
   aspect-ratio: 16 / 9;
   object-fit: cover;
 }
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.preview:hover .overlay { opacity: 1; }
+
+.alt {
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px 12px;
+  border: 1px solid #e4e4ec;
+  border-radius: 9px;
+  font-family: var(--font-family);
+  font-size: 13px;
+  color: var(--base-13);
+  outline: none;
+}
+.alt:focus { border-color: var(--primary-12, #4f7cf6); }
 .remove {
   position: absolute;
   top: 8px;
@@ -50,6 +79,20 @@
   justify-content: center;
 }
 .remove:hover { background: rgba(0, 0, 0, 0.8); }
+
+.libBtn {
+  display: inline-block;
+  margin-top: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-12, #4f7cf6);
+  cursor: pointer;
+  text-decoration: underline;
+}
 
 .error {
   display: block;

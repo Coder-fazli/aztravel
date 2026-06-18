@@ -7,6 +7,8 @@ import { useUnsavedChanges } from '@/lib/hooks/useUnsavedChnages'
 import { saveBlogFromForm } from '@/lib/actions/admin/blog'
 import RichTextEditor from './RichTextEditor'
 import CoverImageUpload from './CoverImageUpload'
+import SeoPanel from './SeoPanel'
+import { postUrl } from '@/lib/postUrl'
 
 
 function slugify(s: string) {
@@ -90,6 +92,16 @@ export default function BlogForm({
           {/* Publish */}
           <div className={styles.panel}>
             <span className={styles.panelLabel}>Publish</span>
+            {post && (
+              <a
+                href={postUrl(post.locale, post.slug)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.viewLink}
+              >
+                ↗ View post
+              </a>
+            )}
             <label className={styles.field}>
               <span>Status</span>
               <select name="status" defaultValue={post?.status ?? 'draft'}>
@@ -105,17 +117,25 @@ export default function BlogForm({
             </div>
           </div>
 
+          {/* SEO (Rank Math-style snippet) */}
+          <div className={styles.panel}>
+            <span className={styles.panelLabel}>SEO</span>
+            <SeoPanel
+              locale={locale}
+              onSlugChange={handleSlug}
+              postTitle={title}
+              slug={slug}
+              defaultMetaTitle={post?.metaTitle ?? ''}
+              defaultMetaDescription={post?.metaDescription ?? ''}
+              onChange={() => setIsDirty(true)}
+            />
+          </div>
+
           {/* Organize */}
           <div className={styles.panel}>
             <span className={styles.panelLabel}>Organize</span>
-            <label className={styles.field}>
-              <span>Slug *</span>
-              <input name="slug" 
-              required 
-              value={slug} 
-              onChange={(e) => handleSlug(e.target.value)}
-              placeholder="top-10-things-to-do-in-baku" />
-            </label>
+            {/* slug is edited via the SEO “Edit snippet” permalink — submitted hidden */}
+            <input type="hidden" name="slug" value={slug} />
             <label className={styles.field}>
               <span>Category (comma separated)</span>
               <input name="category" defaultValue={post?.category?.join(', ') ?? ''} placeholder="guide, city" />
@@ -125,8 +145,8 @@ export default function BlogForm({
               <input name="tags" defaultValue={post?.tags?.join(', ') ?? ''} placeholder="baku, food" />
             </label>
             <label className={styles.field}>
-              <span>Read time (min)</span>
-              <input name="readTime" type="number" min="1" defaultValue={post?.readTime ?? 5} />
+              <span>Views</span>
+              <input name="views" type="number" min="0" defaultValue={post?.views ?? 0} />
             </label>
           </div>
 
@@ -135,7 +155,13 @@ export default function BlogForm({
             <span className={styles.panelLabel}>Media</span>
             <label className={styles.field}>
               <span>Cover image</span>
-              <CoverImageUpload name="coverImage" defaultValue={post?.coverImage ?? ''} onChange={() => setIsDirty(true)} />
+              <CoverImageUpload
+                name="coverImage"
+                defaultValue={post?.coverImage ?? ''}
+                altName="coverImageAlt"
+                defaultAlt={post?.coverImageAlt ?? ''}
+                onChange={() => setIsDirty(true)}
+              />
             </label>
             <label className={styles.field}>
               <span>Gallery image URLs (comma separated)</span>

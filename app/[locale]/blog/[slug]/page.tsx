@@ -1,8 +1,45 @@
-import PromoBanner from '@/components/ui/PromoBanner'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import SectionHeadline from '@/components/features/home/SectionHeadline'
 import BlogCard from '@/components/features/home/BlogCard'
 import GetInTouchSection from '@/components/features/home/GetInTouchSection'
+import RichContent from '@/components/blog/RichContent'
+import { getBlogBySlug, getBlogTranslations } from '@/lib/actions/content'
+import { tiptapText } from '@/lib/tiptapText'
+import { postUrl } from '@/lib/postUrl'
+import { SITE_URL } from '@/lib/site'
 import styles from './page.module.css'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>
+}): Promise<Metadata> {
+  const { locale, slug } = await params
+  const loc = (['en', 'es', 'ar'].includes(locale) ? locale : 'en') as 'en' | 'es' | 'ar'
+  const post = await getBlogBySlug(slug, loc)
+  if (!post) return {}
+
+  const title = post.metaTitle || post.title
+  const description = post.metaDescription || tiptapText(post.content, 160)
+
+  // hreflang alternates from the post's translation siblings
+  const siblings = await getBlogTranslations(post.translationGroupId)
+  const languages = Object.fromEntries(
+    siblings.map((s: any) => [s.locale, `${SITE_URL}${postUrl(s.locale, s.slug)}`])
+  )
+
+  return {
+    title,
+    description,
+    alternates: { languages },
+    openGraph: {
+      title,
+      description,
+      images: post.coverImage ? [post.coverImage] : [],
+    },
+  }
+}
 
 const para =
   'Join teeth tent growth staircase sky invested win ladder building. Needle ensure die responsible streamline. Globalize high-level ensure rundown catching tentative hit so. In third uat reference waste inclusion asserts lean. Socialize unlock savvy cost our needed. Data individual power journey domains.'
@@ -51,8 +88,12 @@ export default async function BlogPostPage({
 }: {
   params: Promise<{ locale: string; slug: string }>
 }) {
-  const { locale } = await params
+  const { locale, slug } = await params
   const loc = (['en', 'es', 'ar'].includes(locale) ? locale : 'en') as 'en' | 'es' | 'ar'
+
+  const post = await getBlogBySlug(slug, loc)
+  if (!post) notFound()
+  const date = post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ''
 
   return (
     <div className={styles.page}>
@@ -61,65 +102,25 @@ export default async function BlogPostPage({
         <header className={styles.header}>
           <div className={styles.titleRow}>
             <img src="/images/blog/arrow-curve.svg" alt="" className={styles.curve} aria-hidden="true" />
-            <h1 className={styles.title}>Enjoy exploring Azerbaijan and its nature!</h1>
+            <h1 className={styles.title} dir={loc === 'ar' ? 'rtl' : 'ltr'}>{post.title}</h1>
             <div className={styles.meta}>
-              <span className={styles.metaItem}>
-                <img src="/images/blog/calendar-icon.svg" alt="" className={styles.metaIcon} /> 16 Avqust 2025
-              </span>
-              <span className={styles.metaItem}><ClockIcon /> 5 min read</span>
+              {date && (
+                <span className={styles.metaItem}>
+                  <img src="/images/blog/calendar-icon.svg" alt="" className={styles.metaIcon} /> {date}
+                </span>
+              )}
+              {post.readTime ? (
+                <span className={styles.metaItem}><ClockIcon /> {post.readTime} min read</span>
+              ) : null}
             </div>
           </div>
-          <img src="/images/city-baku.jpg" alt="" className={styles.hero} />
+          {post.coverImage && (
+            <img src={post.coverImage} alt={post.coverImageAlt || post.title} className={styles.hero} />
+          )}
         </header>
 
-        {/* intro text */}
-        <section className={styles.block}>
-          <h2 className={styles.h2}>This is a header</h2>
-          <p className={styles.p}>{para} {para}</p>
-        </section>
-
-        {/* blue promo banner (from DB) */}
-        <PromoBanner bannerKey="blog-event-blue" locale={loc} />
-
-        {/* bullet list */}
-        <ul className={styles.list}>
-          {bullets.map((b, i) => (
-            <li key={i} className={styles.li}><span className={styles.dot} /><p className={styles.p}>{b}</p></li>
-          ))}
-        </ul>
-
-        {/* text + quote */}
-        <section className={styles.block}>
-          <h2 className={styles.h2}>This is another header</h2>
-          <p className={styles.p}>{para}</p>
-        </section>
-
-        <blockquote className={styles.quote}>
-          <p>Join teeth tent growth staircase sky invested win ladder building. Needle ensure die responsible streamline. Globalize high-level ensure rundown catching tentative hit so.</p>
-        </blockquote>
-
-        {/* video */}
-        <div className={styles.video}>
-          <img src="/images/dest-2.jpg" alt="" />
-          <button type="button" className={styles.play} aria-label="Play video"><PlayIcon /></button>
-        </div>
-
-        {/* text */}
-        <section className={styles.block}>
-          <h2 className={styles.h2}>This is another header</h2>
-          <p className={styles.p}>{para} {para}</p>
-        </section>
-
-        {/* gallery */}
-        <section className={styles.gallery}>
-          <h2 className={styles.h2}>Gallery</h2>
-          <div className={styles.galleryGrid}>
-            {gallery.map((src, i) => <img key={i} src={src} alt="" />)}
-          </div>
-        </section>
-
-        {/* orange promo banner (from DB) */}
-        <PromoBanner bannerKey="blog-event-orange" locale={loc} />
+        {/* article body (rich text from the editor) */}
+        <RichContent doc={post.content} className={styles.body} />
 
         {/* share */}
         <div className={styles.share}>

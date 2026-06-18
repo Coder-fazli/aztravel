@@ -10,10 +10,15 @@ export const BlogSchema = new Schema({
     excerpt: { type: Schema.Types.Mixed, default: null },
     content: { type: Schema.Types.Mixed, default: null },
 
+    // SEO (Rank Math-style snippet)
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+
     translationGroupId: { type: String, required: true },
 
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     coverImage: String,
+    coverImageAlt: { type: String, default: '' },
     images: [String],
     tags: [String],
     category: [String],

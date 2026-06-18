@@ -3,20 +3,22 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import styles from './AdminSidebar.module.css'
+import SidebarIcon from './SidebarIcons'
 
 const nav = [
-  { label: 'Dashboard', href: '/admin' },
-  { label: 'Tours', href: '/admin/tours' },
-  { label: 'Hotels', href: '/admin/hotels' },
-  { label: 'Restaurants', href: '/admin/restaurants' },
-  { label: 'Events', href: '/admin/events' },
-  { label: 'Blog', href: '/admin/blog' },
-  { label: 'Banners', href: '/admin/banners' },
-  { label: 'Locations', href: '/admin/locations' },
-  { label: 'Bookings', href: '/admin/bookings' },
-  { label: 'Reviews', href: '/admin/reviews' },
-  { label: 'E-visa', href: '/admin/evisa' },
-  { label: 'Users', href: '/admin/users' },
+  { label: 'Dashboard', href: '/admin', icon: 'dashboard' },
+  { label: 'Tours', href: '/admin/tours', icon: 'tours' },
+  { label: 'Hotels', href: '/admin/hotels', icon: 'hotels' },
+  { label: 'Restaurants', href: '/admin/restaurants', icon: 'restaurants' },
+  { label: 'Events', href: '/admin/events', icon: 'events' },
+  { label: 'Blog', href: '/admin/blog', icon: 'blog' },
+  { label: 'Media', href: '/admin/media', icon: 'media' },
+  { label: 'Banners', href: '/admin/banners', icon: 'banners' },
+  { label: 'Locations', href: '/admin/locations', icon: 'locations' },
+  { label: 'Bookings', href: '/admin/bookings', icon: 'bookings' },
+  { label: 'Reviews', href: '/admin/reviews', icon: 'reviews' },
+  { label: 'E-visa', href: '/admin/evisa', icon: 'evisa' },
+  { label: 'Users', href: '/admin/users', icon: 'users' },
 ]
 
 export default function AdminSidebar() {
@@ -41,7 +43,7 @@ export default function AdminSidebar() {
               href={item.href}
               className={`${styles.item} ${active ? styles.active : ''}`}
             >
-              <span className={styles.dot} />
+              <SidebarIcon name={item.icon} className={styles.icon} />
               {item.label}
             </Link>
           )

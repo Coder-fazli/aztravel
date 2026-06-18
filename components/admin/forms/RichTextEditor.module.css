@@ -119,6 +119,8 @@
   background: #1f2430;
   border-radius: 8px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  /* above the sticky toolbar (z-index 5) so the selection menu isn't hidden */
+  z-index: 50;
 }
 .bubble .btn { color: #fff; height: 28px; min-width: 28px; }
 .bubble .btn:hover { background: rgba(255, 255, 255, 0.12); }

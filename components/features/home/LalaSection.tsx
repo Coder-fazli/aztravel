@@ -1,4 +1,4 @@
-import Button from '@/components/ui/Button'
+import Button from '@/components/ui/AppButton'
 import styles from './LalaSection.module.css'
 
 export default function LalaSection() {

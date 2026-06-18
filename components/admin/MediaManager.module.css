@@ -1,0 +1,57 @@
+.drop {
+  border: 2px dashed #cdd3dd;
+  border-radius: 14px;
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: #fbfcfd;
+  color: var(--base-8);
+  font-family: var(--font-family);
+  font-size: 14px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.drop:hover { border-color: var(--primary-12, #6b8afd); background: #f5f8ff; }
+.drag { border-color: var(--primary-12, #6b8afd); background: #eef3ff; }
+
+.count {
+  margin: 16px 0 10px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  color: var(--base-8);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+.muted { grid-column: 1 / -1; color: var(--base-8); font-size: 14px; padding: 20px 0; }
+
+.tile {
+  border: 1px solid #ececf0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.tile img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  background: #f1f1f4;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px;
+}
+.actions button {
+  border: none;
+  background: none;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--secondary-13, #4f7cf6);
+  cursor: pointer;
+}
+.del { color: #d14343 !important; }
