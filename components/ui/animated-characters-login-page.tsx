@@ -11,6 +11,7 @@ import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 
+
 interface PupilProps {
   size?: number;
   maxDistance?: number;
@@ -324,9 +325,12 @@ function LoginPage() {
         await clerk.setActive({ session: result.createdSessionId });
         router.push("/admin");
       } else {
-        // surface the exact Clerk status so we know which step it wants
-        setError(`Sign-in needs another step — status: ${result.status}`);
-        console.log("Clerk sign-in status:", result.status, result)
+        // surface exactly which second-factor strategies Clerk expects
+        const factors = (result.supportedSecondFactors ?? [])
+          .map((f: any) => f.strategy)
+          .join(", ");
+        setError(`status: ${result.status} | 2nd factors: ${factors || "none"}`);
+        console.log("Clerk sign-in result:", JSON.parse(JSON.stringify(result)));
       }
     } catch (err: any) {
       setError(
