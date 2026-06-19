@@ -4,13 +4,16 @@ import { useState } from 'react'
 import Link from 'next/link'
 import styles from './BlogHeroSlider.module.css'
 
-const DESC =
-  'Integer fringilla tellus ullamcorper ac mauris potenti amet commodo  amet enim. Integer fringilla tellus ullamcorper ac mauris potenti amet commodo  amet enim.'
+export type HeroSlide = { title: string; image: string; href: string; desc: string }
 
-const slides = [
-  { title: 'Enjoy exploring Azerbaijan and its nature!', image: '/images/blog/slide-1.jpg' },
-  { title: 'Everything you search for is here, hurry up!', image: '/images/blog/slide-2.jpg' },
-  { title: 'Azerbaijani culture, music, cuisine is waiting.', image: '/images/blog/slide-3.jpg' },
+const FALLBACK_DESC =
+  'Integer fringilla tellus ullamcorper ac mauris potenti amet commodo amet enim.'
+
+// shown only when there are no published posts yet
+const FALLBACK_SLIDES: HeroSlide[] = [
+  { title: 'Enjoy exploring Azerbaijan and its nature!', image: '/images/blog/slide-1.jpg', href: '/blog', desc: FALLBACK_DESC },
+  { title: 'Everything you search for is here, hurry up!', image: '/images/blog/slide-2.jpg', href: '/blog', desc: FALLBACK_DESC },
+  { title: 'Azerbaijani culture, music, cuisine is waiting.', image: '/images/blog/slide-3.jpg', href: '/blog', desc: FALLBACK_DESC },
 ]
 
 function ArrowRight() {
@@ -33,7 +36,8 @@ function Chevron({ dir }: { dir: 'left' | 'right' }) {
   )
 }
 
-export default function BlogHeroSlider() {
+export default function BlogHeroSlider({ slides: input }: { slides?: HeroSlide[] }) {
+  const slides = input && input.length ? input : FALLBACK_SLIDES
   const [index, setIndex] = useState(0)
   const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length)
   const next = () => setIndex((i) => (i + 1) % slides.length)
@@ -63,10 +67,10 @@ export default function BlogHeroSlider() {
               <div className={styles.content}>
                 <div className={styles.texts}>
                   <h1 className={styles.title}>{s.title}</h1>
-                  <p className={styles.desc}>{DESC}</p>
+                  <p className={styles.desc}>{s.desc}</p>
                 </div>
-                <Link href="/blog" className={styles.btn}>
-                  View blog
+                <Link href={s.href} className={styles.btn}>
+                  Read more
                   <span className={styles.btnArrow}><ArrowRight /></span>
                 </Link>
               </div>
