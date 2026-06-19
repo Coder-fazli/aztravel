@@ -19,7 +19,10 @@ export default clerkMiddleware(async (auth, req) => {
     }
 
     if (pathname.startsWith('/admin')) {
-        const { sessionClaims } = await auth();
+        const { userId, sessionClaims } = await auth();
+
+        // 🔎 DEBUG — remove later. Prints to the dev-server terminal.
+        console.log('[admin gate] userId:', userId, '| metadata:', sessionClaims?.metadata)
 
         // signed in but not an admin/operator → bounce home
         const role = (sessionClaims?.metadata as { role?: string })?.role

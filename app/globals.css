@@ -131,41 +131,46 @@
   letter-spacing: var(--body-spacing);
 }
 
-/* ── RESET ── */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ── RESET ──
+   Wrapped in @layer base so Tailwind utility classes (px-3, gap-*, etc.) can
+   override it. Unlayered rules beat layered ones in CSS, so an unlayered
+   `* { padding: 0 }` was silently killing Tailwind padding on shadcn inputs. */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-html,
-body {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-  max-width: 100%;
-}
+  html,
+  body {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100%;
+  }
 
-body {
-  font-family: var(--font-family);
-  background: var(--color-bg);
-  color: var(--color-text);
-}
+  body {
+    font-family: var(--font-family);
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
-button {
-  border: none;
-  background: none;
-  font-family: var(--font-family);
-  cursor: pointer;
-}
+  button {
+    border: none;
+    background: none;
+    font-family: var(--font-family);
+    cursor: pointer;
+  }
 
-img {
-  display: block;
-  max-width: 100%;
+  img {
+    display: block;
+    max-width: 100%;
+  }
 }
 
 @theme inline {
