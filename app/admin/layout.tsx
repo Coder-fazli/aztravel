@@ -1,18 +1,18 @@
+import { ClerkProvider } from '@clerk/nextjs'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import styles from './admin.module.css'
 
-// ⚠️ BACKEND STEP (do this yourself with the guide):
-// Gate this layout with Clerk so only admin/operator roles get in, e.g.
-//   const { userId } = await auth()
-//   if (!userId) redirect('/sign-in')
-//   ...check role...
-// For now the admin UI is open so we can build the screens.
+// Clerk only loads here (admin) and on /sign-in — NOT on public pages — so the
+// ~228 KiB Clerk bundle isn't shipped to the homepage/blog/etc.
+// (Access control itself is enforced server-side in middleware.ts.)
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={styles.shell}>
-      <AdminSidebar />
-      <main className={styles.main}>{children}</main>
-    </div>
+    <ClerkProvider afterSignOutUrl="/sign-in">
+      <div className={styles.shell}>
+        <AdminSidebar />
+        <main className={styles.main}>{children}</main>
+      </div>
+    </ClerkProvider>
   )
 }

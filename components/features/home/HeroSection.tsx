@@ -52,8 +52,15 @@ export default function HeroSection() {
   return (
     <section className={styles.hero} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
 
-      {/* FULLSCREEN BACKGROUND */}
-      <img src={slides[active].bg} alt="" className={styles.slideBg} />
+      {/* FULLSCREEN BACKGROUND — LCP image: load eagerly with high priority */}
+      <img
+        src={slides[active].bg}
+        alt=""
+        className={styles.slideBg}
+        fetchPriority="high"
+        loading="eager"
+        decoding="async"
+      />
       <div className={styles.slideOverlay} />
 
       {/* TITLE — changes per slide, positioned at Figma: x=232, y=235 */}
@@ -99,7 +106,7 @@ export default function HeroSection() {
       {/* NAVIGATION ARROWS — right side */}
       <div className={styles.arrows}>
         <button className={styles.arrowBtn} onClick={prev} aria-label="Previous">
-          <img src={prevBg} alt="" className={styles.arrowBg} />
+          <img src={prevBg} alt="" className={styles.arrowBg} loading="lazy" decoding="async" />
           <div className={styles.arrowBgOverlay} />
           <div className={styles.arrowIcons}>
             <span className={styles.arrowIcon1}>←</span>
@@ -107,7 +114,7 @@ export default function HeroSection() {
           </div>
         </button>
         <button className={styles.arrowBtn} onClick={next} aria-label="Next">
-          <img src={nextBg} alt="" className={styles.arrowBg} />
+          <img src={nextBg} alt="" className={styles.arrowBg} loading="lazy" decoding="async" />
           <div className={styles.arrowBgOverlay} />
           <div className={styles.arrowIcons}>
             <span className={styles.arrowIcon1}>→</span>
