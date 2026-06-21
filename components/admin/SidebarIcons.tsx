@@ -10,6 +10,13 @@ const PATHS: Record<string, ReactNode> = {
       <rect x="3" y="14" width="7" height="7" rx="1" />
     </>
   ),
+  home: (
+    <>
+      <path d="M3 10.5 12 3l9 7.5" />
+      <path d="M5 9.5V21h14V9.5" />
+      <path d="M9 21v-6h6v6" />
+    </>
+  ),
   tours: (
     <>
       <circle cx="12" cy="12" r="9" />

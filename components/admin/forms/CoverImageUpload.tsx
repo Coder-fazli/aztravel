@@ -5,14 +5,16 @@ import styles from './CoverImageUpload.module.css'
 import MediaLibrary from '@/components/admin/MediaLibrary'
 
 type Props = {
-  /** hidden input name the resulting URL submits under (e.g. "coverImage") */
-  name: string
+  /** hidden input name the URL submits under; omit when capturing via onValueChange */
+  name?: string
   /** existing image URL (for edit) */
   defaultValue?: string
   /** input name for the alt text (e.g. "coverImageAlt") */
   altName?: string
   defaultAlt?: string
   onChange?: () => void
+  /** reports the current URL on every change (upload / pick / remove) */
+  onValueChange?: (url: string) => void
 }
 
 export default function CoverImageUpload({
@@ -21,6 +23,7 @@ export default function CoverImageUpload({
   altName,
   defaultAlt = '',
   onChange,
+  onValueChange,
 }: Props) {
   const [url, setUrl] = useState(defaultValue)
   const [alt, setAlt] = useState(defaultAlt)
@@ -44,6 +47,7 @@ export default function CoverImageUpload({
         if (!res.ok) throw new Error()
         const data = await res.json()
         setUrl(data.url)
+        onValueChange?.(data.url)
         onChange?.()
       } catch {
         setError('Upload failed. Try again.')
@@ -63,13 +67,14 @@ export default function CoverImageUpload({
 
   const remove = () => {
     setUrl('')
+    onValueChange?.('')
     onChange?.()
   }
 
   return (
     <div>
-      {/* the value that submits with the form */}
-      <input type="hidden" name={name} value={url} readOnly />
+      {/* the value that submits with the form (omit when captured via onValueChange) */}
+      {name && <input type="hidden" name={name} value={url} readOnly />}
 
       {url ? (
         <>
@@ -122,7 +127,7 @@ export default function CoverImageUpload({
       <MediaLibrary
         open={libOpen}
         onClose={() => setLibOpen(false)}
-        onSelect={(u) => { setUrl(u); onChange?.() }}
+        onSelect={(u) => { setUrl(u); onValueChange?.(u); onChange?.() }}
       />
     </div>
   )

@@ -1,28 +1,19 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
 import styles from './HeroSection.module.css'
 
-const slides = [
-  {
-    id: 1,
-    title: 'Enjoy exploring Azerbaijan and its nature!',
-    bg: '/images/hero-slide-1.jpg',
-  },
-  {
-    id: 2,
-    title: 'Everything you search for is here, hurry up!',
-    bg: '/images/hero-slide-2.jpg',
-  },
-  {
-    id: 3,
-    title: 'Azerbaijani culture, music, cuisine is waiting.',
-    bg: '/images/hero-slide-3.jpg',
-  },
+// each field already resolved to the current locale by the page
+export type HeroSlide = { image: string; title: string; buttonText: string; buttonLink: string }
+
+const FALLBACK: HeroSlide[] = [
+  { image: '/images/hero-slide-1.jpg', title: 'Enjoy exploring Azerbaijan and its nature!', buttonText: 'Explore', buttonLink: '/tours' },
+  { image: '/images/hero-slide-2.jpg', title: 'Everything you search for is here, hurry up!', buttonText: 'Explore', buttonLink: '/tours' },
+  { image: '/images/hero-slide-3.jpg', title: 'Azerbaijani culture, music, cuisine is waiting.', buttonText: 'Explore', buttonLink: '/tours' },
 ]
 
-export default function HeroSection() {
+export default function HeroSection({ slides: input }: { slides?: HeroSlide[] }) {
+  const slides = input && input.length ? input : FALLBACK
   const [active, setActive] = useState(0)
 
   useEffect(() => {
@@ -46,15 +37,15 @@ export default function HeroSection() {
     touchX.current = null
   }
 
-  const prevBg = slides[(active - 1 + slides.length) % slides.length].bg
-  const nextBg = slides[(active + 1) % slides.length].bg
+  const prevBg = slides[(active - 1 + slides.length) % slides.length].image
+  const nextBg = slides[(active + 1) % slides.length].image
 
   return (
     <section className={styles.hero} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
 
       {/* FULLSCREEN BACKGROUND — LCP image: load eagerly with high priority */}
       <img
-        src={slides[active].bg}
+        src={slides[active].image}
         alt=""
         className={styles.slideBg}
         fetchPriority="high"
@@ -68,11 +59,18 @@ export default function HeroSection() {
         <h1 className={styles.title}>{slides[active].title}</h1>
       </div>
 
-      {/* EXPLORE BUTTON — static position, Figma: x=232, y=515 */}
-      <Link href="/tours" className={styles.exploreBtn}>
-        <span>Explore</span>
-        <img src="/images/icon-arrow-right.svg" alt="" />
-      </Link>
+      {/* EXPLORE BUTTON — per-slide text + link, opens in a new tab */}
+      {slides[active].buttonText && (
+        <a
+          href={slides[active].buttonLink || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.exploreBtn}
+        >
+          <span>{slides[active].buttonText}</span>
+          <img src="/images/icon-arrow-right.svg" alt="" />
+        </a>
+      )}
 
       {/* DECORATIVE POINTER — static, Figma: x=375, y=493 */}
       <div className={styles.pointer}>

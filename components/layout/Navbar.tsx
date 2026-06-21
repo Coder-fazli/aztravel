@@ -17,7 +17,7 @@ const navLinks = [
   { label: 'Shop',       href: '/shops' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ logo }: { logo?: string }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -62,7 +62,7 @@ export default function Navbar() {
 
         {/* LOGO — icon (44x44) + text wordmark (87x30, hidden on mobile) */}
         <Link href="/" className={styles.logo}>
-          <img src="/images/nav-logo-icon.svg" alt="Azerbaijan Travel" className={styles.logoIcon} />
+          <img src={logo || '/images/nav-logo-icon.svg'} alt="Azerbaijan Travel" className={styles.logoIcon} />
           <img src={transparent ? '/images/nav-logo-text.svg' : '/images/nav-logo-text-dark.svg'} alt="" className={styles.logoText} />
         </Link>
 

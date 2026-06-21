@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { SITE_URL, SITE_INDEXABLE } from "@/lib/site";
+import { getSettings } from "@/lib/actions/settings";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,15 +23,20 @@ const poppins = Poppins({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: "AzTravel",
-  description: "Discover Azerbaijan — destinations, seasons and travel guides.",
-  // Work-in-progress: keep the whole site out of search results until ready.
-  robots: SITE_INDEXABLE
-    ? undefined
-    : { index: false, follow: false, nocache: true },
-};
+// Dynamic so the favicon can be changed from the admin (Home page settings).
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: "AzTravel",
+    description: "Discover Azerbaijan — destinations, seasons and travel guides.",
+    // Work-in-progress: keep the whole site out of search results until ready.
+    robots: SITE_INDEXABLE
+      ? undefined
+      : { index: false, follow: false, nocache: true },
+    icons: settings?.favicon ? { icon: settings.favicon } : undefined,
+  };
+}
 
 export default function RootLayout({
   children,

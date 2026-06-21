@@ -7,6 +7,7 @@ import SidebarIcon from './SidebarIcons'
 
 const nav = [
   { label: 'Dashboard', href: '/admin', icon: 'dashboard' },
+  { label: 'Home page', href: '/admin/home', icon: 'home' },
   { label: 'Tours', href: '/admin/tours', icon: 'tours' },
   { label: 'Hotels', href: '/admin/hotels', icon: 'hotels' },
   { label: 'Restaurants', href: '/admin/restaurants', icon: 'restaurants' },
