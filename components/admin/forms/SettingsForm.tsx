@@ -10,6 +10,10 @@ const LABELS: Record<string, string> = { en: 'English', es: 'Español', ar: 'ا�
 const T_MAX = 60
 const D_MAX = 160
 
+// current hardcoded defaults (so the admin shows the existing logo/favicon/slides)
+const DEFAULT_LOGO = '/images/nav-logo-icon.svg'
+const DEFAULT_FAVICON = '/favicon.ico'
+
 type HeroSlide = {
   image: string
   title: Record<string, string>
@@ -17,10 +21,17 @@ type HeroSlide = {
   buttonLink: Record<string, string>
 }
 
+const DEFAULT_HERO_SLIDES: HeroSlide[] = [
+  { image: '/images/hero-slide-1.jpg', title: { en: 'Enjoy exploring Azerbaijan and its nature!' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
+  { image: '/images/hero-slide-2.jpg', title: { en: 'Everything you search for is here, hurry up!' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
+  { image: '/images/hero-slide-3.jpg', title: { en: 'Azerbaijani culture, music, cuisine is waiting.' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
+]
+
 export default function SettingsForm({ settings }: { settings: any }) {
   const [dirty, setDirty] = useState(false)
+  const [activeLoc, setActiveLoc] = useState<string>(routing.defaultLocale)
 
-  // controlled values so the Google preview updates live as you type
+  // controlled meta values (all locales) so the preview updates live + all submit
   const [vals, setVals] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {}
     for (const loc of routing.locales) {
@@ -34,9 +45,11 @@ export default function SettingsForm({ settings }: { settings: any }) {
     setDirty(true)
   }
 
-  // hero slider — array of slides (image shared; title / button text / link per language)
+  // hero slider — seeded with the current hardcoded slides when none saved yet
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>(
-    Array.isArray(settings?.heroSlides) ? settings.heroSlides : []
+    Array.isArray(settings?.heroSlides) && settings.heroSlides.length
+      ? settings.heroSlides
+      : DEFAULT_HERO_SLIDES
   )
   const addSlide = () => {
     setHeroSlides((s) => [...s, { image: '', title: {}, buttonText: {}, buttonLink: {} }])
@@ -62,55 +75,71 @@ export default function SettingsForm({ settings }: { settings: any }) {
     setDirty(true)
   }
 
+  // active-locale meta (for the tabbed SEO panel)
+  const dir = activeLoc === 'ar' ? 'rtl' : 'ltr'
+  const t = vals[`metaTitle_${activeLoc}`] ?? ''
+  const d = vals[`metaDescription_${activeLoc}`] ?? ''
+  const urlPath = activeLoc === routing.defaultLocale ? '' : `/${activeLoc}`
+
   return (
     <form action={saveSettingsFromForm} className={styles.form}>
-      {routing.locales.map((loc) => {
-        const dir = loc === 'ar' ? 'rtl' : 'ltr'
-        const t = vals[`metaTitle_${loc}`] ?? ''
-        const d = vals[`metaDescription_${loc}`] ?? ''
-        const urlPath = loc === routing.defaultLocale ? '' : `/${loc}`
-        return (
-          <div className={styles.panel} key={loc}>
-            <span className={styles.panelLabel}>SEO — {LABELS[loc] ?? loc}</span>
+      {/* ── SEO (one panel, language tabs) ── */}
+      <div className={styles.panel}>
+        <span className={styles.panelLabel}>SEO</span>
 
-            {/* live Google snippet */}
-            <div className={styles.preview}>
-              <div className={styles.pUrl}>azerbaijantravel.com{urlPath}</div>
-              <div className={styles.pTitle}>{t || 'Your title appears here'}</div>
-              <div className={styles.pDesc}>{d || 'Your meta description appears here.'}</div>
-            </div>
+        <div className={styles.tabs}>
+          {routing.locales.map((loc) => (
+            <button
+              type="button"
+              key={loc}
+              className={`${styles.tab} ${activeLoc === loc ? styles.tabActive : ''}`}
+              onClick={() => setActiveLoc(loc)}
+            >
+              {LABELS[loc] ?? loc}
+            </button>
+          ))}
+        </div>
 
-            <label className={styles.field}>
-              <div className={styles.labelRow}>
-                <span>Meta title</span>
-                <span className={t.length > T_MAX ? styles.over : styles.count}>{t.length} / {T_MAX}</span>
-              </div>
-              <input
-                name={`metaTitle_${loc}`}
-                dir={dir}
-                value={t}
-                onChange={(e) => set(`metaTitle_${loc}`, e.target.value)}
-                placeholder="AzTravel — Discover Azerbaijan"
-              />
-            </label>
+        {/* live Google snippet for the active language */}
+        <div className={styles.preview}>
+          <div className={styles.pUrl}>azerbaijantravel.com{urlPath}</div>
+          <div className={styles.pTitle}>{t || 'Your title appears here'}</div>
+          <div className={styles.pDesc}>{d || 'Your meta description appears here.'}</div>
+        </div>
 
-            <label className={styles.field}>
-              <div className={styles.labelRow}>
-                <span>Meta description</span>
-                <span className={d.length > D_MAX ? styles.over : styles.count}>{d.length} / {D_MAX}</span>
-              </div>
-              <textarea
-                name={`metaDescription_${loc}`}
-                dir={dir}
-                rows={3}
-                value={d}
-                onChange={(e) => set(`metaDescription_${loc}`, e.target.value)}
-                placeholder="Plan your trip to Azerbaijan — tours, e-visa, destinations…"
-              />
-            </label>
+        <label className={styles.field}>
+          <div className={styles.labelRow}>
+            <span>Meta title</span>
+            <span className={t.length > T_MAX ? styles.over : styles.count}>{t.length} / {T_MAX}</span>
           </div>
-        )
-      })}
+          <input
+            dir={dir}
+            value={t}
+            onChange={(e) => set(`metaTitle_${activeLoc}`, e.target.value)}
+            placeholder="AzTravel — Discover Azerbaijan"
+          />
+        </label>
+
+        <label className={styles.field}>
+          <div className={styles.labelRow}>
+            <span>Meta description</span>
+            <span className={d.length > D_MAX ? styles.over : styles.count}>{d.length} / {D_MAX}</span>
+          </div>
+          <textarea
+            dir={dir}
+            rows={3}
+            value={d}
+            onChange={(e) => set(`metaDescription_${activeLoc}`, e.target.value)}
+            placeholder="Plan your trip to Azerbaijan — tours, e-visa, destinations…"
+          />
+        </label>
+
+        {/* hidden inputs carry EVERY language's value to the form on submit */}
+        {routing.locales.flatMap((loc) => [
+          <input key={`mt-${loc}`} type="hidden" name={`metaTitle_${loc}`} value={vals[`metaTitle_${loc}`] ?? ''} readOnly />,
+          <input key={`md-${loc}`} type="hidden" name={`metaDescription_${loc}`} value={vals[`metaDescription_${loc}`] ?? ''} readOnly />,
+        ])}
+      </div>
 
       {/* ── hero slider ── */}
       <div className={styles.panel}>
@@ -136,19 +165,19 @@ export default function SettingsForm({ settings }: { settings: any }) {
             />
 
             {routing.locales.map((loc) => {
-              const dir = loc === 'ar' ? 'rtl' : 'ltr'
+              const ldir = loc === 'ar' ? 'rtl' : 'ltr'
               return (
                 <div className={styles.slideLang} key={loc}>
                   <span className={styles.langTag}>{LABELS[loc] ?? loc}</span>
                   <input
-                    dir={dir}
+                    dir={ldir}
                     value={slide.title?.[loc] ?? ''}
                     onChange={(e) => setSlideField(i, 'title', loc, e.target.value)}
                     placeholder="Slide title"
                   />
                   <div className={styles.slideRow}>
                     <input
-                      dir={dir}
+                      dir={ldir}
                       value={slide.buttonText?.[loc] ?? ''}
                       onChange={(e) => setSlideField(i, 'buttonText', loc, e.target.value)}
                       placeholder="Button text (e.g. Explore)"
@@ -174,12 +203,12 @@ export default function SettingsForm({ settings }: { settings: any }) {
       {/* branding */}
       <div className={styles.panel}>
         <span className={styles.panelLabel}>Logo</span>
-        <CoverImageUpload name="logo" defaultValue={settings?.logo ?? ''} onChange={() => setDirty(true)} />
+        <CoverImageUpload name="logo" defaultValue={settings?.logo || DEFAULT_LOGO} onChange={() => setDirty(true)} />
       </div>
 
       <div className={styles.panel}>
         <span className={styles.panelLabel}>Favicon</span>
-        <CoverImageUpload name="favicon" defaultValue={settings?.favicon ?? ''} onChange={() => setDirty(true)} />
+        <CoverImageUpload name="favicon" defaultValue={settings?.favicon || DEFAULT_FAVICON} onChange={() => setDirty(true)} />
         <p className={styles.hint}>Square image (e.g. 512×512). PNG or ICO.</p>
       </div>
 
