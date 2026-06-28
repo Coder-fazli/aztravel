@@ -120,30 +120,28 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
     setInserting(true)
     try {
       if (widget === 'reviews') {
-        // Use the exact venue the editor picked.
-        const src = selected!
-        onInsert({
-          locationId: src.location_id,
-          location: src.name,
-          widget,
-          limit,
-        })
-      } else {
-        // For area widgets (attractions / restaurants / hotels) we need a city/area
-        // locationId, not the venue's ID. Resolve it now by searching the city name.
-        const city = selected?.address_obj?.city
-          || (selected?.name ?? initialAttrs?.location ?? query)
+        // Always use the exact place's own locationId for reviews.
+        onInsert({ locationId: selected!.location_id, location: selected!.name, widget, limit })
+      } else if (selected && guessIsVenue(selected.name)) {
+        // User picked a specific venue but wants area results (attractions etc.).
+        // nearby_search needs a city/geographic locationId, not the venue's id.
+        // Resolve the city by searching its name.
+        const city = selected.address_obj?.city || selected.name
         const cityResults = await fetchSearch(city)
         const cityId = cityResults?.[0]?.location_id
         onInsert({
-          locationId: cityId || selected?.location_id || initialAttrs?.locationId || '',
+          locationId: cityId || selected.location_id,
           location: city,
           widget,
           limit,
         })
+      } else {
+        // User picked a city/area directly — use its locationId as-is.
+        // No second search needed; doing one risks getting the wrong first result.
+        const loc = selected ?? { location_id: initialAttrs?.locationId ?? '', name: initialAttrs?.location ?? query }
+        onInsert({ locationId: loc.location_id, location: loc.name, widget, limit })
       }
     } catch {
-      // fallback — insert with whatever we have
       onInsert({
         locationId: selected?.location_id || initialAttrs?.locationId || '',
         location: selected?.name || initialAttrs?.location || query,
