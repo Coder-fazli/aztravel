@@ -35,14 +35,17 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
   }
 
   if (widget === 'reviews') {
-    const [reviews, albumPhotos] = await Promise.all([
+    const [reviews, albumPhotos, placeDetails] = await Promise.all([
       getReviews(locationId, limit),
       getPhotos(locationId, 8),
+      getDetails(locationId).catch(() => null),
     ])
 
     if (!reviews?.length) {
       return <div className={styles.empty}>No reviews found for &ldquo;{location}&rdquo;.</div>
     }
+
+    const placeUrl = placeDetails?.web_url as string | undefined
 
     return (
       <div className={styles.wrap}>
@@ -51,7 +54,18 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
             <span className={styles.dot} />
             <span className={styles.label}>{LABELS.reviews} · {location}</span>
           </div>
-          <span className={styles.attribution}>TripAdvisor</span>
+          {placeUrl ? (
+            <a
+              href={placeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.viewBtn}
+            >
+              View on TripAdvisor ↗
+            </a>
+          ) : (
+            <span className={styles.attribution}>TripAdvisor</span>
+          )}
         </div>
 
         {albumPhotos?.length > 0 && (
