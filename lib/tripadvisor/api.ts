@@ -21,6 +21,24 @@ export async function getDetails(locationId: string) {
 }
 
 export async function getPlaces(locationId: string, category: string, limit = 5) {
+  // /location/{id}/nearby_search works for venue-level IDs but is unreliable for
+  // city/area IDs. The lat+long endpoint works for everything, so we fetch
+  // coordinates from details first (cached 24h, so effectively free on repeat loads).
+  const details = await getDetails(locationId)
+  const lat = details?.latitude as string | undefined
+  const lng = details?.longitude as string | undefined
+
+  if (lat && lng) {
+    const url = `${BASE}/location/nearby_search?latLong=${lat}%2C${lng}&category=${category}&limit=${limit}&key=${key()}`
+    const res = await fetch(url, CACHE)
+    if (res.ok) {
+      const json = await res.json()
+      const data = (json.data ?? []).slice(0, limit)
+      if (data.length) return data
+    }
+  }
+
+  // Fallback: locationId-based endpoint (works for venue IDs)
   const url = `${BASE}/location/${locationId}/nearby_search?category=${category}&limit=${limit}&key=${key()}`
   const res = await fetch(url, CACHE)
   if (!res.ok) return []
