@@ -119,6 +119,26 @@
   color: var(--primary-12);
 }
 
+/* ── place photo album strip (review widget) ── */
+.photoStrip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  scrollbar-width: none;
+}
+.photoStrip::-webkit-scrollbar { display: none; }
+
+.photoThumb {
+  flex-shrink: 0;
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
 /* ── review cards ── */
 .reviewGrid {
   display: flex;
@@ -184,6 +204,12 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.reviewTextExpanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: unset;
+  overflow: visible;
+}
 .readMore {
   font-size: 12px;
   font-weight: 600;
@@ -192,6 +218,20 @@
   align-items: center;
   gap: 3px;
 }
+.readMoreBtn {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-12);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-family);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.readMoreBtn:hover { opacity: 0.75; }
 
 /* ── empty ── */
 .empty {
