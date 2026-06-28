@@ -4,6 +4,7 @@ import { TextAlign } from '@tiptap/extension-text-align'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
+import { TripAdvisorExtension } from './TripAdvisorExtension'
 
 // Shared content extensions — the SAME list MUST be used by the editor (admin)
 // and the server renderer (generateHTML on the public page), otherwise stored
@@ -24,4 +25,5 @@ export const contentExtensions = [
   TextStyle,
   Color,
   Highlight.configure({ multicolor: true }),
+  TripAdvisorExtension,
 ]

@@ -3,11 +3,6 @@
   import { routing } from '@/i18n/routing'
   import { updateSettings } from '@/lib/actions/settings'
 
-  function parseJson(s: string) {
-     if (!s) return []
-     try { return JSON.parse(s) } catch { return [] }
-  }
-
   export async function saveSettingsFromForm(formData: FormData){
      const get = (k: string) => (formData.get(k) as string) || ''
 
@@ -23,7 +18,6 @@
       metaDescription,
       logo: get('logo'),
       favicon: get('favicon'),
-      heroSlides: parseJson(get('heroSlides')),
     })
        redirect('/admin/home')
   }

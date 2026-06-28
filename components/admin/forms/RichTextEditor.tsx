@@ -12,8 +12,9 @@ import {
   Bold, Italic, Underline, Strikethrough, Highlighter,
   List, ListOrdered, Quote, Code,
   AlignLeft, AlignCenter, AlignRight,
-  Link as LinkIcon, Image as ImageIcon, Minus,
+  Link as LinkIcon, Image as ImageIcon, Minus, MapPin,
 } from 'lucide-react'
+import TripAdvisorPicker from './TripAdvisorPicker'
 import styles from './RichTextEditor.module.css'
 
 type Props = {
@@ -66,6 +67,7 @@ export default function RichTextEditor({
     defaultValue ? JSON.stringify(defaultValue) : ''
   )
   const [libOpen, setLibOpen] = useState(false)
+  const [taOpen, setTaOpen] = useState(false)
 
   const editor = useEditor({
     // v3: never render on the server — avoids hydration mismatch in this Next setup.
@@ -95,7 +97,7 @@ export default function RichTextEditor({
 
   return (
     <div className={styles.wrap}>
-      <Toolbar editor={editor} onLink={setLink} onImage={() => setLibOpen(true)} />
+      <Toolbar editor={editor} onLink={setLink} onImage={() => setLibOpen(true)} onTripAdvisor={() => setTaOpen(true)} />
 
       {/* floating toolbar that appears next to a text selection */}
       <BubbleMenu editor={editor} className={styles.bubble}>
@@ -116,6 +118,8 @@ export default function RichTextEditor({
         onClose={() => setLibOpen(false)}
         onSelect={(url) => { editor.chain().focus().setImage({ src: url }).run(); onChange?.() }}
       />
+
+      {taOpen && <TripAdvisorPicker editor={editor} onClose={() => setTaOpen(false)} />}
     </div>
   )
 }
@@ -125,10 +129,12 @@ function Toolbar({
   editor,
   onLink,
   onImage,
+  onTripAdvisor,
 }: {
   editor: Editor
   onLink: () => void
   onImage: () => void
+  onTripAdvisor: () => void
 }) {
   const heading = (level: 1 | 2 | 3) => () =>
     editor.chain().focus().toggleHeading({ level }).run()
@@ -165,6 +171,7 @@ function Toolbar({
 
       <Btn title="Link" active={editor.isActive('link')} onClick={onLink}><LinkIcon size={17} /></Btn>
       <Btn title="Image" onClick={onImage}><ImageIcon size={17} /></Btn>
+      <Btn title="TripAdvisor block" onClick={onTripAdvisor}><MapPin size={17} /></Btn>
       <Btn title="Horizontal rule" onClick={() => editor.chain().focus().setHorizontalRule().run()}><Minus size={17} /></Btn>
     </div>
   )
