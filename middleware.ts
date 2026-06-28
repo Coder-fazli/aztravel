@@ -29,7 +29,7 @@ export default clerkMiddleware(async (auth, req) => {
     }
 
     if (pathname.startsWith('/admin')) {
-        const { userId, sessionClaims } = await auth();
+        const { sessionClaims } = await auth();
 
         // signed in but not an admin/operator → bounce home
         const role = (sessionClaims?.metadata as { role?: string })?.role
