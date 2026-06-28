@@ -13,6 +13,8 @@ type Props = {
 type Result = {
   location_id: string
   name: string
+  // TripAdvisor returns 'geos' for cities/regions, other values for specific venues
+  result_type?: string
   address_obj?: { city?: string; country?: string }
 }
 
@@ -23,13 +25,21 @@ const WIDGETS = [
   { value: 'hotels',      label: 'Hotels near this area' },
 ]
 
-// Guess the place type from its name — TripAdvisor search doesn't return a type field.
-const VENUE_KEYWORDS = ['restaurant', 'cafe', 'café', 'bar', 'hotel', 'inn', 'hostel',
-  'resort', 'spa', 'museum', 'gallery', 'park', 'beach', 'market', 'shop', 'store']
+// Use result_type='geos' when available (TripAdvisor Content API returns it).
+// Fall back to keyword heuristics for cases where the field is absent.
+const VENUE_KEYWORDS = [
+  'restaurant', 'cafe', 'café', 'bar', 'pub', 'bistro', 'grill', 'kitchen',
+  'hotel', 'inn', 'hostel', 'resort', 'suite', 'lodge',
+  'spa', 'museum', 'gallery', 'theatre', 'theater', 'cinema',
+  'park', 'garden', 'beach', 'market', 'bazaar', 'mall',
+  'shop', 'store', 'tower', 'center', 'centre', 'palace',
+]
 
-function guessIsVenue(name: string): boolean {
-  const lower = name.toLowerCase()
-  return VENUE_KEYWORDS.some((kw) => lower.includes(kw))
+function isArea(r: Result): boolean {
+  if (r.result_type) return r.result_type === 'geos'
+  // fallback: if name has a venue keyword, treat as specific venue
+  const lower = r.name.toLowerCase()
+  return !VENUE_KEYWORDS.some((kw) => lower.includes(kw))
 }
 
 const s = {
@@ -111,35 +121,43 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
 
   const pick = (r: Result) => {
     setSelected(r)
-    // Auto-suggest: specific venue → reviews; otherwise → attractions
-    setWidget(guessIsVenue(r.name) ? 'reviews' : 'attractions')
+    setWidget(isArea(r) ? 'attractions' : 'reviews')
   }
 
   const insert = async () => {
     if (!selected && !isEdit) return
     setInserting(true)
     try {
-      if (widget === 'reviews') {
-        // Always use the exact place's own locationId for reviews.
-        onInsert({ locationId: selected!.location_id, location: selected!.name, widget, limit })
-      } else if (selected && guessIsVenue(selected.name)) {
-        // User picked a specific venue but wants area results (attractions etc.).
-        // nearby_search needs a city/geographic locationId, not the venue's id.
-        // Resolve the city by searching its name.
-        const city = selected.address_obj?.city || selected.name
-        const cityResults = await fetchSearch(city)
-        const cityId = cityResults?.[0]?.location_id
+      if (selected) {
+        // Fresh pick — decide based on what was selected + what widget was chosen
+        if (widget === 'reviews') {
+          // Reviews always use the exact venue locationId
+          onInsert({ locationId: selected.location_id, location: selected.name, widget, limit })
+        } else if (!isArea(selected)) {
+          // Venue picked but area widget chosen — resolve city locationId.
+          // Filter cityResults by result_type='geos' for accuracy;
+          // fall back to first result if none match.
+          const city = selected.address_obj?.city || selected.name
+          const cityResults = await fetchSearch(city)
+          const geoResult = cityResults.find((r) => r.result_type === 'geos') ?? cityResults[0]
+          onInsert({
+            locationId: geoResult?.location_id || selected.location_id,
+            location: city,
+            widget,
+            limit,
+          })
+        } else {
+          // Area picked with area widget — use its locationId directly
+          onInsert({ locationId: selected.location_id, location: selected.name, widget, limit })
+        }
+      } else {
+        // Edit mode, no new selection — re-use stored attrs (user only changed limit/widget)
         onInsert({
-          locationId: cityId || selected.location_id,
-          location: city,
+          locationId: initialAttrs?.locationId ?? '',
+          location: initialAttrs?.location ?? query,
           widget,
           limit,
         })
-      } else {
-        // User picked a city/area directly — use its locationId as-is.
-        // No second search needed; doing one risks getting the wrong first result.
-        const loc = selected ?? { location_id: initialAttrs?.locationId ?? '', name: initialAttrs?.location ?? query }
-        onInsert({ locationId: loc.location_id, location: loc.name, widget, limit })
       }
     } catch {
       onInsert({
@@ -155,12 +173,11 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
 
   const canInsert = (!!selected || isEdit) && !inserting
 
-  // hint based on selected name
-  const isVenue = selected ? guessIsVenue(selected.name) : false
+  const selectedIsArea = selected ? isArea(selected) : false
   const hint = selected
-    ? isVenue
-      ? 'This looks like a specific venue — "Reviews" will show its TripAdvisor ratings.'
-      : 'This looks like a city or area — choose Attractions, Restaurants or Hotels.'
+    ? selectedIsArea
+      ? 'This is a city or area — choose Attractions, Restaurants or Hotels.'
+      : 'This is a specific venue — "Reviews" will show its TripAdvisor ratings.'
     : null
 
   return (
@@ -196,7 +213,7 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
             <span style={{ ...s.muted, textAlign: 'left' }}>Select the exact place:</span>
             {results.slice(0, 8).map((r) => {
               const addr = [r.address_obj?.city, r.address_obj?.country].filter(Boolean).join(', ')
-              const isVenueResult = guessIsVenue(r.name)
+              const isVenueResult = !isArea(r)
               const active = selected?.location_id === r.location_id
               return (
                 <div
@@ -231,10 +248,10 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
         {hint && (
           <div style={{
             padding: '10px 14px', borderRadius: 10, fontSize: 13, color: 'var(--base-9)',
-            background: isVenue ? '#f070540d' : '#8886f50d',
-            border: `1px solid ${isVenue ? '#f0705428' : '#8886f528'}`,
+            background: selectedIsArea ? '#8886f50d' : '#f070540d',
+            border: `1px solid ${selectedIsArea ? '#8886f528' : '#f0705428'}`,
           }}>
-            <strong style={{ color: isVenue ? '#f07054' : '#8886f5' }}>Tip:</strong> {hint}
+            <strong style={{ color: selectedIsArea ? '#8886f5' : '#f07054' }}>Tip:</strong> {hint}
           </div>
         )}
 
