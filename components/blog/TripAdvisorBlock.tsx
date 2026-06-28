@@ -1,5 +1,5 @@
 import { searchLocation, getPlaces, getReviews, getPhotos, getDetails } from '@/lib/tripadvisor/api'
-import TripAdvisorReviewCard from './TripAdvisorReviewCard'
+import TripAdvisorReviewList from './TripAdvisorReviewList'
 import styles from './TripAdvisorBlock.module.css'
 
 type Props = {
@@ -64,11 +64,7 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
           </div>
         )}
 
-        <div className={styles.reviewGrid}>
-          {reviews.map((r: any, i: number) => (
-            <TripAdvisorReviewCard key={r.id ?? i} review={r} />
-          ))}
-        </div>
+        <TripAdvisorReviewList reviews={reviews} />
       </div>
     )
   }

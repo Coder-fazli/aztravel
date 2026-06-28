@@ -210,6 +210,29 @@
 }
 .readMoreBtn:hover { opacity: 0.75; }
 
+/* ── show all / show less reviews ── */
+.showAllBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1.5px solid var(--base-5);
+  border-radius: 14px;
+  background: var(--base-1);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--base-13);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.showAllBtn:hover {
+  border-color: var(--primary-12);
+  color: var(--primary-12);
+}
+
 /* ── empty ── */
 .empty {
   padding: 20px; font-size: 14px;

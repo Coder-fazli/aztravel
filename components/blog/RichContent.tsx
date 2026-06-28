@@ -48,15 +48,18 @@ export default async function RichContent({
   }
   flushBatch()
 
+  // className (e.g. styles.body) is applied only to HTML segments so its
+  // descendant rules (e.g. .body a { text-decoration: underline }) don't
+  // bleed into TripAdvisor cards which manage their own link styles.
   return (
-    <div className={className}>
+    <>
       {segments.map((seg, i) =>
         seg.type === 'html' ? (
-          <div key={i} dangerouslySetInnerHTML={{ __html: seg.html }} />
+          <div key={i} className={className} dangerouslySetInnerHTML={{ __html: seg.html }} />
         ) : (
           <TripAdvisorBlock key={i} locationId={seg.locationId} location={seg.location} widget={seg.widget} limit={seg.limit} />
         ),
       )}
-    </div>
+    </>
   )
 }

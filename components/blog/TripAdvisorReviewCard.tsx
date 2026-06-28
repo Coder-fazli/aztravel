@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import styles from './TripAdvisorBlock.module.css'
 
 function initials(name: string) {
@@ -26,14 +25,11 @@ type Props = {
 }
 
 export default function TripAdvisorReviewCard({ review: r }: Props) {
-  const [expanded, setExpanded] = useState(false)
-
   const authorName = r.user?.username || r.username || 'Traveler'
   const avatarUrl  = r.user?.avatar?.thumbnail || r.user?.avatar?.small
   const date       = r.published_date
     ? new Date(r.published_date).toLocaleDateString('en', { month: 'short', year: 'numeric' })
     : ''
-  const isLong = (r.text?.length ?? 0) > 220
 
   return (
     <a
@@ -56,25 +52,9 @@ export default function TripAdvisorReviewCard({ review: r }: Props) {
       </div>
 
       {r.title && <div className={styles.reviewTitle}>{r.title}</div>}
+      {r.text  && <div className={styles.reviewText}>{r.text}</div>}
 
-      {r.text && (
-        <>
-          <div className={`${styles.reviewText} ${expanded ? styles.reviewTextExpanded : ''}`}>
-            {r.text}
-          </div>
-          {isLong && (
-            <button
-              type="button"
-              className={styles.readMoreBtn}
-              onClick={(e) => { e.preventDefault(); setExpanded((v) => !v) }}
-            >
-              {expanded ? 'Show less ↑' : 'Read more ↓'}
-            </button>
-          )}
-        </>
-      )}
-
-      {!isLong && <div className={styles.readMore}>Read on TripAdvisor →</div>}
+      <div className={styles.readMore}>Read on TripAdvisor →</div>
     </a>
   )
 }
