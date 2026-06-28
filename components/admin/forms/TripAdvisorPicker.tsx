@@ -53,6 +53,8 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
   const [nearbyType, setNearbyType] = useState<NearbyType>('hotels')
   const [photoLimit, setPhotoLimit] = useState<3 | 6 | 9>(6)
   const [inserting,  setInserting]  = useState(false)
+  const [preview,    setPreview]    = useState<any>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
 
   const search = async () => {
     if (!query.trim()) return
@@ -69,6 +71,24 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
   }
 
   const canNext = intent === 'list' ? picked.length > 0 : !!selected
+
+  const goToStep3 = async () => {
+    setStep(3)
+    setPreview(null)
+    setPreviewLoading(true)
+    try {
+      const params = new URLSearchParams()
+      params.set('widget', intent === 'list' ? 'list' : intent === 'nearby' ? nearbyType : intent ?? '')
+      if (intent === 'list') {
+        params.set('placeIds', picked.map((p) => p.location_id).join(','))
+      } else {
+        params.set('locationId', selected?.location_id ?? '')
+      }
+      const res = await fetch(`/api/tripadvisor/preview?${params}`)
+      setPreview(await res.json())
+    } catch { setPreview({ ok: false }) }
+    finally { setPreviewLoading(false) }
+  }
 
   const insert = async () => {
     if (!canNext || inserting) return
@@ -234,7 +254,7 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
               <button onClick={onClose} style={{ padding: '9px 20px', border: '1px solid #e4e4ec', borderRadius: 10, background: '#fff', color: '#666', fontSize: 14, cursor: 'pointer', fontFamily: 'var(--font-family)' }}>Cancel</button>
               <button
                 disabled={!canNext}
-                onClick={() => setStep(3)}
+                onClick={goToStep3}
                 style={{ padding: '9px 22px', border: 'none', borderRadius: 10, background: '#f07054', color: '#fff', fontSize: 14, fontWeight: 600, cursor: canNext ? 'pointer' : 'default', opacity: canNext ? 1 : 0.35, fontFamily: 'var(--font-family)' }}
               >
                 Next →
@@ -269,6 +289,39 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
                 {intent === 'nearby'   && `Top ${nearbyType} nearby · TripAdvisor`}
               </div>
             </div>
+
+            {/* live preview / feedback */}
+            {previewLoading && (
+              <div style={{ padding: '12px 14px', borderRadius: 10, background: '#f7f7fb', fontSize: 13, color: 'var(--base-8)', textAlign: 'center' }}>
+                Checking TripAdvisor data…
+              </div>
+            )}
+            {!previewLoading && preview && (
+              preview.ok ? (
+                <div style={{ borderRadius: 12, overflow: 'hidden', border: '1.5px solid #c8edd0', background: '#f0faf2' }}>
+                  {/* photo thumbnail for photos widget */}
+                  {preview.type === 'photos' && preview.photoUrl && (
+                    <img src={preview.photoUrl} alt={preview.name} style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }} />
+                  )}
+                  <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>✅</span>
+                    <div>
+                      {preview.type === 'photos'  && <div style={{ fontSize: 13, fontWeight: 600, color: '#2d7a3a' }}>Found on TripAdvisor — photos will load.</div>}
+                      {preview.type === 'reviews' && <div style={{ fontSize: 13, fontWeight: 600, color: '#2d7a3a' }}>{preview.name} · ★{Number(preview.rating).toFixed(1)} · {Number(preview.numReviews).toLocaleString()} reviews</div>}
+                      {preview.type === 'list'    && <div style={{ fontSize: 13, fontWeight: 600, color: '#2d7a3a' }}>{preview.names?.slice(0,2).join(', ')}{preview.names?.length > 2 ? ` +${preview.names.length - 2} more` : ''}</div>}
+                      {preview.type === 'nearby'  && <div style={{ fontSize: 13, fontWeight: 600, color: '#2d7a3a' }}>Location found: {preview.name}</div>}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ padding: '12px 14px', borderRadius: 10, border: '1.5px solid #f5c6c6', background: '#fff5f5', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                  <span style={{ fontSize: 16, flexShrink: 0 }}>⚠️</span>
+                  <div style={{ fontSize: 13, color: '#a00', lineHeight: 1.5 }}>
+                    TripAdvisor returned no data for this place. The block may appear empty on the page. Try a different place or widget type.
+                  </div>
+                </div>
+              )
+            )}
 
             {/* photo limit pills */}
             {intent === 'photos' && (
