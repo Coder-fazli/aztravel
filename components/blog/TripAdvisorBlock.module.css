@@ -84,6 +84,11 @@
   font-weight: 600;
   color: var(--base-13);
   line-height: 1.3;
+  text-decoration: none;
+}
+a.name:hover {
+  color: var(--primary-12);
+  text-decoration: underline;
 }
 
 .ratingRow {

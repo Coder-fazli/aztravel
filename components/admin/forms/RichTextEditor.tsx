@@ -132,7 +132,16 @@ export default function RichTextEditor({
         onSelect={(url) => { editor.chain().focus().setImage({ src: url }).run(); onChange?.() }}
       />
 
-      {taOpen && <TripAdvisorPicker editor={editor} onClose={() => setTaOpen(false)} />}
+      {taOpen && (
+        <TripAdvisorPicker
+          onInsert={(attrs) => {
+            editor.chain().focus().insertContent({ type: 'tripadvisorBlock', attrs }).run()
+            onChange?.()
+            setTaOpen(false)
+          }}
+          onClose={() => setTaOpen(false)}
+        />
+      )}
     </div>
   )
 }

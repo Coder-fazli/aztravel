@@ -25,9 +25,18 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export default async function TripAdvisorBlock({ locationId: propId, location, widget, limit }: Props) {
-  // Use the exact locationId picked in the editor; fall back to a search only for
-  // old blocks that were saved without an id.
-  const locationId = propId || (await searchLocation(location))?.[0]?.location_id
+  let locationId: string | undefined
+
+  if (widget === 'reviews') {
+    // Reviews are fetched for the exact place the editor picked.
+    locationId = propId || (await searchLocation(location))?.[0]?.location_id
+  } else {
+    // Nearby searches (attractions / restaurants / hotels) need a city/area ID,
+    // not a specific venue ID. Search by the location text (e.g. "Baku, Azerbaijan")
+    // to get the right area, then fall back to the picked ID.
+    const areaResults = await searchLocation(location)
+    locationId = areaResults?.[0]?.location_id || propId
+  }
 
   if (!locationId) {
     return (
@@ -64,7 +73,13 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
           <li key={item.location_id ?? i} className={styles.item}>
             <span className={styles.num}>{i + 1}</span>
             <div className={styles.info}>
-              <div className={styles.name}>{item.name ?? item.title ?? 'Unknown'}</div>
+              {item.web_url ? (
+                <a href={item.web_url} target="_blank" rel="noopener noreferrer" className={styles.name}>
+                  {item.name ?? item.title ?? 'Unknown'}
+                </a>
+              ) : (
+                <div className={styles.name}>{item.name ?? item.title ?? 'Unknown'}</div>
+              )}
               {item.rating && (
                 <div className={styles.ratingRow}>
                   <Stars rating={Number(item.rating)} />
