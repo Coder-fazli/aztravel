@@ -7,6 +7,7 @@ export const TripAdvisorExtension = Node.create({
 
   addAttributes() {
     return {
+      locationId: { default: '' },
       location: { default: '' },
       widget: { default: 'attractions' },
       limit: { default: 5 },

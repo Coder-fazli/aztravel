@@ -8,21 +8,28 @@ const intlMiddleware = createIntlMiddleware(routing);
 export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
 
-    // These must NOT be localized by next-intl (it would rewrite e.g.
-    // /api/upload → /en/api/upload, or /sign-in → /en/sign-in, and break them).
-    if (
-        pathname.startsWith('/api') ||
-        pathname.startsWith('/sign-in') ||
-        pathname.startsWith('/sign-up')
-    ) {
+    // Public API routes — no auth required (read-only proxies, no sensitive data).
+    if (pathname.startsWith('/api/tripadvisor')) {
+        return NextResponse.next()
+    }
+
+    // Private API routes — must be signed in.
+    // Return JSON 401 (not a redirect) so fetch() callers get a proper error.
+    if (pathname.startsWith('/api')) {
+        const { userId } = await auth()
+        if (!userId) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+        return NextResponse.next()
+    }
+
+    // sign-in / sign-up must NOT be localized by next-intl.
+    if (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')) {
         return NextResponse.next()
     }
 
     if (pathname.startsWith('/admin')) {
         const { userId, sessionClaims } = await auth();
-
-        // 🔎 DEBUG — remove later. Prints to the dev-server terminal.
-        console.log('[admin gate] userId:', userId, '| metadata:', sessionClaims?.metadata)
 
         // signed in but not an admin/operator → bounce home
         const role = (sessionClaims?.metadata as { role?: string })?.role

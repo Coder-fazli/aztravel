@@ -1,6 +1,8 @@
 import { searchLocation, getPlaces, getReviews } from '@/lib/tripadvisor/api'
+import styles from './TripAdvisorBlock.module.css'
 
 type Props = {
+  locationId?: string
   location: string
   widget: string
   limit: number
@@ -13,13 +15,23 @@ const LABELS: Record<string, string> = {
   reviews: 'Recent Reviews',
 }
 
-export default async function TripAdvisorBlock({ location, widget, limit }: Props) {
-  const results = await searchLocation(location)
-  const locationId = results?.[0]?.location_id
+function Stars({ rating }: { rating: number }) {
+  const full = Math.round(rating)
+  return (
+    <span className={styles.stars}>
+      {'★'.repeat(full)}{'☆'.repeat(5 - full)}
+    </span>
+  )
+}
+
+export default async function TripAdvisorBlock({ locationId: propId, location, widget, limit }: Props) {
+  // Use the exact locationId picked in the editor; fall back to a search only for
+  // old blocks that were saved without an id.
+  const locationId = propId || (await searchLocation(location))?.[0]?.location_id
 
   if (!locationId) {
     return (
-      <div style={{ padding: '16px', background: '#f5f5f7', borderRadius: 10, color: '#666', fontSize: 14 }}>
+      <div className={styles.empty}>
         No TripAdvisor results found for &ldquo;{location}&rdquo;.
       </div>
     )
@@ -31,71 +43,38 @@ export default async function TripAdvisorBlock({ location, widget, limit }: Prop
 
   if (!items?.length) {
     return (
-      <div style={{ padding: '16px', background: '#f5f5f7', borderRadius: 10, color: '#666', fontSize: 14 }}>
+      <div className={styles.empty}>
         No {LABELS[widget] ?? widget} found near &ldquo;{location}&rdquo;.
       </div>
     )
   }
 
   return (
-    <div style={{
-      border: '1px solid #e4e4ec', borderRadius: 14, overflow: 'hidden',
-      fontFamily: 'inherit', marginBlock: '1.5rem',
-    }}>
-      <div style={{
-        padding: '12px 16px', background: '#34e0a1', display: 'flex',
-        alignItems: 'center', gap: 8,
-      }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="#000" aria-hidden>
-          <circle cx="12" cy="12" r="10" />
-          <circle cx="12" cy="12" r="4" fill="#fff" />
-        </svg>
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#000' }}>
-          {LABELS[widget] ?? widget} — {location}
-        </span>
-        <span style={{ marginLeft: 'auto', fontSize: 11, color: '#005b4a', fontWeight: 600 }}>
-          via TripAdvisor
-        </span>
+    <div className={styles.wrap}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <span className={styles.dot} />
+          <span className={styles.label}>{LABELS[widget] ?? widget} · {location}</span>
+        </div>
+        <span className={styles.attribution}>TripAdvisor</span>
       </div>
 
-      <ul style={{ listStyle: 'none', margin: 0, padding: '8px 0' }}>
+      <ul className={styles.list}>
         {items.map((item: any, i: number) => (
-          <li key={item.location_id ?? i} style={{
-            display: 'flex', alignItems: 'flex-start', gap: 12,
-            padding: '10px 16px', borderBottom: i < items.length - 1 ? '1px solid #f0f0f0' : 'none',
-          }}>
-            <span style={{
-              minWidth: 24, height: 24, borderRadius: '50%',
-              background: '#f5f5f7', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 12, fontWeight: 700, color: '#666', flexShrink: 0,
-            }}>
-              {i + 1}
-            </span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#1a1a2e', lineHeight: 1.3 }}>
-                {item.name ?? item.title ?? 'Unknown'}
-              </div>
-              {(item.rating || item.rating_image_url) && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
-                  {item.rating && (
-                    <span style={{ fontSize: 13, color: '#e67e00', fontWeight: 700 }}>
-                      {'★'.repeat(Math.round(Number(item.rating)))}
-                      {'☆'.repeat(5 - Math.round(Number(item.rating)))}
-                    </span>
-                  )}
+          <li key={item.location_id ?? i} className={styles.item}>
+            <span className={styles.num}>{i + 1}</span>
+            <div className={styles.info}>
+              <div className={styles.name}>{item.name ?? item.title ?? 'Unknown'}</div>
+              {item.rating && (
+                <div className={styles.ratingRow}>
+                  <Stars rating={Number(item.rating)} />
                   {item.num_reviews && (
-                    <span style={{ fontSize: 12, color: '#888' }}>({item.num_reviews} reviews)</span>
+                    <span className={styles.reviewCount}>({item.num_reviews} reviews)</span>
                   )}
                 </div>
               )}
               {item.text && (
-                <p style={{
-                  fontSize: 13, color: '#555', margin: '4px 0 0',
-                  overflow: 'hidden', display: '-webkit-box',
-                  WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-                }}>
-                  {item.text}
-                </p>
+                <p className={styles.excerpt}>{item.text}</p>
               )}
             </div>
           </li>

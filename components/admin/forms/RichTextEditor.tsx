@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useEditor, EditorContent, type Editor } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer, type Editor } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import { Placeholder } from '@tiptap/extension-placeholder'
 import { contentExtensions } from '@/lib/tiptap/extensions'
+import { TripAdvisorExtension } from '@/lib/tiptap/TripAdvisorExtension'
+import TripAdvisorNodeView from './TripAdvisorNodeView'
 import MediaLibrary from '@/components/admin/MediaLibrary'
 import {
   Undo2, Redo2,
@@ -69,10 +71,21 @@ export default function RichTextEditor({
   const [libOpen, setLibOpen] = useState(false)
   const [taOpen, setTaOpen] = useState(false)
 
+  // Replace the plain TripAdvisorExtension from contentExtensions with one that
+  // has a React NodeView so inserted blocks are visible (and deletable) in the editor.
+  const editorExtensions = [
+    ...contentExtensions.filter((e) => e.name !== 'tripadvisorBlock'),
+    TripAdvisorExtension.extend({
+      addNodeView() {
+        return ReactNodeViewRenderer(TripAdvisorNodeView)
+      },
+    }),
+  ]
+
   const editor = useEditor({
     // v3: never render on the server — avoids hydration mismatch in this Next setup.
     immediatelyRender: false,
-    extensions: [...contentExtensions, Placeholder.configure({ placeholder })],
+    extensions: [...editorExtensions, Placeholder.configure({ placeholder })],
     content: defaultValue ?? '',
     editorProps: { attributes: { class: styles.prose, dir } },
     onUpdate: ({ editor }) => {
