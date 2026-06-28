@@ -84,7 +84,16 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
   }
 
   // ── place cards (attractions / restaurants / hotels) ──
-  const places = await getPlaces(locationId, widget, limit)
+  let places = await getPlaces(locationId, widget, limit)
+  if (!places?.length) {
+    // Sub-region locationIds often fail with nearby_search (TripAdvisor needs a city-level ID).
+    // Try resolving the stored location name to a fresh city ID as fallback.
+    const fallback = await searchLocation(location)
+    const fallbackId = fallback?.[0]?.location_id
+    if (fallbackId && fallbackId !== locationId) {
+      places = await getPlaces(fallbackId, widget, limit)
+    }
+  }
   if (!places?.length) {
     return <div className={styles.empty}>No {LABELS[widget] ?? widget} found near &ldquo;{location}&rdquo;.</div>
   }
