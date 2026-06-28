@@ -147,27 +147,11 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
             limit,
           })
         } else {
-          // Area picked with area widget.
-          // Check if it's a sub-region (has a parent city in address_obj.city).
-          // If so, resolve the parent city — TripAdvisor nearby_search needs a
-          // city-level locationId, not a district/region ID.
-          const parentCity = selected.address_obj?.city
-          const isSubRegion = parentCity &&
-            parentCity.toLowerCase() !== selected.name.toLowerCase()
-
-          if (isSubRegion) {
-            const cityResults = await fetchSearch(parentCity)
-            const geoResult = cityResults[0]  // best match for the city name
-            onInsert({
-              locationId: geoResult?.location_id || selected.location_id,
-              location: parentCity,
-              widget,
-              limit,
-            })
-          } else {
-            // This is already a city-level area — use directly
-            onInsert({ locationId: selected.location_id, location: selected.name, widget, limit })
-          }
+          // Area picked with area widget — use its locationId directly.
+          // address_obj.city is TripAdvisor's PARENT geographic level (e.g. Baku's
+          // parent is "Absheron Region") — do NOT use it to re-resolve; the picked
+          // result IS the location the user wants to search near.
+          onInsert({ locationId: selected.location_id, location: selected.name, widget, limit })
         }
       } else {
         // Edit mode, no new selection — re-use stored attrs (user only changed limit/widget)
