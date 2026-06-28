@@ -14,8 +14,6 @@ type Result = {
   location_id: string
   name: string
   address_obj?: { city?: string; country?: string }
-  location_type?: string
-  result_type?: string
 }
 
 const WIDGETS = [
@@ -25,27 +23,15 @@ const WIDGETS = [
   { value: 'hotels',      label: 'Hotels near this area' },
 ]
 
-const LOC_TYPES: Record<string, { label: string; color: string; widget: string }> = {
-  restaurant:   { label: 'Restaurant',     color: '#f07054', widget: 'reviews' },
-  hotel:        { label: 'Hotel',          color: '#4845ef', widget: 'reviews' },
-  attraction:   { label: 'Attraction',     color: '#34a853', widget: 'reviews' },
-  geographic:   { label: 'Area / City',    color: '#8886f5', widget: 'attractions' },
-  neighborhood: { label: 'Neighborhood',   color: '#8886f5', widget: 'attractions' },
+// Guess the place type from its name — TripAdvisor search doesn't return a type field.
+const VENUE_KEYWORDS = ['restaurant', 'cafe', 'café', 'bar', 'hotel', 'inn', 'hostel',
+  'resort', 'spa', 'museum', 'gallery', 'park', 'beach', 'market', 'shop', 'store']
+
+function guessIsVenue(name: string): boolean {
+  const lower = name.toLowerCase()
+  return VENUE_KEYWORDS.some((kw) => lower.includes(kw))
 }
 
-const HINTS: Record<string, string> = {
-  restaurant:   'This is a restaurant — "Reviews" will show its TripAdvisor ratings.',
-  hotel:        'This is a hotel — "Reviews" will show guest ratings for this property.',
-  attraction:   'This is an attraction — "Reviews" will show visitor ratings.',
-  geographic:   'This is a city or area — use Attractions, Restaurants or Hotels to show nearby places.',
-  neighborhood: 'This is a neighborhood — use Attractions or Restaurants to show nearby places.',
-}
-
-function locType(r: Result) {
-  return r.location_type ?? r.result_type
-}
-
-/* ── styles ── */
 const s = {
   overlay: {
     position: 'fixed' as const, inset: 0,
@@ -96,11 +82,18 @@ const s = {
   }),
 }
 
+async function fetchSearch(q: string): Promise<Result[]> {
+  const res = await fetch(`/api/tripadvisor/search?q=${encodeURIComponent(q)}`)
+  const data = await res.json()
+  return Array.isArray(data) ? data : []
+}
+
 export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: Props) {
   const isEdit = !!initialAttrs?.locationId
 
   const [query,    setQuery]    = useState(initialAttrs?.location ?? '')
   const [loading,  setLoading]  = useState(false)
+  const [inserting,setInserting]= useState(false)
   const [results,  setResults]  = useState<Result[]>([])
   const [searched, setSearched] = useState(false)
   const [selected, setSelected] = useState<Result | null>(null)
@@ -111,30 +104,66 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
     if (!query.trim()) return
     setLoading(true); setSearched(false); setSelected(null)
     try {
-      const res  = await fetch(`/api/tripadvisor/search?q=${encodeURIComponent(query)}`)
-      const data = await res.json()
-      setResults(Array.isArray(data) ? data : [])
+      setResults(await fetchSearch(query))
     } catch { setResults([]) }
     finally { setLoading(false); setSearched(true) }
   }
 
   const pick = (r: Result) => {
     setSelected(r)
-    const lt = locType(r)
-    if (lt && LOC_TYPES[lt]) setWidget(LOC_TYPES[lt].widget)
+    // Auto-suggest: specific venue → reviews; otherwise → attractions
+    setWidget(guessIsVenue(r.name) ? 'reviews' : 'attractions')
   }
 
-  const insert = () => {
+  const insert = async () => {
     if (!selected && !isEdit) return
-    const src = selected ?? { location_id: initialAttrs!.locationId!, name: initialAttrs!.location!, address_obj: undefined }
-    const addr = [src.address_obj?.city, src.address_obj?.country].filter(Boolean).join(', ')
-    onInsert({ locationId: src.location_id, location: addr || src.name, widget, limit })
+    setInserting(true)
+    try {
+      if (widget === 'reviews') {
+        // Use the exact venue the editor picked.
+        const src = selected!
+        onInsert({
+          locationId: src.location_id,
+          location: src.name,
+          widget,
+          limit,
+        })
+      } else {
+        // For area widgets (attractions / restaurants / hotels) we need a city/area
+        // locationId, not the venue's ID. Resolve it now by searching the city name.
+        const city = selected?.address_obj?.city
+          || (selected?.name ?? initialAttrs?.location ?? query)
+        const cityResults = await fetchSearch(city)
+        const cityId = cityResults?.[0]?.location_id
+        onInsert({
+          locationId: cityId || selected?.location_id || initialAttrs?.locationId || '',
+          location: city,
+          widget,
+          limit,
+        })
+      }
+    } catch {
+      // fallback — insert with whatever we have
+      onInsert({
+        locationId: selected?.location_id || initialAttrs?.locationId || '',
+        location: selected?.name || initialAttrs?.location || query,
+        widget,
+        limit,
+      })
+    } finally {
+      setInserting(false)
+    }
   }
 
-  const canInsert = !!selected || isEdit
-  const selType   = selected ? locType(selected) : undefined
-  const typeInfo  = selType ? LOC_TYPES[selType] : undefined
-  const hint      = selType ? HINTS[selType]     : undefined
+  const canInsert = (!!selected || isEdit) && !inserting
+
+  // hint based on selected name
+  const isVenue = selected ? guessIsVenue(selected.name) : false
+  const hint = selected
+    ? isVenue
+      ? 'This looks like a specific venue — "Reviews" will show its TripAdvisor ratings.'
+      : 'This looks like a city or area — choose Attractions, Restaurants or Hotels.'
+    : null
 
   return (
     <div style={s.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
@@ -158,7 +187,6 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
           </button>
         </div>
 
-        {/* result states */}
         {loading && <div style={s.muted}>Searching TripAdvisor…</div>}
         {searched && !loading && results.length === 0 && (
           <div style={s.muted}>No results found — try a different name.</div>
@@ -170,8 +198,7 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
             <span style={{ ...s.muted, textAlign: 'left' }}>Select the exact place:</span>
             {results.slice(0, 8).map((r) => {
               const addr = [r.address_obj?.city, r.address_obj?.country].filter(Boolean).join(', ')
-              const lt   = locType(r)
-              const ti   = lt ? LOC_TYPES[lt] : undefined
+              const isVenueResult = guessIsVenue(r.name)
               const active = selected?.location_id === r.location_id
               return (
                 <div
@@ -188,14 +215,14 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
                     <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--base-13)' }}>{r.name}</div>
                     {addr && <div style={{ fontSize: 12, color: 'var(--base-8)' }}>{addr}</div>}
                   </div>
-                  {ti && (
-                    <span style={{
-                      fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 20,
-                      background: `${ti.color}18`, color: ti.color, whiteSpace: 'nowrap', flexShrink: 0,
-                    }}>
-                      {ti.label}
-                    </span>
-                  )}
+                  <span style={{
+                    fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 20,
+                    background: isVenueResult ? '#f070541a' : '#8886f51a',
+                    color: isVenueResult ? '#f07054' : '#8886f5',
+                    whiteSpace: 'nowrap', flexShrink: 0,
+                  }}>
+                    {isVenueResult ? 'Venue' : 'Area'}
+                  </span>
                 </div>
               )
             })}
@@ -203,12 +230,13 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
         )}
 
         {/* smart hint */}
-        {hint && typeInfo && (
+        {hint && (
           <div style={{
             padding: '10px 14px', borderRadius: 10, fontSize: 13, color: 'var(--base-9)',
-            background: `${typeInfo.color}0d`, border: `1px solid ${typeInfo.color}28`,
+            background: isVenue ? '#f070540d' : '#8886f50d',
+            border: `1px solid ${isVenue ? '#f0705428' : '#8886f528'}`,
           }}>
-            <strong style={{ color: typeInfo.color }}>Tip:</strong> {hint}
+            <strong style={{ color: isVenue ? '#f07054' : '#8886f5' }}>Tip:</strong> {hint}
           </div>
         )}
 
@@ -236,7 +264,7 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
         <div style={s.btnRow}>
           <button style={s.btnCancel} onClick={onClose}>Cancel</button>
           <button style={s.btnPrimary(canInsert)} onClick={insert} disabled={!canInsert}>
-            {isEdit ? 'Update' : 'Insert'}
+            {inserting ? '…' : isEdit ? 'Update' : 'Insert'}
           </button>
         </div>
       </div>

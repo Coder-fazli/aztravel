@@ -25,18 +25,11 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export default async function TripAdvisorBlock({ locationId: propId, location, widget, limit }: Props) {
-  let locationId: string | undefined
-
-  if (widget === 'reviews') {
-    // Reviews are fetched for the exact place the editor picked.
-    locationId = propId || (await searchLocation(location))?.[0]?.location_id
-  } else {
-    // Nearby searches (attractions / restaurants / hotels) need a city/area ID,
-    // not a specific venue ID. Search by the location text (e.g. "Baku, Azerbaijan")
-    // to get the right area, then fall back to the picked ID.
-    const areaResults = await searchLocation(location)
-    locationId = areaResults?.[0]?.location_id || propId
-  }
+  // The picker resolves the correct locationId at insert time:
+  // - reviews  → specific venue ID
+  // - area widgets → city/area ID
+  // Fall back to a search only for legacy blocks saved without an ID.
+  const locationId = propId || (await searchLocation(location))?.[0]?.location_id
 
   if (!locationId) {
     return (
