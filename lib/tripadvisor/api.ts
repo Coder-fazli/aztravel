@@ -35,3 +35,11 @@ export async function getReviews(locationId: string, limit = 5) {
   const json = await res.json()
   return (json.data ?? []).slice(0, limit)
 }
+
+export async function getPhotos(locationId: string, limit = 1) {
+  const url = `${BASE}/location/${locationId}/photos?limit=${limit}&key=${key()}`
+  const res = await fetch(url, CACHE)
+  if (!res.ok) return []
+  const json = await res.json()
+  return (json.data ?? []).slice(0, limit)
+}
