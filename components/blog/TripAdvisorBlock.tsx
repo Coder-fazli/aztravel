@@ -35,6 +35,51 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
     return <div className={styles.empty}>No TripAdvisor results found for &ldquo;{location}&rdquo;.</div>
   }
 
+  // ── photos widget — gallery grid for one specific place ──
+  if (widget === 'photos') {
+    const id = placeIds?.split(',')[0]?.trim() || locationId
+    const [photos, detail] = await Promise.all([
+      getPhotos(id, limit || 6),
+      getDetails(id).catch(() => null),
+    ])
+
+    if (!photos?.length) {
+      return <div className={styles.empty}>No photos found.</div>
+    }
+
+    const placeUrl = detail?.web_url as string | undefined
+
+    return (
+      <div className={styles.wrap}>
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <span className={styles.dot} />
+            <span className={styles.label}>{detail?.name ?? location} — Photos</span>
+          </div>
+          {placeUrl ? (
+            <a href={placeUrl} target="_blank" rel="noopener noreferrer" className={styles.viewBtn}>
+              View on TripAdvisor ↗
+            </a>
+          ) : (
+            <span className={styles.attribution}>TripAdvisor</span>
+          )}
+        </div>
+        <div className={styles.photoGrid}>
+          {photos.map((photo: any, i: number) => {
+            const thumb = photo.images?.medium?.url || photo.images?.small?.url
+            const large = photo.images?.large?.url || photo.images?.original?.url || thumb
+            if (!thumb) return null
+            return (
+              <a key={photo.id ?? i} href={large ?? '#'} target="_blank" rel="noopener noreferrer" className={styles.photoItem}>
+                <img src={thumb} alt={photo.caption || detail?.name || location} />
+              </a>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
   // ── reviews widget ──
   if (widget === 'reviews') {
     const [reviews, albumPhotos, placeDetails] = await Promise.all([

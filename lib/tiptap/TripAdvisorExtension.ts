@@ -9,7 +9,7 @@ export const TripAdvisorExtension = Node.create({
     return {
       locationId: { default: '' },
       location:   { default: '' },
-      widget:     { default: 'attractions' },
+      widget:     { default: 'attractions' },  // attractions | restaurants | hotels | reviews | photos
       limit:      { default: 5 },
       placeIds:   { default: '' },  // comma-separated specific TripAdvisor IDs
     }

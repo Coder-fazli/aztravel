@@ -19,6 +19,7 @@ type Result = {
 
 const WIDGETS = [
   { value: 'reviews',     label: 'Reviews of this exact place' },
+  { value: 'photos',      label: 'Photo gallery of this place' },
   { value: 'attractions', label: 'Attractions near this area' },
   { value: 'restaurants', label: 'Restaurants near this area' },
   { value: 'hotels',      label: 'Hotels near this area' },
