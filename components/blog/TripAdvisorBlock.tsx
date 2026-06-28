@@ -1,4 +1,4 @@
-import { searchLocation, getPlaces, getReviews, getPhotos } from '@/lib/tripadvisor/api'
+import { searchLocation, getPlaces, getReviews, getPhotos, getDetails } from '@/lib/tripadvisor/api'
 import TripAdvisorReviewCard from './TripAdvisorReviewCard'
 import styles from './TripAdvisorBlock.module.css'
 
@@ -35,7 +35,6 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
   }
 
   if (widget === 'reviews') {
-    // Fetch reviews and the place's own photo album in parallel
     const [reviews, albumPhotos] = await Promise.all([
       getReviews(locationId, limit),
       getPhotos(locationId, 8),
@@ -55,20 +54,12 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
           <span className={styles.attribution}>TripAdvisor</span>
         </div>
 
-        {/* place photo album strip */}
         {albumPhotos?.length > 0 && (
           <div className={styles.photoStrip}>
             {albumPhotos.map((photo: any, i: number) => {
               const url = photo.images?.medium?.url || photo.images?.small?.url
               if (!url) return null
-              return (
-                <img
-                  key={photo.id ?? i}
-                  src={url}
-                  alt={photo.caption || location}
-                  className={styles.photoThumb}
-                />
-              )
+              return <img key={photo.id ?? i} src={url} alt={photo.caption || location} className={styles.photoThumb} />
             })}
           </div>
         )}
@@ -88,10 +79,11 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
     return <div className={styles.empty}>No {LABELS[widget] ?? widget} found near &ldquo;{location}&rdquo;.</div>
   }
 
-  // Fetch one cover photo per place in parallel (all cached 24 h)
-  const photos = await Promise.all(
-    places.map((p: any) => getPhotos(p.location_id, 1).catch(() => []))
-  )
+  // Fetch photo + details per place in parallel (all cached 24 h)
+  const [photos, details] = await Promise.all([
+    Promise.all(places.map((p: any) => getPhotos(p.location_id, 1).catch(() => []))),
+    Promise.all(places.map((p: any) => getDetails(p.location_id).catch(() => null))),
+  ])
 
   return (
     <div className={styles.wrap}>
@@ -105,9 +97,14 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
 
       <div className={styles.grid}>
         {places.map((place: any, i: number) => {
-          const photoUrl  = photos[i]?.[0]?.images?.medium?.url || photos[i]?.[0]?.images?.small?.url || null
-          const rating    = place.rating ? Number(place.rating) : null
-          const numReviews= place.num_reviews
+          const photoUrl   = photos[i]?.[0]?.images?.medium?.url || photos[i]?.[0]?.images?.small?.url || null
+          const detail     = details[i]
+          const rating     = place.rating ? Number(place.rating) : null
+          const numReviews = place.num_reviews
+          const price      = detail?.price_level as string | undefined
+          const cuisines   = (detail?.cuisine as { name: string }[] | undefined)?.slice(0, 3)
+          const isChoice   = (detail?.awards as { award_type?: string }[] | undefined)
+            ?.some((a) => a.award_type?.toLowerCase().includes('travelers'))
 
           return (
             <a
@@ -122,7 +119,10 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
                 : <div className={styles.cardImgPlaceholder}>{PLACEHOLDERS[widget] ?? '📍'}</div>
               }
               <div className={styles.cardBody}>
+                {isChoice && <span className={styles.badge}>Travelers&apos; Choice</span>}
+
                 <div className={styles.cardName}>{place.name}</div>
+
                 {rating !== null && (
                   <div className={styles.cardRating}>
                     <Stars rating={rating} />
@@ -131,6 +131,16 @@ export default async function TripAdvisorBlock({ locationId: propId, location, w
                     )}
                   </div>
                 )}
+
+                {(price || cuisines?.length) && (
+                  <div className={styles.cardMeta}>
+                    {price && <span className={styles.price}>{price}</span>}
+                    {cuisines?.map((c) => (
+                      <span key={c.name} className={styles.tag}>{c.name}</span>
+                    ))}
+                  </div>
+                )}
+
                 <div className={styles.cardCta}>View on TripAdvisor →</div>
               </div>
             </a>
