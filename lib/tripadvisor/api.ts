@@ -46,6 +46,13 @@ export async function getPlaces(locationId: string, category: string, limit = 5)
   return (json.data ?? []).slice(0, limit)
 }
 
+// Fetch details for a specific list of TripAdvisor IDs.
+// Use this instead of nearby_search when you want curated/handpicked places.
+export async function getPlacesByIds(ids: string[]) {
+  const results = await Promise.all(ids.map((id) => getDetails(id).catch(() => null)))
+  return results.filter(Boolean)
+}
+
 export async function getReviews(locationId: string, limit = 5) {
   const url = `${BASE}/location/${locationId}/reviews?limit=${limit}&key=${key()}`
   const res = await fetch(url, CACHE)

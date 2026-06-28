@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-type Attrs = { locationId: string; location: string; widget: string; limit: number }
+type Attrs = { locationId: string; location: string; widget: string; limit: number; placeIds: string }
 
 type Props = {
   onInsert: (attrs: Attrs) => void
@@ -13,7 +13,6 @@ type Props = {
 type Result = {
   location_id: string
   name: string
-  // TripAdvisor returns 'geos' for cities/regions, other values for specific venues
   result_type?: string
   address_obj?: { city?: string; country?: string }
 }
@@ -25,8 +24,6 @@ const WIDGETS = [
   { value: 'hotels',      label: 'Hotels near this area' },
 ]
 
-// Use result_type='geos' when available (TripAdvisor Content API returns it).
-// Fall back to keyword heuristics for cases where the field is absent.
 const VENUE_KEYWORDS = [
   'restaurant', 'cafe', 'café', 'bar', 'pub', 'bistro', 'grill', 'kitchen',
   'hotel', 'inn', 'hostel', 'resort', 'suite', 'lodge',
@@ -37,7 +34,6 @@ const VENUE_KEYWORDS = [
 
 function isArea(r: Result): boolean {
   if (r.result_type) return r.result_type === 'geos'
-  // fallback: if name has a venue keyword, treat as specific venue
   const lower = r.name.toLowerCase()
   return !VENUE_KEYWORDS.some((kw) => lower.includes(kw))
 }
@@ -49,7 +45,7 @@ const s = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
   },
   modal: {
-    background: '#fff', borderRadius: 20, padding: 28, width: 480, maxHeight: '82vh',
+    background: '#fff', borderRadius: 20, padding: 28, width: 520, maxHeight: '88vh',
     overflowY: 'auto' as const,
     display: 'flex', flexDirection: 'column' as const, gap: 16,
     fontFamily: 'var(--font-family)', boxShadow: '0 24px 60px rgba(0,0,0,0.18)',
@@ -101,14 +97,22 @@ async function fetchSearch(q: string): Promise<Result[]> {
 export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: Props) {
   const isEdit = !!initialAttrs?.locationId
 
-  const [query,    setQuery]    = useState(initialAttrs?.location ?? '')
-  const [loading,  setLoading]  = useState(false)
-  const [inserting,setInserting]= useState(false)
-  const [results,  setResults]  = useState<Result[]>([])
-  const [searched, setSearched] = useState(false)
-  const [selected, setSelected] = useState<Result | null>(null)
-  const [widget,   setWidget]   = useState(initialAttrs?.widget ?? 'attractions')
-  const [limit,    setLimit]    = useState(initialAttrs?.limit ?? 5)
+  const [query,     setQuery]     = useState(initialAttrs?.location ?? '')
+  const [loading,   setLoading]   = useState(false)
+  const [inserting, setInserting] = useState(false)
+  const [results,   setResults]   = useState<Result[]>([])
+  const [searched,  setSearched]  = useState(false)
+  const [selected,  setSelected]  = useState<Result | null>(null)
+  const [widget,    setWidget]    = useState(initialAttrs?.widget ?? 'attractions')
+  const [limit,     setLimit]     = useState(initialAttrs?.limit ?? 5)
+
+  // Curated place list — each item is a picked Result
+  const [pickedPlaces, setPickedPlaces] = useState<Result[]>(() => {
+    // Restore from initialAttrs if editing
+    return []
+  })
+
+  const isCurated = widget !== 'reviews' && pickedPlaces.length > 0
 
   const search = async () => {
     if (!query.trim()) return
@@ -121,22 +125,41 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
 
   const pick = (r: Result) => {
     setSelected(r)
-    setWidget(isArea(r) ? 'attractions' : 'reviews')
+    if (!isCurated) {
+      setWidget(isArea(r) ? 'attractions' : 'reviews')
+    }
+  }
+
+  const addToList = (r: Result) => {
+    if (pickedPlaces.find((p) => p.location_id === r.location_id)) return
+    setPickedPlaces((prev) => [...prev, r])
+    // Switch to curated mode — widget becomes whichever area type is selected
+    if (widget === 'reviews') setWidget('attractions')
+  }
+
+  const removeFromList = (id: string) => {
+    setPickedPlaces((prev) => prev.filter((p) => p.location_id !== id))
   }
 
   const insert = async () => {
-    if (!selected && !isEdit) return
+    if (!selected && !isEdit && pickedPlaces.length === 0) return
     setInserting(true)
     try {
-      if (selected) {
-        // Fresh pick — decide based on what was selected + what widget was chosen
+      if (isCurated) {
+        // Curated mode: store specific place IDs, use first place's location as label
+        const label = pickedPlaces[0]?.address_obj?.city || pickedPlaces[0]?.name || ''
+        onInsert({
+          locationId: '',
+          location: label,
+          widget,
+          limit: pickedPlaces.length,
+          placeIds: pickedPlaces.map((p) => p.location_id).join(','),
+        })
+      } else if (selected) {
         if (widget === 'reviews') {
-          // Reviews always use the exact venue locationId
-          onInsert({ locationId: selected.location_id, location: selected.name, widget, limit })
+          onInsert({ locationId: selected.location_id, location: selected.name, widget, limit, placeIds: '' })
         } else if (!isArea(selected)) {
-          // Venue picked but area widget chosen — resolve city locationId.
-          // Filter cityResults by result_type='geos' for accuracy;
-          // fall back to first result if none match.
+          // Venue → resolve city
           const city = selected.address_obj?.city || selected.name
           const cityResults = await fetchSearch(city)
           const geoResult = cityResults.find((r) => r.result_type === 'geos') ?? cityResults[0]
@@ -145,42 +168,41 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
             location: city,
             widget,
             limit,
+            placeIds: '',
           })
         } else {
-          // Area picked with area widget — use its locationId directly.
-          // address_obj.city is TripAdvisor's PARENT geographic level (e.g. Baku's
-          // parent is "Absheron Region") — do NOT use it to re-resolve; the picked
-          // result IS the location the user wants to search near.
-          onInsert({ locationId: selected.location_id, location: selected.name, widget, limit })
+          // Area picked directly
+          onInsert({ locationId: selected.location_id, location: selected.name, widget, limit, placeIds: '' })
         }
       } else {
-        // Edit mode, no new selection — re-use stored attrs (user only changed limit/widget)
+        // Edit mode, no new selection
         onInsert({
           locationId: initialAttrs?.locationId ?? '',
-          location: initialAttrs?.location ?? query,
+          location:   initialAttrs?.location ?? query,
           widget,
           limit,
+          placeIds:   initialAttrs?.placeIds ?? '',
         })
       }
     } catch {
       onInsert({
         locationId: selected?.location_id || initialAttrs?.locationId || '',
-        location: selected?.name || initialAttrs?.location || query,
+        location:   selected?.name || initialAttrs?.location || query,
         widget,
         limit,
+        placeIds:   pickedPlaces.map((p) => p.location_id).join(','),
       })
     } finally {
       setInserting(false)
     }
   }
 
-  const canInsert = (!!selected || isEdit) && !inserting
-
+  const canInsert = (!!selected || isEdit || pickedPlaces.length > 0) && !inserting
   const selectedIsArea = selected ? isArea(selected) : false
-  const hint = selected
+  const hint = selected && !isCurated
     ? selectedIsArea
       ? 'This is a city or area — choose Attractions, Restaurants or Hotels.'
-      : 'This is a specific venue — "Reviews" will show its TripAdvisor ratings.'
+      : 'This is a specific venue — "Reviews" will show its ratings. Or click "+ Add to list" to build a curated selection.'
     : null
 
   return (
@@ -190,6 +212,30 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
           {isEdit ? 'Edit TripAdvisor Block' : 'Insert TripAdvisor Block'}
         </strong>
 
+        {/* curated list */}
+        {pickedPlaces.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span style={{ ...s.muted, textAlign: 'left', fontWeight: 600, color: 'var(--base-13)' }}>
+              Curated places ({pickedPlaces.length}):
+            </span>
+            {pickedPlaces.map((p, i) => (
+              <div key={p.location_id} style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '8px 12px', borderRadius: 10,
+                background: '#f7f7fb', border: '1px solid #e4e4ec',
+              }}>
+                <span style={{ fontSize: 12, color: '#999', minWidth: 18 }}>{i + 1}.</span>
+                <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--base-13)' }}>{p.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeFromList(p.location_id)}
+                  style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#aaa', fontSize: 16, lineHeight: 1 }}
+                >×</button>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* search */}
         <div style={s.row}>
           <input
@@ -197,7 +243,7 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && search()}
-            placeholder="Search a place — e.g. Firuze Restaurant Baku"
+            placeholder={pickedPlaces.length ? 'Search another place to add…' : 'Search a place — e.g. Maiden Tower Baku'}
             autoFocus={!isEdit}
           />
           <button style={s.btnSearch} onClick={search} disabled={loading}>
@@ -213,11 +259,16 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
         {/* result list */}
         {results.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <span style={{ ...s.muted, textAlign: 'left' }}>Select the exact place:</span>
+            <span style={{ ...s.muted, textAlign: 'left' }}>
+              {isCurated || pickedPlaces.length > 0
+                ? 'Click "+ Add" to add to curated list, or select one place:'
+                : 'Select the exact place:'}
+            </span>
             {results.slice(0, 8).map((r) => {
               const addr = [r.address_obj?.city, r.address_obj?.country].filter(Boolean).join(', ')
               const isVenueResult = !isArea(r)
               const active = selected?.location_id === r.location_id
+              const alreadyAdded = pickedPlaces.some((p) => p.location_id === r.location_id)
               return (
                 <div
                   key={r.location_id}
@@ -241,6 +292,24 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
                   }}>
                     {isVenueResult ? 'Venue' : 'Area'}
                   </span>
+                  {/* Add to curated list button — only for non-area results */}
+                  {isVenueResult && (
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); addToList(r) }}
+                      disabled={alreadyAdded}
+                      style={{
+                        border: 'none', borderRadius: 8, padding: '4px 10px',
+                        background: alreadyAdded ? '#f0f0f0' : 'var(--primary-12,#f07054)',
+                        color: alreadyAdded ? '#aaa' : '#fff',
+                        fontSize: 12, fontWeight: 700, cursor: alreadyAdded ? 'default' : 'pointer',
+                        whiteSpace: 'nowrap', flexShrink: 0,
+                        fontFamily: 'var(--font-family)',
+                      }}
+                    >
+                      {alreadyAdded ? '✓ Added' : '+ Add'}
+                    </button>
+                  )}
                 </div>
               )
             })}
@@ -262,20 +331,34 @@ export default function TripAdvisorPicker({ onInsert, onClose, initialAttrs }: P
         {canInsert && (
           <>
             <div style={s.divider} />
-            <label style={s.label}>
-              Widget type
-              <select style={s.select} value={widget} onChange={(e) => setWidget(e.target.value)}>
-                {WIDGETS.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
-              </select>
-            </label>
-            <label style={s.label}>
-              How many results (max 10)
-              <input
-                style={{ ...s.input, flex: 'unset' as const }}
-                type="number" value={limit} min={1} max={10}
-                onChange={(e) => setLimit(Math.min(10, Math.max(1, Number(e.target.value))))}
-              />
-            </label>
+            {!isCurated && (
+              <label style={s.label}>
+                Widget type
+                <select style={s.select} value={widget} onChange={(e) => setWidget(e.target.value)}>
+                  {WIDGETS.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
+                </select>
+              </label>
+            )}
+            {isCurated && (
+              <label style={s.label}>
+                Show as
+                <select style={s.select} value={widget} onChange={(e) => setWidget(e.target.value)}>
+                  <option value="attractions">Attractions</option>
+                  <option value="restaurants">Restaurants</option>
+                  <option value="hotels">Hotels</option>
+                </select>
+              </label>
+            )}
+            {!isCurated && (
+              <label style={s.label}>
+                How many results (max 10)
+                <input
+                  style={{ ...s.input, flex: 'unset' as const }}
+                  type="number" value={limit} min={1} max={10}
+                  onChange={(e) => setLimit(Math.min(10, Math.max(1, Number(e.target.value))))}
+                />
+              </label>
+            )}
           </>
         )}
 

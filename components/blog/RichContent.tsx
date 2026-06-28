@@ -5,7 +5,7 @@ import TripAdvisorBlock from './TripAdvisorBlock'
 
 type Segment =
   | { type: 'html'; html: string }
-  | { type: 'ta'; locationId: string; location: string; widget: string; limit: number }
+  | { type: 'ta'; locationId: string; location: string; widget: string; limit: number; placeIds: string }
 
 // Renders TipTap JSON saved by the admin editor.
 // tripadvisorBlock nodes are rendered as the real async server component;
@@ -38,9 +38,10 @@ export default async function RichContent({
       segments.push({
         type: 'ta',
         locationId: node.attrs?.locationId ?? '',
-        location: node.attrs?.location ?? '',
-        widget: node.attrs?.widget ?? 'attractions',
-        limit: node.attrs?.limit ?? 5,
+        location:   node.attrs?.location ?? '',
+        widget:     node.attrs?.widget ?? 'attractions',
+        limit:      node.attrs?.limit ?? 5,
+        placeIds:   node.attrs?.placeIds ?? '',
       })
     } else {
       batch.push(node)
@@ -57,7 +58,7 @@ export default async function RichContent({
         seg.type === 'html' ? (
           <div key={i} className={className} dangerouslySetInnerHTML={{ __html: seg.html }} />
         ) : (
-          <TripAdvisorBlock key={i} locationId={seg.locationId} location={seg.location} widget={seg.widget} limit={seg.limit} />
+          <TripAdvisorBlock key={i} locationId={seg.locationId} location={seg.location} widget={seg.widget} limit={seg.limit} placeIds={seg.placeIds} />
         ),
       )}
     </>
