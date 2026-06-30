@@ -9,7 +9,7 @@
   flex-direction: column;
   gap: 16px;
   position: sticky;
-  top: 156px; /* header height + 16px gap */
+  top: 24px;
 }
 
 /* urgency */

@@ -1,16 +1,31 @@
-/* Tour detail page — two column: main content left, sticky booking sidebar right */
+/* Tour detail page */
 
 .page {
   min-height: 100vh;
   background: var(--base-2);
   padding: 156px var(--content-padding) 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 
+/* ── full-width block: header + gallery ── */
+.fullWidth {
+  max-width: 1136px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── two-column split: content + sidebar ── */
 .layout {
   display: flex;
   align-items: flex-start;
   gap: 32px;
   max-width: 1136px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -80,9 +95,11 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  border-top: 1px solid #eaecef;
+  padding-top: 12px;
 }
 .sectionTitle {
-  font: 700 18px/26px var(--font-family);
+  font: 700 24px/32px var(--font-family);
   letter-spacing: 0.1px;
   color: var(--base-13);
   margin: 0;
@@ -90,7 +107,7 @@
 
 /* ── rich text ── */
 .richText {
-  font: 400 14px/24px var(--font-family);
+  font: 400 16px/28px var(--font-family);
   color: var(--base-13);
   opacity: 0.85;
 }

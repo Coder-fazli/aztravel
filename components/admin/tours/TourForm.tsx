@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { saveTourFromForm }  from '@/lib/actions/admin/tours'
-import RichTextEditor        from '@/components/admin/forms/RichTextEditor'
-import GalleryImageUpload    from './GalleryImageUpload'
+import { saveTourFromForm }    from '@/lib/actions/admin/tours'
+import RichTextEditor          from '@/components/admin/forms/RichTextEditor'
+import GalleryImageUpload      from './GalleryImageUpload'
+import AvailableDatesPicker    from './AvailableDatesPicker'
 import styles from './TourForm.module.css'
 
 type Locale = 'en' | 'es' | 'ar'
@@ -64,8 +65,8 @@ export default function TourForm({ tour }: { tour?: any }) {
   const [canHours,   setCanHours]  = useState<string>(String(tour?.cancellationPolicy?.hoursNotice ?? 24))
   const [location,   setLocation]  = useState<string>(String(tour?.location ?? ''))
   const [guide,      setGuide]     = useState<string>(String(tour?.guide ?? ''))
-  const [availDates, setAvailDates] = useState<string>(
-    (tour?.availableDates ?? []).map((d: any) => new Date(d).toISOString().slice(0, 10)).join('\n')
+  const defaultAvailDates: string[] = (tour?.availableDates ?? []).map(
+    (d: any) => new Date(d).toISOString().slice(0, 10)
   )
 
   // ── helpers ──
@@ -414,14 +415,9 @@ export default function TourForm({ tour }: { tour?: any }) {
           {/* Available Dates */}
           <div className={styles.panel}>
             <span className={styles.panelLabel}>Available Dates</span>
-            <p className={styles.hint}>One date per line — YYYY-MM-DD</p>
-            <textarea
-              className={styles.textarea}
+            <AvailableDatesPicker
               name="availableDates"
-              rows={6}
-              value={availDates}
-              onChange={e => setAvailDates(e.target.value)}
-              placeholder={'2025-07-10\n2025-07-15'}
+              defaultValue={defaultAvailDates}
             />
           </div>
         </div>

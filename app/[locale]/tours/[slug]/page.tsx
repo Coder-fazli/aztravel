@@ -46,65 +46,66 @@ export default async function TourDetailPage({ params }: { params: Params }) {
 
   return (
     <div className={styles.page}>
+
+      {/* ── FULL WIDTH: header + gallery ── */}
+      <div className={styles.fullWidth}>
+        <header className={styles.header}>
+          <div className={styles.tags}>
+            {tour.isSpecialOffer && (
+              <span className={styles.tag} style={{ background: 'var(--primary-13)' }}>
+                Special offer
+              </span>
+            )}
+            {(tour.categories ?? []).map((cat: string) => (
+              <span key={cat} className={styles.tag}
+                style={{ background: TAG_COLORS[cat] ?? 'var(--base-8)' }}>
+                {CATEGORY_LABELS[cat] ?? cat}
+              </span>
+            ))}
+          </div>
+
+          <h1 className={styles.title}>{t(tour.title)}</h1>
+
+          <div className={styles.meta}>
+            {tour.rating?.avg > 0 && (
+              <span className={styles.metaItem}>
+                <StarIcon />
+                <strong>{tour.rating.avg.toFixed(1)}</strong>
+                <span className={styles.metaMuted}>· {tour.rating.count} reviews</span>
+              </span>
+            )}
+            {guide && (
+              <span className={styles.metaItem}>
+                <GuideIcon />
+                <span>by {guide.name}</span>
+                {guide.languages?.length > 0 && (
+                  <span className={styles.metaMuted}>
+                    · {guide.languages.join(', ')}
+                  </span>
+                )}
+              </span>
+            )}
+            {tour.duration?.value && (
+              <span className={styles.metaItem}>
+                <ClockIcon />
+                <span>{tour.duration.value} {tour.duration.unit}</span>
+              </span>
+            )}
+            {loc && (
+              <span className={styles.metaItem}>
+                <PinIcon />
+                <span>{typeof loc.name === 'object' ? t(loc.name) : loc.name}</span>
+              </span>
+            )}
+          </div>
+        </header>
+
+        <TourGallery images={tour.images ?? []} title={t(tour.title)} />
+      </div>
+
+      {/* ── TWO COLUMN: content + sidebar ── */}
       <div className={styles.layout}>
-
-        {/* ── LEFT COLUMN ── */}
         <main className={styles.main}>
-
-          {/* tags + title + meta */}
-          <header className={styles.header}>
-            <div className={styles.tags}>
-              {tour.isSpecialOffer && (
-                <span className={styles.tag} style={{ background: 'var(--primary-13)' }}>
-                  Special offer
-                </span>
-              )}
-              {(tour.categories ?? []).map((cat: string) => (
-                <span key={cat} className={styles.tag}
-                  style={{ background: TAG_COLORS[cat] ?? 'var(--base-8)' }}>
-                  {CATEGORY_LABELS[cat] ?? cat}
-                </span>
-              ))}
-            </div>
-
-            <h1 className={styles.title}>{t(tour.title)}</h1>
-
-            <div className={styles.meta}>
-              {tour.rating?.avg > 0 && (
-                <span className={styles.metaItem}>
-                  <StarIcon />
-                  <strong>{tour.rating.avg.toFixed(1)}</strong>
-                  <span className={styles.metaMuted}>· {tour.rating.count} reviews</span>
-                </span>
-              )}
-              {guide && (
-                <span className={styles.metaItem}>
-                  <GuideIcon />
-                  <span>by {guide.name}</span>
-                  {guide.languages?.length > 0 && (
-                    <span className={styles.metaMuted}>
-                      · {guide.languages.join(', ')}
-                    </span>
-                  )}
-                </span>
-              )}
-              {tour.duration?.value && (
-                <span className={styles.metaItem}>
-                  <ClockIcon />
-                  <span>{tour.duration.value} {tour.duration.unit}</span>
-                </span>
-              )}
-              {loc && (
-                <span className={styles.metaItem}>
-                  <PinIcon />
-                  <span>{typeof loc.name === 'object' ? t(loc.name) : loc.name}</span>
-                </span>
-              )}
-            </div>
-          </header>
-
-          {/* gallery */}
-          <TourGallery images={tour.images ?? []} title={t(tour.title)} />
 
           {/* description */}
           {t(tour.description) && (
@@ -198,24 +199,24 @@ export default async function TourDetailPage({ params }: { params: Params }) {
               />
             </section>
           )}
-        </main>
+          </main>
 
-        {/* ── RIGHT STICKY SIDEBAR ── */}
-        <aside className={styles.sidebar}>
-          <BookingWidget
-            priceFinal={tour.price?.final ?? 0}
-            priceOriginal={tour.price?.original ?? 0}
-            currency={tour.price?.currency ?? '$'}
-            capacityMax={tour.capacity?.max ?? 20}
-            availableDates={availableDates}
-            timeSlots={timeSlots}
-            cancellationFree={tour.cancellationPolicy?.free ?? false}
-            cancellationHours={tour.cancellationPolicy?.hoursNotice ?? 24}
-            payLater={tour.payLater ?? false}
-            bookedLast24h={tour.bookedLast24h ?? 0}
-          />
-        </aside>
-      </div>
+          {/* ── RIGHT STICKY SIDEBAR ── */}
+          <aside className={styles.sidebar}>
+            <BookingWidget
+              priceFinal={tour.price?.final ?? 0}
+              priceOriginal={tour.price?.original ?? 0}
+              currency={tour.price?.currency ?? '$'}
+              capacityMax={tour.capacity?.max ?? 20}
+              availableDates={availableDates}
+              timeSlots={timeSlots}
+              cancellationFree={tour.cancellationPolicy?.free ?? false}
+              cancellationHours={tour.cancellationPolicy?.hoursNotice ?? 24}
+              payLater={tour.payLater ?? false}
+              bookedLast24h={tour.bookedLast24h ?? 0}
+            />
+          </aside>
+        </div>
     </div>
   )
 }

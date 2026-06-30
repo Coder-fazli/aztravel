@@ -1,0 +1,90 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* keep the calendar contained inside the panel */
+.calendarWrap {
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fafafa;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+/* selected-date pills */
+.pills {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pillsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pillsCount {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--base-13);
+}
+.clearBtn {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  color: #d14343;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.clearBtn:hover { text-decoration: underline; }
+
+.pillsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 10px;
+  border-radius: 999px;
+  background: #f0f4ff;
+  border: 1px solid #c7d4f7;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--secondary-13);
+}
+.pillRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  font-size: 14px;
+  color: var(--secondary-13);
+  cursor: pointer;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.1s;
+}
+.pillRemove:hover { opacity: 1; }
+
+.empty {
+  font-family: var(--font-family);
+  font-size: 12px;
+  color: var(--base-8);
+  font-style: italic;
+  margin: 0;
+}
