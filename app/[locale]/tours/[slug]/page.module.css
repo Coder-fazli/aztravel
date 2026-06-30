@@ -137,6 +137,41 @@
   color: var(--base-13);
 }
 
+/* ── collapsible accordion (highlights + package features) ── */
+.accordion {
+  border-top: 1px solid #eaecef;
+  padding-top: 12px;
+}
+
+.accordionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: 700 24px/32px var(--font-family);
+  color: var(--base-13);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  padding-bottom: 0;
+}
+/* hide the default browser triangle */
+.accordionTitle::-webkit-details-marker { display: none; }
+.accordionTitle::marker { display: none; }
+
+/* rotate chevron when open */
+.accordion[open] .accordionTitle svg {
+  transform: rotate(180deg);
+}
+.accordionTitle svg {
+  flex-shrink: 0;
+  color: var(--base-8);
+  transition: transform 0.2s ease;
+}
+
+.accordionBody {
+  padding-top: 20px;
+}
+
 /* ── inclusions / exclusions ── */
 .inExGrid {
   display: grid;

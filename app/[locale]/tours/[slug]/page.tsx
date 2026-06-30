@@ -107,6 +107,66 @@ export default async function TourDetailPage({ params }: { params: Params }) {
       <div className={styles.layout}>
         <main className={styles.main}>
 
+          {/* highlights — collapsible */}
+          {tour.highlights?.length > 0 && (
+            <details className={styles.accordion}>
+              <summary className={styles.accordionTitle}>
+                Highlights
+                <ChevronIcon />
+              </summary>
+              <div className={styles.accordionBody}>
+                <div className={styles.highlights}>
+                  {tour.highlights.map((h: any, i: number) => (
+                    <div key={i} className={styles.highlight}>
+                      <CheckIcon />
+                      <span>{t(h)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </details>
+          )}
+
+          {/* inclusions / exclusions — collapsible */}
+          {(tour.inclusions?.length > 0 || tour.exclusions?.length > 0) && (
+            <details className={styles.accordion}>
+              <summary className={styles.accordionTitle}>
+                Package Features
+                <ChevronIcon />
+              </summary>
+              <div className={styles.accordionBody}>
+                <div className={styles.inExGrid}>
+                  {tour.inclusions?.length > 0 && (
+                    <div>
+                      <h3 className={styles.inExTitle}>Include Features</h3>
+                      <ul className={styles.inExList}>
+                        {tour.inclusions.map((item: any, i: number) => (
+                          <li key={i} className={styles.inExItem}>
+                            <span className={styles.inExIconInclude}><IncludeIcon /></span>
+                            <span>{t(item)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {tour.exclusions?.length > 0 && (
+                    <div>
+                      <h3 className={styles.inExTitle}>Exclude Features</h3>
+                      <ul className={styles.inExList}>
+                        {tour.exclusions.map((item: any, i: number) => (
+                          <li key={i} className={styles.inExItem}>
+                            <span className={styles.inExIconExclude}><ExcludeIcon /></span>
+                            <span>{t(item)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </details>
+          )}
+
           {/* description */}
           {t(tour.description) && (
             <section className={styles.section}>
@@ -115,59 +175,6 @@ export default async function TourDetailPage({ params }: { params: Params }) {
                 className={styles.richText}
                 dangerouslySetInnerHTML={{ __html: t(tour.description) }}
               />
-            </section>
-          )}
-
-          {/* highlights */}
-          {tour.highlights?.length > 0 && (
-            <section className={styles.section}>
-              <div className={styles.highlights}>
-                {tour.highlights.map((h: any, i: number) => (
-                  <div key={i} className={styles.highlight}>
-                    <CheckIcon />
-                    <span>{t(h)}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* inclusions / exclusions */}
-          {(tour.inclusions?.length > 0 || tour.exclusions?.length > 0) && (
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Package Features</h2>
-              <div className={styles.inExGrid}>
-                {tour.inclusions?.length > 0 && (
-                  <div>
-                    <h3 className={styles.inExTitle}>Include Features</h3>
-                    <ul className={styles.inExList}>
-                      {tour.inclusions.map((item: any, i: number) => (
-                        <li key={i} className={styles.inExItem}>
-                          <span className={styles.inExIconInclude}>
-                            <IncludeIcon />
-                          </span>
-                          <span>{t(item)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {tour.exclusions?.length > 0 && (
-                  <div>
-                    <h3 className={styles.inExTitle}>Exclude Features</h3>
-                    <ul className={styles.inExList}>
-                      {tour.exclusions.map((item: any, i: number) => (
-                        <li key={i} className={styles.inExItem}>
-                          <span className={styles.inExIconExclude}>
-                            <ExcludeIcon />
-                          </span>
-                          <span>{t(item)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
             </section>
           )}
 
@@ -233,6 +240,9 @@ function ClockIcon() {
 }
 function PinIcon() {
   return <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M8 1.5c2.5 0 4.5 2 4.5 4.5 0 3-4.5 8-4.5 8S3.5 9 3.5 6c0-2.5 2-4.5 4.5-4.5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+}
+function ChevronIcon() {
+  return <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 6.5 9 11.5 14 6.5"/></svg>
 }
 function CheckIcon() {
   return <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--primary-13)" strokeWidth="1.8"><circle cx="8" cy="8" r="6.5" strokeWidth="1.4"/><polyline points="5 8.5 7 10.5 11 6"/></svg>

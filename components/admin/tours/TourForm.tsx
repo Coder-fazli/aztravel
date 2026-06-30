@@ -365,12 +365,16 @@ export default function TourForm({ tour }: { tour?: any }) {
           <div className={styles.panel}>
             <span className={styles.panelLabel}>Categories</span>
             <input type="hidden" name="categories" value={categories.join(',')} />
-            <div className={styles.checks}>
+            <div className={styles.catPills}>
               {CATEGORIES.map(cat => (
-                <label key={cat} className={styles.checkLabel}>
-                  <input type="checkbox" checked={categories.includes(cat)} onChange={() => toggleCat(cat)} />
-                  <span>{cat}</span>
-                </label>
+                <button
+                  key={cat}
+                  type="button"
+                  className={`${styles.catPill} ${categories.includes(cat) ? styles.catPillActive : ''}`}
+                  onClick={() => toggleCat(cat)}
+                >
+                  {cat}
+                </button>
               ))}
             </div>
           </div>

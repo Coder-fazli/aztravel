@@ -6,18 +6,18 @@ import { Calendar } from '@/components/ui/calendar'
 import styles from './BookingWidget.module.css'
 
 type TimeSlot = {
-  date:      string   // ISO date string
+  date:      string
   times:     string[]
   spotsLeft: number
 }
 
 type Props = {
-  priceFinal:    number
-  priceOriginal: number
-  currency:      string
-  capacityMax:   number
-  availableDates: string[]   // ISO strings
-  timeSlots:      TimeSlot[]
+  priceFinal:          number
+  priceOriginal:       number
+  currency:            string
+  capacityMax:         number
+  availableDates:      string[]
+  timeSlots:           TimeSlot[]
   cancellationFree:    boolean
   cancellationHours:   number
   payLater:            boolean
@@ -31,7 +31,7 @@ function isSameDay(a: Date, b: Date) {
 }
 
 function formatDate(d: Date) {
-  return d.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
 }
 
 export default function BookingWidget({
@@ -39,16 +39,19 @@ export default function BookingWidget({
   availableDates, timeSlots,
   cancellationFree, cancellationHours, payLater, bookedLast24h,
 }: Props) {
-  const [guests,       setGuests]       = useState(1)
+  const [adults,        setAdults]        = useState(1)
+  const [children,      setChildren]      = useState(0)
+  const [draftAdults,   setDraftAdults]   = useState(1)
+  const [draftChildren, setDraftChildren] = useState(0)
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [calOpen,      setCalOpen]      = useState(false)
   const [guestOpen,    setGuestOpen]    = useState(false)
 
   const availSet = new Set(availableDates.map(d => new Date(d).toDateString()))
-
   const isAvailable = (date: Date) => {
-    if (date < new Date(new Date().setHours(0,0,0,0))) return false
+    if (date < new Date(new Date().setHours(0, 0, 0, 0))) return false
     return availSet.has(date.toDateString())
   }
 
@@ -56,7 +59,11 @@ export default function BookingWidget({
     ? timeSlots.find(s => isSameDay(new Date(s.date), selectedDate))
     : null
 
-  const total = guests * priceFinal
+  const totalGuests = adults + children
+  const total       = totalGuests * priceFinal
+
+  const guestLabel = totalGuests === 1 ? '1 guest' : `${totalGuests} guests`
+  const maxReached  = draftAdults + draftChildren >= (capacityMax || 20)
 
   function handleDateSelect(date: Date | undefined) {
     setSelectedDate(date)
@@ -64,80 +71,130 @@ export default function BookingWidget({
     setCalOpen(false)
   }
 
+  function openGuests() {
+    setDraftAdults(adults)
+    setDraftChildren(children)
+    setGuestOpen(true)
+  }
+
+  function applyGuests() {
+    setAdults(draftAdults)
+    setChildren(draftChildren)
+    setGuestOpen(false)
+  }
+
   return (
     <div className={styles.widget}>
-      {/* urgency badge */}
+
+      {/* urgency */}
       {bookedLast24h > 5 && (
-        <div className={styles.urgency}>Usually sells out</div>
+        <div className={styles.urgency}>🔥 Usually sells out</div>
       )}
 
       {/* price */}
-      <div className={styles.priceRow}>
+      <div className={styles.priceBlock}>
         <span className={styles.priceFrom}>from</span>
-        <span className={styles.price}>{priceFinal}{currency}</span>
-        <span className={styles.priceOriginal}>{priceOriginal}{currency}</span>
-        <span className={styles.priceLabel}>/person</span>
+        <div className={styles.priceRow}>
+          <span className={styles.price}>{priceFinal}{currency}</span>
+          {priceOriginal > priceFinal && (
+            <span className={styles.priceOriginal}>{priceOriginal}{currency}</span>
+          )}
+          <span className={styles.priceLabel}>/person</span>
+        </div>
       </div>
 
-      {/* guest picker */}
-      <div className={styles.field}>
-        <Popover open={guestOpen} onOpenChange={setGuestOpen}>
-          <PopoverTrigger className={styles.fieldBtn}>
-            <GuestsIcon />
-            <span>Adults × {guests}</span>
-            <ChevronIcon open={guestOpen} />
+      {/* date + guests — side by side in bordered container */}
+      <div className={styles.selectors}>
+
+        {/* date */}
+        <Popover open={calOpen} onOpenChange={setCalOpen}>
+          <PopoverTrigger className={styles.selectorBtn}>
+            <CalendarIcon />
+            <span>{selectedDate ? formatDate(selectedDate) : 'Select date'}</span>
           </PopoverTrigger>
-          <PopoverContent className={styles.guestPopover} align="start" sideOffset={4}>
+          <PopoverContent className={styles.calPopover} align="start" sideOffset={8}>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleDateSelect}
+              disabled={(d) => !isAvailable(d)}
+            />
+          </PopoverContent>
+        </Popover>
+
+        <span className={styles.selectorDivider} />
+
+        {/* guests */}
+        <Popover
+          open={guestOpen}
+          onOpenChange={(o) => { if (o) openGuests(); else setGuestOpen(false) }}
+        >
+          <PopoverTrigger className={styles.selectorBtn}>
+            <GuestsIcon />
+            <span>{guestLabel}</span>
+          </PopoverTrigger>
+          <PopoverContent className={styles.guestPopover} align="end" sideOffset={8}>
+
+            <p className={styles.guestHint}>
+              You can select up to {capacityMax || 20} travelers in total.
+            </p>
+
+            {/* adults */}
             <div className={styles.guestRow}>
               <div>
                 <p className={styles.guestType}>Adults</p>
-                <p className={styles.guestAge}>Age: 18 and over</p>
+                <p className={styles.guestAge}>Age 13+</p>
               </div>
               <div className={styles.counter}>
                 <button
+                  type="button"
                   className={styles.counterBtn}
-                  onClick={() => setGuests(g => Math.max(1, g - 1))}
-                  disabled={guests <= 1}
+                  onClick={() => setDraftAdults(v => Math.max(1, v - 1))}
+                  disabled={draftAdults <= 1}
                 >−</button>
-                <span className={styles.counterVal}>{guests}</span>
+                <span className={styles.counterVal}>{draftAdults}</span>
                 <button
+                  type="button"
                   className={styles.counterBtn}
-                  onClick={() => setGuests(g => Math.min(capacityMax || 20, g + 1))}
-                  disabled={guests >= (capacityMax || 20)}
+                  onClick={() => setDraftAdults(v => v + 1)}
+                  disabled={maxReached}
                 >+</button>
               </div>
             </div>
-            <button className={styles.continueBtn} onClick={() => setGuestOpen(false)}>
-              Continue
+
+            {/* children */}
+            <div className={styles.guestRow}>
+              <div>
+                <p className={styles.guestType}>Children</p>
+                <p className={styles.guestAge}>Age 3 − 12</p>
+              </div>
+              <div className={styles.counter}>
+                <button
+                  type="button"
+                  className={styles.counterBtn}
+                  onClick={() => setDraftChildren(v => Math.max(0, v - 1))}
+                  disabled={draftChildren <= 0}
+                >−</button>
+                <span className={styles.counterVal}>{draftChildren}</span>
+                <button
+                  type="button"
+                  className={styles.counterBtn}
+                  onClick={() => setDraftChildren(v => v + 1)}
+                  disabled={maxReached}
+                >+</button>
+              </div>
+            </div>
+
+            <button type="button" className={styles.applyBtn} onClick={applyGuests}>
+              Apply
             </button>
           </PopoverContent>
         </Popover>
       </div>
 
-      {/* date picker */}
-      <div className={styles.field}>
-        <Popover open={calOpen} onOpenChange={setCalOpen}>
-          <PopoverTrigger className={styles.fieldBtn}>
-            <CalendarIcon />
-            <span>{selectedDate ? formatDate(selectedDate) : 'Select date'}</span>
-            <ChevronIcon open={calOpen} />
-          </PopoverTrigger>
-          <PopoverContent className={styles.calPopover} align="start" sideOffset={4}>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={handleDateSelect}
-              disabled={(date) => !isAvailable(date)}
-              numberOfMonths={2}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      {/* time slots — shown after date picked */}
+      {/* time slots */}
       {selectedDate && slotForDate && (
         <div className={styles.slots}>
-          <p className={styles.slotsLabel}>Choose start time</p>
           {slotForDate.spotsLeft <= 5 && slotForDate.spotsLeft > 0 && (
             <span className={styles.spotsLeft}>Only {slotForDate.spotsLeft} spots left</span>
           )}
@@ -145,6 +202,7 @@ export default function BookingWidget({
             {slotForDate.times.map(t => (
               <button
                 key={t}
+                type="button"
                 className={`${styles.slotBtn} ${selectedTime === t ? styles.slotBtnActive : ''}`}
                 onClick={() => setSelectedTime(t)}
               >
@@ -158,14 +216,26 @@ export default function BookingWidget({
       {/* total */}
       {selectedDate && (
         <div className={styles.total}>
-          <span className={styles.totalBreak}>{guests} × {priceFinal}{currency}</span>
+          <span className={styles.totalBreak}>
+            {adults} Adult{adults !== 1 ? 's' : ''}
+            {children > 0 ? ` + ${children} Child${children !== 1 ? 'ren' : ''}` : ''}
+            {' × '}{priceFinal}{currency}
+          </span>
           <span className={styles.totalPrice}>{total}{currency}</span>
         </div>
       )}
 
-      {/* CTA */}
-      <button className={styles.cta} disabled={!selectedDate}>
+      {/* CTAs */}
+      <button
+        type="button"
+        className={styles.ctaPrimary}
+        disabled={!selectedDate}
+      >
         {selectedDate ? 'Book now' : 'Check availability'}
+      </button>
+
+      <button type="button" className={styles.ctaSecondary}>
+        Make enquiry
       </button>
 
       {/* perks */}
@@ -187,45 +257,30 @@ export default function BookingWidget({
   )
 }
 
-/* ── inline icons ── */
-function GuestsIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor"
-      strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="6" r="3" />
-      <path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" />
-    </svg>
-  )
-}
-
 function CalendarIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor"
-      strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="3" width="14" height="13" rx="2.5" />
-      <line x1="2" y1="7.5" x2="16" y2="7.5" />
-      <line x1="6" y1="1.5" x2="6" y2="4.5" />
-      <line x1="12" y1="1.5" x2="12" y2="4.5" />
+    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="3" width="13" height="12" rx="2"/>
+      <line x1="2" y1="7" x2="15" y2="7"/>
+      <line x1="5.5" y1="1.5" x2="5.5" y2="4.5"/>
+      <line x1="11.5" y1="1.5" x2="11.5" y2="4.5"/>
     </svg>
   )
 }
-
-function ChevronIcon({ open }: { open: boolean }) {
+function GuestsIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor"
-      strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-      style={{ marginLeft: 'auto', transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
-      <polyline points="3 6 8 11 13 6" />
+    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="6.5" cy="5" r="2.5"/>
+      <path d="M1 15c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/>
+      <circle cx="12" cy="5" r="2" strokeWidth="1.3"/>
+      <path d="M14.5 14c0-2-1.5-3.5-3-4" strokeWidth="1.3"/>
     </svg>
   )
 }
-
 function CheckIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--primary-13)"
-      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-      <circle cx="8" cy="8" r="6.5" stroke="var(--primary-13)" strokeWidth="1.4" />
-      <polyline points="5 8.5 7 10.5 11 6" />
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="var(--primary-13)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+      <polyline points="2 7 5.5 10.5 12 3.5"/>
     </svg>
   )
 }

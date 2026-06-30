@@ -267,27 +267,33 @@
   gap: 10px;
 }
 
-/* ── category checkboxes ── */
-.checks {
+/* ── category pills ── */
+.catPills {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 6px;
 }
-.checkLabel {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.catPill {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1.5px solid #e4e4ec;
+  background: #fff;
   font-family: var(--font-family);
-  font-size: 13px;
-  color: var(--base-13);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--base-8);
   cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  text-transform: capitalize;
+  white-space: nowrap;
 }
-.checkLabel input[type="checkbox"] {
-  width: 15px;
-  height: 15px;
-  accent-color: var(--primary-13);
-  cursor: pointer;
+.catPill:hover { border-color: var(--primary-13); color: var(--primary-13); }
+.catPillActive {
+  border-color: var(--primary-13);
+  background: var(--primary-13);
+  color: #fff;
 }
+.catPillActive:hover { background: var(--primary-13); color: #fff; }
 
 /* ── option toggles ── */
 .toggle {
