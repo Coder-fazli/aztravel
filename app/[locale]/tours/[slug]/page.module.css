@@ -1,0 +1,198 @@
+/* Tour detail page — two column: main content left, sticky booking sidebar right */
+
+.page {
+  min-height: 100vh;
+  background: var(--base-2);
+  padding: 156px var(--content-padding) 64px;
+}
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  max-width: 1136px;
+  margin: 0 auto;
+}
+
+/* ── left column ── */
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ── right sidebar ── */
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+}
+
+/* ── header ── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tag {
+  font: 700 11px/16px var(--font-family);
+  letter-spacing: 0.3px;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 8px;
+}
+
+.title {
+  font: 700 28px/36px var(--font-family);
+  letter-spacing: 0.1px;
+  color: var(--base-13);
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 13px/20px var(--font-family);
+  color: var(--base-13);
+}
+.metaItem svg { flex-shrink: 0; color: var(--base-8); }
+.metaItem strong { color: var(--base-13); }
+.metaMuted {
+  color: var(--base-8);
+}
+
+/* ── sections ── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.sectionTitle {
+  font: 700 18px/26px var(--font-family);
+  letter-spacing: 0.1px;
+  color: var(--base-13);
+  margin: 0;
+}
+
+/* ── rich text ── */
+.richText {
+  font: 400 14px/24px var(--font-family);
+  color: var(--base-13);
+  opacity: 0.85;
+}
+.richText p  { margin: 0 0 12px; }
+.richText h2,
+.richText h3 { font-weight: 700; margin: 20px 0 8px; color: var(--base-13); opacity: 1; }
+.richText ul,
+.richText ol { padding-left: 20px; margin: 8px 0; }
+.richText li { margin-bottom: 6px; }
+.richText strong { font-weight: 700; color: var(--base-13); opacity: 1; }
+
+/* ── highlights grid ── */
+.highlights {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.highlight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--base-1);
+  border: 1px solid var(--base-5);
+  font: 400 13px/20px var(--font-family);
+  color: var(--base-13);
+}
+
+/* ── inclusions / exclusions ── */
+.inExGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.inExTitle {
+  font: 600 14px/22px var(--font-family);
+  color: var(--base-13);
+  margin: 0 0 10px;
+}
+.inExList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.inExItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font: 400 13px/20px var(--font-family);
+  color: var(--base-13);
+}
+.inExItem svg { flex-shrink: 0; margin-top: 3px; }
+.inExItemNo { color: var(--base-8); }
+
+/* ── itinerary ── */
+.itinerary {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 2px solid var(--base-5);
+  padding-left: 20px;
+}
+.itineraryStep {
+  display: flex;
+  gap: 16px;
+  padding-bottom: 24px;
+  position: relative;
+}
+.itineraryStep::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary-13);
+  border: 2px solid var(--base-1);
+  box-shadow: 0 0 0 2px var(--primary-13);
+}
+.itineraryDay {
+  font: 700 11px/20px var(--font-family);
+  letter-spacing: 0.5px;
+  color: var(--primary-13);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  min-width: 48px;
+}
+.itineraryTitle {
+  font: 600 14px/22px var(--font-family);
+  color: var(--base-13);
+  margin: 0 0 4px;
+}
+.itineraryDesc {
+  font: 400 13px/20px var(--font-family);
+  color: var(--base-8);
+  margin: 0;
+}

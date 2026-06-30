@@ -1,0 +1,33 @@
+/* Figma: Sort toggle — grid icon (left) + list icon (right), 36×36 each */
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: none;
+  background: var(--base-4);
+  color: var(--base-8);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.btn:hover {
+  background: var(--base-5);
+  color: var(--base-13);
+}
+.btnActive {
+  background: var(--primary-13);
+  color: #fff;
+}
+.btnActive:hover {
+  background: var(--primary-13);
+  color: #fff;
+}

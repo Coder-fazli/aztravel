@@ -1,0 +1,78 @@
+/* Figma: tours list page — sidebar 270px + content 834px + 24px gap */
+
+.page {
+  min-height: 100vh;
+  background: var(--base-2);
+  padding: 140px var(--content-padding) 0;
+}
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 0 64px;
+}
+
+/* ── content column ── */
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── headline row ── */
+.headline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.headlineText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.title {
+  font: 700 22px/28px var(--font-family);
+  letter-spacing: 0.2px;
+  color: var(--base-13);
+  margin: 0;
+}
+.subtitle {
+  font: 400 14px/22px var(--font-family);
+  letter-spacing: 0.2px;
+  color: var(--base-8);
+  margin: 0;
+}
+
+/* ── list view ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── grid view — 3 columns ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* ── empty state ── */
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  border-radius: 16px;
+  border: 1px solid var(--base-5);
+  background: var(--base-1);
+}
+.empty p {
+  font: 400 14px/22px var(--font-family);
+  color: var(--base-8);
+  margin: 0;
+}

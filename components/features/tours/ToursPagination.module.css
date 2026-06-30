@@ -1,0 +1,115 @@
+/* Figma: Pagination bar — pages left + visible row count right */
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 8px;
+}
+
+/* ── page buttons ── */
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navBtn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--base-8);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.navBtn:hover:not(:disabled) {
+  background: var(--base-4);
+  color: var(--base-13);
+}
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pageBtn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  font: 400 12px/18px var(--font-family);
+  color: var(--base-8);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.pageBtn:hover {
+  background: var(--base-4);
+  color: var(--base-13);
+}
+.pageBtnActive {
+  background: var(--primary-13);
+  color: #fff;
+  font-weight: 700;
+}
+.pageBtnActive:hover {
+  background: var(--primary-13);
+  color: #fff;
+}
+
+.dots {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 400 12px/18px var(--font-family);
+  color: var(--base-8);
+  pointer-events: none;
+}
+
+/* ── visible row count ── */
+.rowCount {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rowLabel {
+  font: 400 12px/18px var(--font-family);
+  letter-spacing: 0.2px;
+  color: var(--base-8);
+  white-space: nowrap;
+}
+
+.limitSelect {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--base-5);
+  background: var(--base-1);
+  cursor: pointer;
+}
+.limitValue {
+  font: 400 12px/18px var(--font-family);
+  color: var(--base-13);
+  min-width: 16px;
+  text-align: center;
+}
+.limitField {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+}

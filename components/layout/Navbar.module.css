@@ -86,7 +86,8 @@
   white-space: nowrap;
 }
 
-.navbar.solid .topRightItem p { color: var(--base-8); }
+.navbar.solid .topRightItem p   { color: var(--base-8); }
+.navbar.solid .topRightItem img { filter: brightness(0) opacity(0.6); }
 
 /* ── MAIN NAV ── */
 /* Figma: py-32px, px-152px */
