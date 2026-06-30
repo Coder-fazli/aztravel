@@ -2,6 +2,7 @@ import { notFound }       from 'next/navigation'
 import { getTourBySlug }  from '@/lib/actions/tours'
 import TourGallery        from '@/components/features/tours/TourGallery'
 import BookingWidget      from '@/components/features/tours/BookingWidget'
+import ReadMore           from '@/components/features/tours/ReadMore'
 import styles             from './page.module.css'
 
 type Params       = Promise<{ locale: string; slug: string }>
@@ -161,10 +162,7 @@ export default async function TourDetailPage({ params }: { params: Params }) {
           {t(tour.description) && (
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Tour details</h2>
-              <div
-                className={styles.richText}
-                dangerouslySetInnerHTML={{ __html: t(tour.description) }}
-              />
+              <ReadMore html={t(tour.description)} className={styles.richText} clampPx={220} />
             </section>
           )}
 

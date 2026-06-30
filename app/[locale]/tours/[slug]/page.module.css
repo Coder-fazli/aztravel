@@ -179,7 +179,7 @@
 .inExGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 80px;
 }
 .inExTitle {
   font: 700 16px/24px var(--font-family);
