@@ -118,6 +118,7 @@ export default function BookingWidget({
               selected={selectedDate}
               onSelect={handleDateSelect}
               disabled={(d) => !isAvailable(d)}
+              numberOfMonths={2}
             />
           </PopoverContent>
         </Popover>

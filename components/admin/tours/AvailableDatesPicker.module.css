@@ -1,38 +1,48 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-/* keep the calendar contained inside the panel */
-.calendarWrap {
-  border: 1px solid #eef0f3;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #fafafa;
+/* trigger button */
+.trigger {
+  width: 100%;
   display: flex;
-  justify-content: center;
-  padding: 8px 0;
-}
-
-/* selected-date pills */
-.pills {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid #e4e4ec;
+  border-radius: 9px;
+  background: #fff;
+  font-family: var(--font-family);
+  font-size: 13px;
+  color: var(--base-13);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+.trigger:hover { border-color: var(--primary-13); }
+.trigger svg { flex-shrink: 0; color: var(--base-8); }
+
+/* popover */
+.popover {
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--base-5);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  background: var(--base-1);
+  width: auto;
 }
 
-.pillsHeader {
+.popoverFooter {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 8px 8px 4px;
+  border-top: 1px solid #eef0f3;
+  margin-top: 4px;
 }
-.pillsCount {
-  font-family: var(--font-family);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--base-13);
-}
+
 .clearBtn {
   font-family: var(--font-family);
   font-size: 12px;
@@ -43,8 +53,24 @@
   cursor: pointer;
   padding: 0;
 }
-.clearBtn:hover { text-decoration: underline; }
+.clearBtn:hover:not(:disabled) { text-decoration: underline; }
+.clearBtn:disabled { opacity: 0.35; cursor: not-allowed; }
 
+.doneBtn {
+  padding: 6px 18px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-13);
+  color: #fff;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.doneBtn:hover { opacity: 0.9; }
+
+/* pills */
 .pillsList {
   display: flex;
   flex-wrap: wrap;
@@ -80,11 +106,3 @@
   transition: opacity 0.1s;
 }
 .pillRemove:hover { opacity: 1; }
-
-.empty {
-  font-family: var(--font-family);
-  font-size: 12px;
-  color: var(--base-8);
-  font-style: italic;
-  margin: 0;
-}

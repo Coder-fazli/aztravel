@@ -4,12 +4,10 @@
   background: var(--base-1);
   border: 1px solid var(--base-5);
   border-radius: 20px;
-  padding: 24px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  position: sticky;
-  top: 24px;
+  gap: 22px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.06);
 }
 

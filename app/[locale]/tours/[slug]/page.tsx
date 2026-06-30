@@ -107,64 +107,54 @@ export default async function TourDetailPage({ params }: { params: Params }) {
       <div className={styles.layout}>
         <main className={styles.main}>
 
-          {/* highlights — collapsible */}
+          {/* highlights */}
           {tour.highlights?.length > 0 && (
-            <details className={styles.accordion}>
-              <summary className={styles.accordionTitle}>
-                Highlights
-                <ChevronIcon />
-              </summary>
-              <div className={styles.accordionBody}>
-                <div className={styles.highlights}>
-                  {tour.highlights.map((h: any, i: number) => (
-                    <div key={i} className={styles.highlight}>
-                      <CheckIcon />
-                      <span>{t(h)}</span>
-                    </div>
-                  ))}
-                </div>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Highlights</h2>
+              <div className={styles.highlights}>
+                {tour.highlights.map((h: any, i: number) => (
+                  <div key={i} className={styles.highlight}>
+                    <CheckIcon />
+                    <span>{t(h)}</span>
+                  </div>
+                ))}
               </div>
-            </details>
+            </section>
           )}
 
-          {/* inclusions / exclusions — collapsible */}
+          {/* inclusions / exclusions */}
           {(tour.inclusions?.length > 0 || tour.exclusions?.length > 0) && (
-            <details className={styles.accordion}>
-              <summary className={styles.accordionTitle}>
-                Package Features
-                <ChevronIcon />
-              </summary>
-              <div className={styles.accordionBody}>
-                <div className={styles.inExGrid}>
-                  {tour.inclusions?.length > 0 && (
-                    <div>
-                      <h3 className={styles.inExTitle}>Include Features</h3>
-                      <ul className={styles.inExList}>
-                        {tour.inclusions.map((item: any, i: number) => (
-                          <li key={i} className={styles.inExItem}>
-                            <span className={styles.inExIconInclude}><IncludeIcon /></span>
-                            <span>{t(item)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {tour.exclusions?.length > 0 && (
-                    <div>
-                      <h3 className={styles.inExTitle}>Exclude Features</h3>
-                      <ul className={styles.inExList}>
-                        {tour.exclusions.map((item: any, i: number) => (
-                          <li key={i} className={styles.inExItem}>
-                            <span className={styles.inExIconExclude}><ExcludeIcon /></span>
-                            <span>{t(item)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Package Features</h2>
+              <div className={styles.inExGrid}>
+                {tour.inclusions?.length > 0 && (
+                  <div>
+                    <h3 className={styles.inExTitle}>Include Features</h3>
+                    <ul className={styles.inExList}>
+                      {tour.inclusions.map((item: any, i: number) => (
+                        <li key={i} className={styles.inExItem}>
+                          <span className={styles.inExIconInclude}><IncludeIcon /></span>
+                          <span>{t(item)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {tour.exclusions?.length > 0 && (
+                  <div>
+                    <h3 className={styles.inExTitle}>Exclude Features</h3>
+                    <ul className={styles.inExList}>
+                      {tour.exclusions.map((item: any, i: number) => (
+                        <li key={i} className={styles.inExItem}>
+                          <span className={styles.inExIconExclude}><ExcludeIcon /></span>
+                          <span>{t(item)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            </details>
+            </section>
           )}
 
           {/* description */}

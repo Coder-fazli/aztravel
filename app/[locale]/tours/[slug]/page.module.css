@@ -40,8 +40,11 @@
 
 /* ── right sidebar ── */
 .sidebar {
-  width: 320px;
+  width: 340px;
   flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+  align-self: flex-start;
 }
 
 /* ── header ── */

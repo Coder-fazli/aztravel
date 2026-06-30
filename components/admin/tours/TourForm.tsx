@@ -49,6 +49,11 @@ export default function TourForm({ tour }: { tour?: any }) {
     }))
   )
 
+  // ── panel collapse state ──
+  const [hlOpen,  setHlOpen]  = useState(false)
+  const [inOpen,  setInOpen]  = useState(false)
+  const [exOpen,  setExOpen]  = useState(false)
+
   // ── sidebar ──
   const [status,     setStatus]    = useState<string>(tour?.status ?? 'draft')
   const [categories, setCats]      = useState<string[]>(tour?.categories ?? [])
@@ -170,62 +175,86 @@ export default function TourForm({ tour }: { tour?: any }) {
 
           {/* Highlights */}
           <div className={styles.panel}>
-            <div className={styles.panelHead}>
+            <button type="button" className={styles.collapseToggle} onClick={() => setHlOpen(o => !o)}>
               <span className={styles.panelLabel}>Highlights</span>
-              <button type="button" className={styles.addBtn} onClick={() => addLS(setHighlights)}>+ Add</button>
-            </div>
-            {highlights.map((h, i) => (
-              <div key={i} className={styles.listRow}>
-                <input
-                  className={styles.listInput}
-                  placeholder={`Highlight (${lang.toUpperCase()})`}
-                  value={h[lang]}
-                  onChange={e => updateLS(setHighlights, i, e.target.value)}
-                />
-                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setHighlights, i)}>✕</button>
+              <span className={`${styles.collapseChevron} ${hlOpen ? styles.collapseChevronOpen : ''}`}>‹</span>
+            </button>
+            {hlOpen && (
+              <div className={styles.collapseBody}>
+                <div className={styles.panelHead}>
+                  <span />
+                  <button type="button" className={styles.addBtn} onClick={() => addLS(setHighlights)}>+ Add</button>
+                </div>
+                {highlights.map((h, i) => (
+                  <div key={i} className={styles.listRow}>
+                    <input
+                      className={styles.listInput}
+                      placeholder={`Highlight (${lang.toUpperCase()})`}
+                      value={h[lang]}
+                      onChange={e => updateLS(setHighlights, i, e.target.value)}
+                    />
+                    <button type="button" className={styles.removeBtn} onClick={() => removeLS(setHighlights, i)}>✕</button>
+                  </div>
+                ))}
+                {highlights.length === 0 && <p className={styles.empty}>No highlights yet — click Add.</p>}
               </div>
-            ))}
-            {highlights.length === 0 && <p className={styles.empty}>No highlights — click Add.</p>}
+            )}
           </div>
 
           {/* Inclusions */}
           <div className={styles.panel}>
-            <div className={styles.panelHead}>
+            <button type="button" className={styles.collapseToggle} onClick={() => setInOpen(o => !o)}>
               <span className={styles.panelLabel}>Included</span>
-              <button type="button" className={styles.addBtn} onClick={() => addLS(setInclusions)}>+ Add</button>
-            </div>
-            {inclusions.map((item, i) => (
-              <div key={i} className={styles.listRow}>
-                <input
-                  className={styles.listInput}
-                  placeholder={`Included item (${lang.toUpperCase()})`}
-                  value={item[lang]}
-                  onChange={e => updateLS(setInclusions, i, e.target.value)}
-                />
-                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setInclusions, i)}>✕</button>
+              <span className={`${styles.collapseChevron} ${inOpen ? styles.collapseChevronOpen : ''}`}>‹</span>
+            </button>
+            {inOpen && (
+              <div className={styles.collapseBody}>
+                <div className={styles.panelHead}>
+                  <span />
+                  <button type="button" className={styles.addBtn} onClick={() => addLS(setInclusions)}>+ Add</button>
+                </div>
+                {inclusions.map((item, i) => (
+                  <div key={i} className={styles.listRow}>
+                    <input
+                      className={styles.listInput}
+                      placeholder={`Included item (${lang.toUpperCase()})`}
+                      value={item[lang]}
+                      onChange={e => updateLS(setInclusions, i, e.target.value)}
+                    />
+                    <button type="button" className={styles.removeBtn} onClick={() => removeLS(setInclusions, i)}>✕</button>
+                  </div>
+                ))}
+                {inclusions.length === 0 && <p className={styles.empty}>No inclusions yet.</p>}
               </div>
-            ))}
-            {inclusions.length === 0 && <p className={styles.empty}>No inclusions yet.</p>}
+            )}
           </div>
 
           {/* Exclusions */}
           <div className={styles.panel}>
-            <div className={styles.panelHead}>
+            <button type="button" className={styles.collapseToggle} onClick={() => setExOpen(o => !o)}>
               <span className={styles.panelLabel}>Not included</span>
-              <button type="button" className={styles.addBtn} onClick={() => addLS(setExclusions)}>+ Add</button>
-            </div>
-            {exclusions.map((item, i) => (
-              <div key={i} className={styles.listRow}>
-                <input
-                  className={styles.listInput}
-                  placeholder={`Excluded item (${lang.toUpperCase()})`}
-                  value={item[lang]}
-                  onChange={e => updateLS(setExclusions, i, e.target.value)}
-                />
-                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setExclusions, i)}>✕</button>
+              <span className={`${styles.collapseChevron} ${exOpen ? styles.collapseChevronOpen : ''}`}>‹</span>
+            </button>
+            {exOpen && (
+              <div className={styles.collapseBody}>
+                <div className={styles.panelHead}>
+                  <span />
+                  <button type="button" className={styles.addBtn} onClick={() => addLS(setExclusions)}>+ Add</button>
+                </div>
+                {exclusions.map((item, i) => (
+                  <div key={i} className={styles.listRow}>
+                    <input
+                      className={styles.listInput}
+                      placeholder={`Excluded item (${lang.toUpperCase()})`}
+                      value={item[lang]}
+                      onChange={e => updateLS(setExclusions, i, e.target.value)}
+                    />
+                    <button type="button" className={styles.removeBtn} onClick={() => removeLS(setExclusions, i)}>✕</button>
+                  </div>
+                ))}
+                {exclusions.length === 0 && <p className={styles.empty}>No exclusions yet.</p>}
               </div>
-            ))}
-            {exclusions.length === 0 && <p className={styles.empty}>No exclusions yet.</p>}
+            )}
           </div>
 
           {/* Itinerary */}
