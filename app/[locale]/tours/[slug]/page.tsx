@@ -134,14 +134,18 @@ export default async function TourDetailPage({ params }: { params: Params }) {
           {/* inclusions / exclusions */}
           {(tour.inclusions?.length > 0 || tour.exclusions?.length > 0) && (
             <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Package Features</h2>
               <div className={styles.inExGrid}>
                 {tour.inclusions?.length > 0 && (
                   <div>
-                    <h3 className={styles.inExTitle}>Included</h3>
+                    <h3 className={styles.inExTitle}>Include Features</h3>
                     <ul className={styles.inExList}>
                       {tour.inclusions.map((item: any, i: number) => (
                         <li key={i} className={styles.inExItem}>
-                          <IncludeIcon /> {t(item)}
+                          <span className={styles.inExIconInclude}>
+                            <IncludeIcon />
+                          </span>
+                          <span>{t(item)}</span>
                         </li>
                       ))}
                     </ul>
@@ -149,11 +153,14 @@ export default async function TourDetailPage({ params }: { params: Params }) {
                 )}
                 {tour.exclusions?.length > 0 && (
                   <div>
-                    <h3 className={styles.inExTitle}>Not included</h3>
+                    <h3 className={styles.inExTitle}>Exclude Features</h3>
                     <ul className={styles.inExList}>
                       {tour.exclusions.map((item: any, i: number) => (
-                        <li key={i} className={`${styles.inExItem} ${styles.inExItemNo}`}>
-                          <ExcludeIcon /> {t(item)}
+                        <li key={i} className={styles.inExItem}>
+                          <span className={styles.inExIconExclude}>
+                            <ExcludeIcon />
+                          </span>
+                          <span>{t(item)}</span>
                         </li>
                       ))}
                     </ul>
@@ -230,8 +237,19 @@ function CheckIcon() {
   return <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--primary-13)" strokeWidth="1.8"><circle cx="8" cy="8" r="6.5" strokeWidth="1.4"/><polyline points="5 8.5 7 10.5 11 6"/></svg>
 }
 function IncludeIcon() {
-  return <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="var(--primary-13)" strokeWidth="1.8"><polyline points="2 7 5.5 10.5 12 3.5"/></svg>
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <circle cx="11" cy="11" r="10" stroke="#3b82f6" strokeWidth="1.5"/>
+      <polyline points="6.5 11 9.5 14 15.5 8" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
 }
 function ExcludeIcon() {
-  return <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="var(--error-13)" strokeWidth="1.8"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <circle cx="11" cy="11" r="10" stroke="#ef4444" strokeWidth="1.5"/>
+      <line x1="7" y1="7" x2="15" y2="15" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"/>
+      <line x1="15" y1="7" x2="7" y2="15" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  )
 }

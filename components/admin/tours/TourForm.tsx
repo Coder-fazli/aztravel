@@ -1,14 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { saveTourFromForm } from '@/lib/actions/admin/tours'
+import { saveTourFromForm }  from '@/lib/actions/admin/tours'
+import RichTextEditor        from '@/components/admin/forms/RichTextEditor'
+import GalleryImageUpload    from './GalleryImageUpload'
 import styles from './TourForm.module.css'
 
 type Locale = 'en' | 'es' | 'ar'
-type LS = { en: string; es: string; ar: string }
-type Step = { title: LS; description: LS }
+type LS     = { en: string; es: string; ar: string }
+type Step   = { title: LS; description: LS }
 
-const LOCALES: Locale[] = ['en', 'es', 'ar']
+const LOCALES: Locale[]              = ['en', 'es', 'ar']
 const LOCALE_LABEL: Record<Locale, string> = { en: 'EN', es: 'ES', ar: 'AR' }
 const CATEGORIES = ['multi-day','day-trip','guided','history-culture','nature','adventure']
 
@@ -31,31 +33,22 @@ export default function TourForm({ tour }: { tour?: any }) {
   const [lang, setLang] = useState<Locale>('en')
 
   // ── localized text ──
-  const [title,       setTitle]       = useState<LS>(initLS(tour?.title))
-  const [excerpt,     setExcerpt]     = useState<LS>(initLS(tour?.excerpt))
-  const [description, setDescription] = useState<LS>(initLS(tour?.description))
-  const [conditions,  setConditions]  = useState<LS>(initLS(tour?.conditions))
-  const [slug,        setSlug]        = useState<string>(tour?.slug ?? '')
+  const [title,      setTitle]      = useState<LS>(initLS(tour?.title))
+  const [slug,       setSlug]       = useState<string>(tour?.slug ?? '')
   const [slugTouched, setSlugTouched] = useState<boolean>(Boolean(tour?.slug))
 
   // ── localized arrays ──
-  const [highlights, setHighlights] = useState<LS[]>(
-    (tour?.highlights ?? []).map(initLS)
-  )
-  const [inclusions, setInclusions] = useState<LS[]>(
-    (tour?.inclusions ?? []).map(initLS)
-  )
-  const [exclusions, setExclusions] = useState<LS[]>(
-    (tour?.exclusions ?? []).map(initLS)
-  )
-  const [itinerary, setItinerary] = useState<Step[]>(
+  const [highlights, setHighlights] = useState<LS[]>((tour?.highlights ?? []).map(initLS))
+  const [inclusions, setInclusions] = useState<LS[]>((tour?.inclusions ?? []).map(initLS))
+  const [exclusions, setExclusions] = useState<LS[]>((tour?.exclusions ?? []).map(initLS))
+  const [itinerary,  setItinerary]  = useState<Step[]>(
     (tour?.itinerary ?? []).map((s: any) => ({
       title:       initLS(s?.title),
       description: initLS(s?.description),
     }))
   )
 
-  // ── sidebar fields ──
+  // ── sidebar ──
   const [status,     setStatus]    = useState<string>(tour?.status ?? 'draft')
   const [categories, setCats]      = useState<string[]>(tour?.categories ?? [])
   const [priceOrig,  setPriceOrig] = useState<string>(String(tour?.price?.original ?? ''))
@@ -71,11 +64,8 @@ export default function TourForm({ tour }: { tour?: any }) {
   const [canHours,   setCanHours]  = useState<string>(String(tour?.cancellationPolicy?.hoursNotice ?? 24))
   const [location,   setLocation]  = useState<string>(String(tour?.location ?? ''))
   const [guide,      setGuide]     = useState<string>(String(tour?.guide ?? ''))
-  const [images,     setImages]    = useState<string>((tour?.images ?? []).join('\n'))
   const [availDates, setAvailDates] = useState<string>(
-    (tour?.availableDates ?? [])
-      .map((d: any) => new Date(d).toISOString().slice(0, 10))
-      .join('\n')
+    (tour?.availableDates ?? []).map((d: any) => new Date(d).toISOString().slice(0, 10)).join('\n')
   )
 
   // ── helpers ──
@@ -88,10 +78,7 @@ export default function TourForm({ tour }: { tour?: any }) {
     setCats(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])
   }
 
-  function updateLS(
-    setter: React.Dispatch<React.SetStateAction<LS[]>>,
-    i: number, v: string
-  ) {
+  function updateLS(setter: React.Dispatch<React.SetStateAction<LS[]>>, i: number, v: string) {
     setter(prev => prev.map((item, idx) => idx === i ? { ...item, [lang]: v } : item))
   }
 
@@ -103,7 +90,7 @@ export default function TourForm({ tour }: { tour?: any }) {
     setter(prev => prev.filter((_, idx) => idx !== i))
   }
 
-  // ── hidden inputs for inactive language versions ──
+  // inactive-language hidden inputs for simple text fields
   function hiddenLangs(name: string, value: LS) {
     return LOCALES.filter(l => l !== lang).map(l => (
       <input key={l} type="hidden" name={`${name}_${l}`} value={value[l]} />
@@ -124,8 +111,7 @@ export default function TourForm({ tour }: { tour?: any }) {
       <div className={styles.langTabs}>
         {LOCALES.map(l => (
           <button
-            key={l}
-            type="button"
+            key={l} type="button"
             className={`${styles.langTab} ${lang === l ? styles.langActive : ''}`}
             onClick={() => setLang(l)}
           >
@@ -136,6 +122,7 @@ export default function TourForm({ tour }: { tour?: any }) {
       </div>
 
       <div className={styles.layout}>
+
         {/* ══════════ LEFT COLUMN ══════════ */}
         <div className={styles.main}>
 
@@ -165,41 +152,26 @@ export default function TourForm({ tour }: { tour?: any }) {
             )}
           </div>
 
-          {/* Excerpt */}
-          <div className={styles.panel}>
-            <span className={styles.panelLabel}>Excerpt</span>
-            <textarea
-              className={styles.textarea}
-              rows={3}
-              placeholder={`Short excerpt (${lang.toUpperCase()})`}
-              value={excerpt[lang]}
-              onChange={e => setExcerpt(prev => ({ ...prev, [lang]: e.target.value }))}
-              name={`excerpt_${lang}`}
-            />
-            {hiddenLangs('excerpt', excerpt)}
-          </div>
-
-          {/* Description */}
+          {/* Description — TipTap rich editor, one per language */}
           <div className={styles.panel}>
             <span className={styles.panelLabel}>Description</span>
-            <textarea
-              className={styles.textarea}
-              rows={10}
-              placeholder={`Tour description — HTML or plain text (${lang.toUpperCase()})`}
-              value={description[lang]}
-              onChange={e => setDescription(prev => ({ ...prev, [lang]: e.target.value }))}
-              name={`description_${lang}`}
-            />
-            {hiddenLangs('description', description)}
+            {LOCALES.map(l => (
+              <div key={l} style={{ display: lang === l ? 'block' : 'none' }}>
+                <RichTextEditor
+                  name={`description_${l}`}
+                  defaultValue={tour?.description?.[l] ?? ''}
+                  placeholder={`Tour description (${l.toUpperCase()})`}
+                  dir={l === 'ar' ? 'rtl' : 'ltr'}
+                />
+              </div>
+            ))}
           </div>
 
           {/* Highlights */}
           <div className={styles.panel}>
             <div className={styles.panelHead}>
               <span className={styles.panelLabel}>Highlights</span>
-              <button type="button" className={styles.addBtn} onClick={() => addLS(setHighlights)}>
-                + Add
-              </button>
+              <button type="button" className={styles.addBtn} onClick={() => addLS(setHighlights)}>+ Add</button>
             </div>
             {highlights.map((h, i) => (
               <div key={i} className={styles.listRow}>
@@ -209,23 +181,17 @@ export default function TourForm({ tour }: { tour?: any }) {
                   value={h[lang]}
                   onChange={e => updateLS(setHighlights, i, e.target.value)}
                 />
-                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setHighlights, i)}>
-                  ✕
-                </button>
+                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setHighlights, i)}>✕</button>
               </div>
             ))}
-            {highlights.length === 0 && (
-              <p className={styles.empty}>No highlights — click Add to start.</p>
-            )}
+            {highlights.length === 0 && <p className={styles.empty}>No highlights — click Add.</p>}
           </div>
 
           {/* Inclusions */}
           <div className={styles.panel}>
             <div className={styles.panelHead}>
               <span className={styles.panelLabel}>Included</span>
-              <button type="button" className={styles.addBtn} onClick={() => addLS(setInclusions)}>
-                + Add
-              </button>
+              <button type="button" className={styles.addBtn} onClick={() => addLS(setInclusions)}>+ Add</button>
             </div>
             {inclusions.map((item, i) => (
               <div key={i} className={styles.listRow}>
@@ -235,23 +201,17 @@ export default function TourForm({ tour }: { tour?: any }) {
                   value={item[lang]}
                   onChange={e => updateLS(setInclusions, i, e.target.value)}
                 />
-                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setInclusions, i)}>
-                  ✕
-                </button>
+                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setInclusions, i)}>✕</button>
               </div>
             ))}
-            {inclusions.length === 0 && (
-              <p className={styles.empty}>No inclusions yet.</p>
-            )}
+            {inclusions.length === 0 && <p className={styles.empty}>No inclusions yet.</p>}
           </div>
 
           {/* Exclusions */}
           <div className={styles.panel}>
             <div className={styles.panelHead}>
               <span className={styles.panelLabel}>Not included</span>
-              <button type="button" className={styles.addBtn} onClick={() => addLS(setExclusions)}>
-                + Add
-              </button>
+              <button type="button" className={styles.addBtn} onClick={() => addLS(setExclusions)}>+ Add</button>
             </div>
             {exclusions.map((item, i) => (
               <div key={i} className={styles.listRow}>
@@ -261,14 +221,10 @@ export default function TourForm({ tour }: { tour?: any }) {
                   value={item[lang]}
                   onChange={e => updateLS(setExclusions, i, e.target.value)}
                 />
-                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setExclusions, i)}>
-                  ✕
-                </button>
+                <button type="button" className={styles.removeBtn} onClick={() => removeLS(setExclusions, i)}>✕</button>
               </div>
             ))}
-            {exclusions.length === 0 && (
-              <p className={styles.empty}>No exclusions yet.</p>
-            )}
+            {exclusions.length === 0 && <p className={styles.empty}>No exclusions yet.</p>}
           </div>
 
           {/* Itinerary */}
@@ -276,8 +232,7 @@ export default function TourForm({ tour }: { tour?: any }) {
             <div className={styles.panelHead}>
               <span className={styles.panelLabel}>Itinerary</span>
               <button
-                type="button"
-                className={styles.addBtn}
+                type="button" className={styles.addBtn}
                 onClick={() => setItinerary(prev => [...prev, { title: empty(), description: empty() }])}
               >
                 + Add day
@@ -287,13 +242,8 @@ export default function TourForm({ tour }: { tour?: any }) {
               <div key={i} className={styles.stepCard}>
                 <div className={styles.stepHead}>
                   <span className={styles.stepDay}>Day {i + 1}</span>
-                  <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={() => setItinerary(prev => prev.filter((_, idx) => idx !== i))}
-                  >
-                    ✕
-                  </button>
+                  <button type="button" className={styles.removeBtn}
+                    onClick={() => setItinerary(prev => prev.filter((_, idx) => idx !== i))}>✕</button>
                 </div>
                 <input
                   className={styles.listInput}
@@ -320,23 +270,16 @@ export default function TourForm({ tour }: { tour?: any }) {
                 />
               </div>
             ))}
-            {itinerary.length === 0 && (
-              <p className={styles.empty}>No itinerary steps yet.</p>
-            )}
+            {itinerary.length === 0 && <p className={styles.empty}>No itinerary steps yet.</p>}
           </div>
 
-          {/* Conditions */}
+          {/* Gallery images */}
           <div className={styles.panel}>
-            <span className={styles.panelLabel}>Join Conditions</span>
-            <textarea
-              className={styles.textarea}
-              rows={6}
-              placeholder={`Join conditions — HTML or plain text (${lang.toUpperCase()})`}
-              value={conditions[lang]}
-              onChange={e => setConditions(prev => ({ ...prev, [lang]: e.target.value }))}
-              name={`conditions_${lang}`}
+            <span className={styles.panelLabel}>Gallery images</span>
+            <GalleryImageUpload
+              name="images"
+              defaultValue={tour?.images ?? []}
             />
-            {hiddenLangs('conditions', conditions)}
           </div>
         </div>
 
@@ -346,12 +289,7 @@ export default function TourForm({ tour }: { tour?: any }) {
           {/* Publish */}
           <div className={styles.panel}>
             <span className={styles.panelLabel}>Status</span>
-            <select
-              name="status"
-              className={styles.select}
-              value={status}
-              onChange={e => setStatus(e.target.value)}
-            >
+            <select name="status" className={styles.select} value={status} onChange={e => setStatus(e.target.value)}>
               <option value="draft">Draft</option>
               <option value="active">Active</option>
               <option value="archived">Archived</option>
@@ -370,23 +308,18 @@ export default function TourForm({ tour }: { tour?: any }) {
             <div className={styles.row2}>
               <div className={styles.field}>
                 <span>Original</span>
-                <input
-                  type="number" name="price_original" min={0} step={0.01}
-                  value={priceOrig} onChange={e => setPriceOrig(e.target.value)}
-                />
+                <input type="number" name="price_original" min={0} step={0.01}
+                  value={priceOrig} onChange={e => setPriceOrig(e.target.value)} />
               </div>
               <div className={styles.field}>
                 <span>Final</span>
-                <input
-                  type="number" name="price_final" min={0} step={0.01}
-                  value={priceFin} onChange={e => setPriceFin(e.target.value)}
-                />
+                <input type="number" name="price_final" min={0} step={0.01}
+                  value={priceFin} onChange={e => setPriceFin(e.target.value)} />
               </div>
             </div>
             <div className={styles.field}>
               <span>Currency</span>
-              <select name="price_currency" className={styles.select} value={priceCur}
-                onChange={e => setPriceCur(e.target.value)}>
+              <select name="price_currency" className={styles.select} value={priceCur} onChange={e => setPriceCur(e.target.value)}>
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
                 <option value="AZN">AZN</option>
@@ -406,14 +339,13 @@ export default function TourForm({ tour }: { tour?: any }) {
               </div>
               <div className={styles.field}>
                 <span>Unit</span>
-                <select name="duration_unit" className={styles.select}
-                  value={durUnit} onChange={e => setDurUnit(e.target.value)}>
+                <select name="duration_unit" className={styles.select} value={durUnit} onChange={e => setDurUnit(e.target.value)}>
                   <option value="hours">Hours</option>
                   <option value="days">Days</option>
                 </select>
               </div>
             </div>
-            <span className={styles.panelLabel} style={{ marginTop: 6 }}>Capacity</span>
+            <span className={styles.panelLabel} style={{ marginTop: 4 }}>Capacity</span>
             <div className={styles.row2}>
               <div className={styles.field}>
                 <span>Min guests</span>
@@ -435,11 +367,7 @@ export default function TourForm({ tour }: { tour?: any }) {
             <div className={styles.checks}>
               {CATEGORIES.map(cat => (
                 <label key={cat} className={styles.checkLabel}>
-                  <input
-                    type="checkbox"
-                    checked={categories.includes(cat)}
-                    onChange={() => toggleCat(cat)}
-                  />
+                  <input type="checkbox" checked={categories.includes(cat)} onChange={() => toggleCat(cat)} />
                   <span>{cat}</span>
                 </label>
               ))}
@@ -450,39 +378,22 @@ export default function TourForm({ tour }: { tour?: any }) {
           <div className={styles.panel}>
             <span className={styles.panelLabel}>Options</span>
             <label className={styles.toggle}>
-              <input
-                type="checkbox"
-                name="isSpecialOffer"
-                checked={isSpecial}
-                onChange={e => setIsSpecial(e.target.checked)}
-              />
+              <input type="checkbox" name="isSpecialOffer" checked={isSpecial} onChange={e => setIsSpecial(e.target.checked)} />
               <span>Special offer</span>
             </label>
             <label className={styles.toggle}>
-              <input
-                type="checkbox"
-                name="payLater"
-                checked={payLater}
-                onChange={e => setPayLater(e.target.checked)}
-              />
+              <input type="checkbox" name="payLater" checked={payLater} onChange={e => setPayLater(e.target.checked)} />
               <span>Pay later</span>
             </label>
             <label className={styles.toggle}>
-              <input
-                type="checkbox"
-                name="cancellation_free"
-                checked={canFree}
-                onChange={e => setCanFree(e.target.checked)}
-              />
+              <input type="checkbox" name="cancellation_free" checked={canFree} onChange={e => setCanFree(e.target.checked)} />
               <span>Free cancellation</span>
             </label>
             {canFree && (
               <div className={styles.field}>
-                <span>Hours notice required</span>
-                <input
-                  type="number" name="cancellation_hours" min={0}
-                  value={canHours} onChange={e => setCanHours(e.target.value)}
-                />
+                <span>Hours notice</span>
+                <input type="number" name="cancellation_hours" min={0}
+                  value={canHours} onChange={e => setCanHours(e.target.value)} />
               </div>
             )}
           </div>
@@ -492,36 +403,12 @@ export default function TourForm({ tour }: { tour?: any }) {
             <span className={styles.panelLabel}>References</span>
             <div className={styles.field}>
               <span>Location ID</span>
-              <input
-                name="location"
-                value={location}
-                onChange={e => setLocation(e.target.value)}
-                placeholder="MongoDB ObjectId"
-              />
+              <input name="location" value={location} onChange={e => setLocation(e.target.value)} placeholder="MongoDB ObjectId" />
             </div>
             <div className={styles.field}>
               <span>Guide ID</span>
-              <input
-                name="guide"
-                value={guide}
-                onChange={e => setGuide(e.target.value)}
-                placeholder="MongoDB ObjectId"
-              />
+              <input name="guide" value={guide} onChange={e => setGuide(e.target.value)} placeholder="MongoDB ObjectId" />
             </div>
-          </div>
-
-          {/* Images */}
-          <div className={styles.panel}>
-            <span className={styles.panelLabel}>Images</span>
-            <p className={styles.hint}>One URL per line (up to 5)</p>
-            <textarea
-              className={styles.textarea}
-              name="images"
-              rows={5}
-              value={images}
-              onChange={e => setImages(e.target.value)}
-              placeholder={'https://cdn.example.com/tour-1.jpg\nhttps://...'}
-            />
           </div>
 
           {/* Available Dates */}
@@ -534,7 +421,7 @@ export default function TourForm({ tour }: { tour?: any }) {
               rows={6}
               value={availDates}
               onChange={e => setAvailDates(e.target.value)}
-              placeholder={'2025-07-10\n2025-07-15\n2025-07-20'}
+              placeholder={'2025-07-10\n2025-07-15'}
             />
           </div>
         </div>

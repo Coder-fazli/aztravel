@@ -124,12 +124,12 @@
 .inExGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 40px;
 }
 .inExTitle {
-  font: 600 14px/22px var(--font-family);
+  font: 700 16px/24px var(--font-family);
   color: var(--base-13);
-  margin: 0 0 10px;
+  margin: 0 0 20px;
 }
 .inExList {
   list-style: none;
@@ -137,17 +137,22 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 18px;
 }
 .inExItem {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  font: 400 13px/20px var(--font-family);
+  gap: 14px;
+  font: 400 15px/24px var(--font-family);
   color: var(--base-13);
 }
-.inExItem svg { flex-shrink: 0; margin-top: 3px; }
-.inExItemNo { color: var(--base-8); }
+.inExIconInclude,
+.inExIconExclude {
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+}
+.inExItem span:last-child { flex: 1; }
 
 /* ── itinerary ── */
 .itinerary {

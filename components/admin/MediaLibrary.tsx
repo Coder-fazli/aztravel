@@ -8,13 +8,17 @@ type MediaItem = { _id: string; url: string; filename?: string; mime?: string; s
 type Props = {
   open: boolean
   onClose: () => void
-  onSelect: (url: string) => void
+  onSelect?: (url: string) => void
+  /** enable multi-select mode; fires instead of onSelect */
+  onSelectMultiple?: (urls: string[]) => void
 }
 
-export default function MediaLibrary({ open, onClose, onSelect }: Props) {
+export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple }: Props) {
+  const multiple = Boolean(onSelectMultiple)
   const [items, setItems] = useState<MediaItem[]>([])
   const [loading, setLoading] = useState(false)
   const [selected, setSelected] = useState<string>('')
+  const [selectedMany, setSelectedMany] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
   const [drag, setDrag] = useState(false)
   const [error, setError] = useState('')
@@ -35,6 +39,7 @@ export default function MediaLibrary({ open, onClose, onSelect }: Props) {
   useEffect(() => {
     if (open) {
       setSelected('')
+      setSelectedMany([])
       setError('')
       load()
     }
@@ -84,10 +89,22 @@ export default function MediaLibrary({ open, onClose, onSelect }: Props) {
     if (selected === url) setSelected('')
   }
 
+  const toggleMany = (url: string) => {
+    setSelectedMany(prev =>
+      prev.includes(url) ? prev.filter(u => u !== url) : [...prev, url]
+    )
+  }
+
   const confirmSelect = () => {
-    if (!selected) return
-    onSelect(selected)
-    onClose()
+    if (multiple) {
+      if (!selectedMany.length) return
+      onSelectMultiple!(selectedMany)
+      onClose()
+    } else {
+      if (!selected) return
+      onSelect!(selected)
+      onClose()
+    }
   }
 
   if (!open) return null
@@ -120,10 +137,17 @@ export default function MediaLibrary({ open, onClose, onSelect }: Props) {
             <button
               type="button"
               key={m._id}
-              className={`${styles.tile} ${selected === m.url ? styles.tileActive : ''}`}
-              onClick={() => setSelected(m.url)}
+              className={`${styles.tile} ${
+                multiple
+                  ? selectedMany.includes(m.url) ? styles.tileActive : ''
+                  : selected === m.url ? styles.tileActive : ''
+              }`}
+              onClick={() => multiple ? toggleMany(m.url) : setSelected(m.url)}
               title={m.filename}
             >
+              {multiple && selectedMany.includes(m.url) && (
+                <span className={styles.tileCheck}>✓</span>
+              )}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={m.url} alt={m.filename ?? ''} />
               <span className={styles.del} onClick={(e) => remove(e, m._id, m.url)} title="Delete">×</span>
@@ -135,8 +159,15 @@ export default function MediaLibrary({ open, onClose, onSelect }: Props) {
 
         <div className={styles.foot}>
           <button type="button" className={styles.cancel} onClick={onClose}>Cancel</button>
-          <button type="button" className={styles.select} onClick={confirmSelect} disabled={!selected}>
-            Use selected
+          <button
+            type="button"
+            className={styles.select}
+            onClick={confirmSelect}
+            disabled={multiple ? selectedMany.length === 0 : !selected}
+          >
+            {multiple
+              ? selectedMany.length > 0 ? `Add ${selectedMany.length} image${selectedMany.length > 1 ? 's' : ''}` : 'Select images'
+              : 'Use selected'}
           </button>
         </div>
       </div>

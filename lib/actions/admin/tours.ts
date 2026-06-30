@@ -1,8 +1,22 @@
 'use server'
 import { redirect }       from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { generateHTML }   from '@tiptap/html'
 import { findMany, findOne, createDoc, updateDoc, removeDoc } from '@/lib/db/crud'
+import { contentExtensions } from '@/lib/tiptap/extensions'
 import Tour from '@/lib/db/models/Tour'
+
+function jsonToHtml(jsonStr: string): string {
+  if (!jsonStr) return ''
+  try {
+    const doc = JSON.parse(jsonStr)
+    // already HTML (e.g. legacy plain-text or loaded from edit) — return as-is
+    if (typeof doc === 'string') return doc
+    return generateHTML(doc, contentExtensions as any)
+  } catch {
+    return jsonStr
+  }
+}
 
 export async function getToursAdmin() {
   return findMany(Tour, {})
@@ -22,9 +36,11 @@ function formToTour(f: FormData) {
   return {
     title:       { en: get(f,'title_en'),       es: get(f,'title_es'),       ar: get(f,'title_ar') },
     slug:        get(f,'slug'),
-    excerpt:     { en: get(f,'excerpt_en'),     es: get(f,'excerpt_es'),     ar: get(f,'excerpt_ar') },
-    description: { en: get(f,'description_en'), es: get(f,'description_es'), ar: get(f,'description_ar') },
-    conditions:  { en: get(f,'conditions_en'),  es: get(f,'conditions_es'),  ar: get(f,'conditions_ar') },
+    description: {
+      en: jsonToHtml(get(f,'description_en')),
+      es: jsonToHtml(get(f,'description_es')),
+      ar: jsonToHtml(get(f,'description_ar')),
+    },
 
     categories:     get(f,'categories').split(',').map(s => s.trim()).filter(Boolean),
     isSpecialOffer: bool(f,'isSpecialOffer'),
@@ -47,7 +63,7 @@ function formToTour(f: FormData) {
     location: get(f,'location') || undefined,
     guide:    get(f,'guide')    || undefined,
 
-    images:         get(f,'images').split('\n').map(s => s.trim()).filter(Boolean),
+    images:         (() => { try { return JSON.parse(get(f,'images')) } catch { return [] } })(),
     availableDates: get(f,'availableDates')
       .split('\n').map(s => s.trim()).filter(Boolean).map(s => new Date(s)),
 
