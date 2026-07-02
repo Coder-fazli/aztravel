@@ -15,6 +15,8 @@ type Props = {
   onChange?: () => void
   /** reports the current URL on every change (upload / pick / remove) */
   onValueChange?: (url: string) => void
+  /** renders a small fixed-size preview instead of full-width 16:9 */
+  compact?: boolean
 }
 
 export default function CoverImageUpload({
@@ -24,6 +26,7 @@ export default function CoverImageUpload({
   defaultAlt = '',
   onChange,
   onValueChange,
+  compact = false,
 }: Props) {
   const [url, setUrl] = useState(defaultValue)
   const [alt, setAlt] = useState(defaultAlt)
@@ -79,9 +82,9 @@ export default function CoverImageUpload({
       {url ? (
         <>
           {/* click the image → open the library to replace */}
-          <div className={styles.preview} onClick={() => setLibOpen(true)} title="Click to replace">
+          <div className={`${styles.preview} ${compact ? styles.previewCompact : ''}`} onClick={() => setLibOpen(true)} title="Click to replace">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt={alt || 'cover'} />
+            <img src={url} alt={alt || 'cover'} className={compact ? styles.imgCompact : ''} />
             <div className={styles.overlay}><span>Click to replace</span></div>
             <button
               type="button"

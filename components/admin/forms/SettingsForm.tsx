@@ -203,12 +203,12 @@ export default function SettingsForm({ settings }: { settings: any }) {
       {/* branding */}
       <div className={styles.panel}>
         <span className={styles.panelLabel}>Logo</span>
-        <CoverImageUpload name="logo" defaultValue={settings?.logo || DEFAULT_LOGO} onChange={() => setDirty(true)} />
+        <CoverImageUpload name="logo" compact defaultValue={settings?.logo || DEFAULT_LOGO} onChange={() => setDirty(true)} />
       </div>
 
       <div className={styles.panel}>
         <span className={styles.panelLabel}>Favicon</span>
-        <CoverImageUpload name="favicon" defaultValue={settings?.favicon || DEFAULT_FAVICON} onChange={() => setDirty(true)} />
+        <CoverImageUpload name="favicon" compact defaultValue={settings?.favicon || DEFAULT_FAVICON} onChange={() => setDirty(true)} />
         <p className={styles.hint}>Square image (e.g. 512×512). PNG or ICO.</p>
       </div>
 

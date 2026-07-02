@@ -33,6 +33,21 @@
   aspect-ratio: 16 / 9;
   object-fit: cover;
 }
+
+/* compact mode for logo / favicon / small images */
+.previewCompact {
+  display: inline-flex;
+  border-radius: 10px;
+}
+.imgCompact {
+  width: auto !important;
+  aspect-ratio: auto !important;
+  height: 72px;
+  max-width: 240px;
+  object-fit: contain;
+  padding: 8px 12px;
+  background: #f8f8fa;
+}
 .overlay {
   position: absolute;
   inset: 0;

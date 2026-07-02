@@ -100,6 +100,15 @@ export async function getPendingCount() {
   return Booking.countDocuments({ status: 'pending' })
 }
 
+/* ── GUEST: LOOKUP BY EMAIL ── */
+export async function getBookingsByEmail(email: string) {
+  await connectDb()
+  const bookings = await Booking.find({ guestEmail: email.toLowerCase().trim() })
+    .sort({ date: -1 })
+    .lean()
+  return JSON.parse(JSON.stringify(bookings))
+}
+
 /* ── ADMIN: MARK BOOKINGS SEEN ── */
 export async function markBookingsSeen() {
   const store = await cookies()

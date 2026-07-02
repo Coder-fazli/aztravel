@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { createBooking } from '@/lib/actions/bookings'
+import { sendEnquiry }   from '@/lib/actions/enquiries'
 import styles from './BookingWidget.module.css'
 
 type TimeSlot = {
@@ -14,6 +15,7 @@ type TimeSlot = {
 
 type Props = {
   tourId:              string
+  tourTitle:           string
   priceFinal:          number
   priceOriginal:       number
   currency:            string
@@ -40,15 +42,22 @@ function formatDate(d: Date) {
 }
 
 export default function BookingWidget({
-  tourId,
+  tourId, tourTitle,
   priceFinal, priceOriginal, currency, capacityMax,
   availableDates, timeSlots,
   cancellationFree, cancellationHours, payLater, bookedLast24h,
 }: Props) {
   const [step,          setStep]         = useState<Step>('select')
   const [result,        setResult]       = useState<BookingResult | null>(null)
+  const [showModal,     setShowModal]    = useState(false)
   const [isPending,     startTransition] = useTransition()
   const [formError,     setFormError]    = useState('')
+
+  // enquiry
+  const [enquiryOpen,    setEnquiryOpen]    = useState(false)
+  const [enquirySent,    setEnquirySent]    = useState(false)
+  const [enquiryError,   setEnquiryError]   = useState('')
+  const [enquirySending, setEnquirySending] = useState(false)
 
   const [adults,        setAdults]        = useState(1)
   const [children,      setChildren]      = useState(0)
@@ -94,6 +103,22 @@ export default function BookingWidget({
     setGuestOpen(false)
   }
 
+  async function handleEnquiry(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setEnquiryError('')
+    setEnquirySending(true)
+    try {
+      const fd = new FormData(e.currentTarget)
+      fd.set('tourTitle', tourTitle)
+      await sendEnquiry(fd)
+      setEnquirySent(true)
+    } catch {
+      setEnquiryError('Something went wrong. Please try again.')
+    } finally {
+      setEnquirySending(false)
+    }
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setFormError('')
@@ -108,6 +133,7 @@ export default function BookingWidget({
         const res = await createBooking(fd)
         setResult(res)
         setStep('confirmed')
+        setShowModal(true)
       } catch {
         setFormError('Something went wrong. Please try again.')
       }
@@ -117,18 +143,77 @@ export default function BookingWidget({
   /* ── CONFIRMED SCREEN ── */
   if (step === 'confirmed' && result) {
     return (
-      <div className={styles.widget}>
-        <div className={styles.confirmedIcon}>✓</div>
-        <h3 className={styles.confirmedTitle}>Booking Confirmed!</h3>
-        <p className={styles.confirmedRef}>{result.bookingRef}</p>
-        <p className={styles.confirmedText}>
-          A confirmation has been sent to your email. We'll be in touch shortly.
-        </p>
-        <div className={styles.confirmedSummary}>
-          <span>{result.tourTitle}</span>
-          <span className={styles.confirmedPrice}>{result.totalPrice} {result.currency}</span>
+      <>
+        {/* compact sidebar card */}
+        <div className={styles.widget}>
+          <div className={styles.confirmedIcon}>✓</div>
+          <h3 className={styles.confirmedTitle}>Booking Confirmed!</h3>
+          <p className={styles.confirmedRef}>{result.bookingRef}</p>
+          <p className={styles.confirmedText}>
+            A confirmation has been sent to your email. We'll be in touch shortly.
+          </p>
+          <div className={styles.confirmedSummary}>
+            <span>{result.tourTitle}</span>
+            <span className={styles.confirmedPrice}>{result.totalPrice} {result.currency}</span>
+          </div>
+          <button className={styles.viewDetailsBtn} onClick={() => setShowModal(true)}>
+            View confirmation details
+          </button>
         </div>
-      </div>
+
+        {/* full-screen modal */}
+        {showModal && (
+          <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
+            <div className={styles.modal} onClick={e => e.stopPropagation()}>
+              <button className={styles.modalClose} onClick={() => setShowModal(false)}>×</button>
+
+              <div className={styles.modalIcon}>✓</div>
+              <h2 className={styles.modalTitle}>Booking Confirmed!</h2>
+              <p className={styles.modalSub}>Your spot is reserved. Check your inbox for the full receipt.</p>
+
+              <div className={styles.modalRef}>{result.bookingRef}</div>
+
+              <div className={styles.modalCard}>
+                <div className={styles.modalRow}>
+                  <span className={styles.modalKey}>Tour</span>
+                  <span className={styles.modalVal}>{result.tourTitle}</span>
+                </div>
+                {selectedDate && (
+                  <div className={styles.modalRow}>
+                    <span className={styles.modalKey}>Date</span>
+                    <span className={styles.modalVal}>{formatDate(selectedDate)}</span>
+                  </div>
+                )}
+                {selectedTime && (
+                  <div className={styles.modalRow}>
+                    <span className={styles.modalKey}>Time</span>
+                    <span className={styles.modalVal}>{selectedTime}</span>
+                  </div>
+                )}
+                <div className={styles.modalRow}>
+                  <span className={styles.modalKey}>Guests</span>
+                  <span className={styles.modalVal}>
+                    {adults} Adult{adults !== 1 ? 's' : ''}
+                    {children > 0 ? ` · ${children} Child${children !== 1 ? 'ren' : ''}` : ''}
+                  </span>
+                </div>
+                <div className={`${styles.modalRow} ${styles.modalRowTotal}`}>
+                  <span className={styles.modalKey}>Total</span>
+                  <span className={styles.modalTotal}>{result.totalPrice} {result.currency}</span>
+                </div>
+              </div>
+
+              <p className={styles.modalNote}>
+                Save your reference number — you'll need it if you contact us.
+              </p>
+
+              <button className={styles.modalDone} onClick={() => setShowModal(false)}>
+                Got it
+              </button>
+            </div>
+          </div>
+        )}
+      </>
     )
   }
 
@@ -325,7 +410,7 @@ export default function BookingWidget({
         {selectedDate ? 'Book now' : 'Check availability'}
       </button>
 
-      <button type="button" className={styles.ctaSecondary}>
+      <button type="button" className={styles.ctaSecondary} onClick={() => { setEnquiryOpen(true); setEnquirySent(false); setEnquiryError('') }}>
         Make enquiry
       </button>
 
@@ -344,6 +429,60 @@ export default function BookingWidget({
           </div>
         )}
       </div>
+
+      {/* enquiry modal */}
+      {enquiryOpen && (
+        <div className={styles.modalOverlay} onClick={() => setEnquiryOpen(false)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <button className={styles.modalClose} onClick={() => setEnquiryOpen(false)}>×</button>
+
+            {enquirySent ? (
+              <>
+                <div className={styles.modalIcon} style={{ background: '#e6f4ff', color: '#1d6fa4' }}>✉</div>
+                <h2 className={styles.modalTitle}>Enquiry sent!</h2>
+                <p className={styles.modalSub}>
+                  We received your message and will get back to you within 24 hours.
+                </p>
+                <button className={styles.modalDone} onClick={() => setEnquiryOpen(false)}>
+                  Close
+                </button>
+              </>
+            ) : (
+              <>
+                <h2 className={styles.modalTitle}>Make an enquiry</h2>
+                {tourTitle && (
+                  <p className={styles.modalSub}>About: <strong>{tourTitle}</strong></p>
+                )}
+                <form onSubmit={handleEnquiry} className={styles.enquiryForm}>
+                  <div className={styles.enquiryRow}>
+                    <div className={styles.formField}>
+                      <label className={styles.formLabel}>Full name *</label>
+                      <input name="name" required className={styles.formInput} placeholder="Your name" />
+                    </div>
+                    <div className={styles.formField}>
+                      <label className={styles.formLabel}>Email *</label>
+                      <input name="email" type="email" required className={styles.formInput} placeholder="your@email.com" />
+                    </div>
+                  </div>
+                  <div className={styles.formField}>
+                    <label className={styles.formLabel}>Phone</label>
+                    <input name="phone" type="tel" className={styles.formInput} placeholder="+994 ..." />
+                  </div>
+                  <div className={styles.formField}>
+                    <label className={styles.formLabel}>Message *</label>
+                    <textarea name="message" required className={styles.formTextarea} rows={4}
+                      placeholder="Tell us your travel dates, group size, or any questions…" />
+                  </div>
+                  {enquiryError && <p className={styles.formError}>{enquiryError}</p>}
+                  <button type="submit" className={styles.modalDone} disabled={enquirySending}>
+                    {enquirySending ? 'Sending…' : 'Send enquiry'}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
