@@ -282,6 +282,6 @@ function CheckIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="var(--primary-13)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
       <polyline points="2 7 5.5 10.5 12 3.5"/>
-    </svg>
+\    </svg>
   )
 }
