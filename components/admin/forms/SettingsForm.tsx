@@ -28,8 +28,9 @@ const DEFAULT_HERO_SLIDES: HeroSlide[] = [
 ]
 
 export default function SettingsForm({ settings }: { settings: any }) {
-  const [dirty, setDirty] = useState(false)
-  const [activeLoc, setActiveLoc] = useState<string>(routing.defaultLocale)
+  const [dirty,       setDirty]      = useState(false)
+  const [activeLoc,   setActiveLoc]  = useState<string>(routing.defaultLocale)
+  const [sliderOpen,  setSliderOpen] = useState(false)
 
   // controlled meta values (all locales) so the preview updates live + all submit
   const [vals, setVals] = useState<Record<string, string>>(() => {
@@ -143,58 +144,70 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* ── hero slider ── */}
       <div className={styles.panel}>
-        <span className={styles.panelLabel}>Hero slider</span>
-        {heroSlides.length === 0 && (
-          <p className={styles.hint}>
-            No slides yet. Image is shared across languages; title, button text and button link are per language.
-          </p>
-        )}
+        <button
+          type="button"
+          className={styles.collapseToggle}
+          onClick={() => setSliderOpen(o => !o)}
+        >
+          <span className={styles.panelLabel}>Hero slider</span>
+          <span className={`${styles.collapseChevron} ${sliderOpen ? styles.collapseChevronOpen : ''}`}>›</span>
+        </button>
 
-        {heroSlides.map((slide, i) => (
-          <div className={styles.slideCard} key={i}>
-            <div className={styles.slideHead}>
-              <strong>Slide {i + 1}</strong>
-              <button type="button" className={styles.removeSlide} onClick={() => removeSlide(i)}>
-                Remove
-              </button>
-            </div>
+        {sliderOpen && (
+          <div className={styles.collapseBody}>
+            {heroSlides.length === 0 && (
+              <p className={styles.hint}>
+                No slides yet. Image is shared across languages; title, button text and link are per language.
+              </p>
+            )}
 
-            <CoverImageUpload
-              defaultValue={slide.image}
-              onValueChange={(url) => setSlideImage(i, url)}
-            />
-
-            {routing.locales.map((loc) => {
-              const ldir = loc === 'ar' ? 'rtl' : 'ltr'
-              return (
-                <div className={styles.slideLang} key={loc}>
-                  <span className={styles.langTag}>{LABELS[loc] ?? loc}</span>
-                  <input
-                    dir={ldir}
-                    value={slide.title?.[loc] ?? ''}
-                    onChange={(e) => setSlideField(i, 'title', loc, e.target.value)}
-                    placeholder="Slide title"
-                  />
-                  <div className={styles.slideRow}>
-                    <input
-                      dir={ldir}
-                      value={slide.buttonText?.[loc] ?? ''}
-                      onChange={(e) => setSlideField(i, 'buttonText', loc, e.target.value)}
-                      placeholder="Button text (e.g. Explore)"
-                    />
-                    <input
-                      value={slide.buttonLink?.[loc] ?? ''}
-                      onChange={(e) => setSlideField(i, 'buttonLink', loc, e.target.value)}
-                      placeholder="Button link (opens in new tab)"
-                    />
-                  </div>
+            {heroSlides.map((slide, i) => (
+              <div className={styles.slideCard} key={i}>
+                <div className={styles.slideHead}>
+                  <strong>Slide {i + 1}</strong>
+                  <button type="button" className={styles.removeSlide} onClick={() => removeSlide(i)}>
+                    Remove
+                  </button>
                 </div>
-              )
-            })}
-          </div>
-        ))}
 
-        <button type="button" className={styles.addSlide} onClick={addSlide}>+ Add slide</button>
+                <CoverImageUpload
+                  defaultValue={slide.image}
+                  onValueChange={(url) => setSlideImage(i, url)}
+                />
+
+                {routing.locales.map((loc) => {
+                  const ldir = loc === 'ar' ? 'rtl' : 'ltr'
+                  return (
+                    <div className={styles.slideLang} key={loc}>
+                      <span className={styles.langTag}>{LABELS[loc] ?? loc}</span>
+                      <input
+                        dir={ldir}
+                        value={slide.title?.[loc] ?? ''}
+                        onChange={(e) => setSlideField(i, 'title', loc, e.target.value)}
+                        placeholder="Slide title"
+                      />
+                      <div className={styles.slideRow}>
+                        <input
+                          dir={ldir}
+                          value={slide.buttonText?.[loc] ?? ''}
+                          onChange={(e) => setSlideField(i, 'buttonText', loc, e.target.value)}
+                          placeholder="Button text (e.g. Explore)"
+                        />
+                        <input
+                          value={slide.buttonLink?.[loc] ?? ''}
+                          onChange={(e) => setSlideField(i, 'buttonLink', loc, e.target.value)}
+                          placeholder="Button link (e.g. /tours)"
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            ))}
+
+            <button type="button" className={styles.addSlide} onClick={addSlide}>+ Add slide</button>
+          </div>
+        )}
       </div>
 
       {/* slides submit as one JSON field */}

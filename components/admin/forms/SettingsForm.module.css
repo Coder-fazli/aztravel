@@ -110,6 +110,36 @@
 
 .hint { margin: 0; font-size: 12px; color: var(--base-8); }
 
+/* collapse toggle (hero slider) */
+.collapseToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.collapseChevron {
+  font-size: 18px;
+  color: var(--base-8);
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+  line-height: 1;
+}
+.collapseChevronOpen {
+  transform: rotate(90deg);
+}
+.collapseBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #eef0f3;
+}
+
 /* ── hero slide cards ── */
 .slideCard {
   border: 1px solid #e4e4ec;
