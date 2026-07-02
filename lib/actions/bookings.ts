@@ -5,6 +5,7 @@ import Booking            from '@/lib/db/models/Booking'
 import Tour               from '@/lib/db/models/Tour'
 import { sendBookingConfirmation } from '@/lib/email/bookingConfirmation'
 import { revalidatePath } from 'next/cache'
+import { cookies }        from 'next/headers'
 
 function generateRef() {
   const year = new Date().getFullYear()
@@ -97,6 +98,22 @@ export async function getBookings(status?: string) {
 export async function getPendingCount() {
   await connectDb()
   return Booking.countDocuments({ status: 'pending' })
+}
+
+/* ── ADMIN: MARK BOOKINGS SEEN ── */
+export async function markBookingsSeen() {
+  const store = await cookies()
+  store.set('bookings_last_seen', Date.now().toString(), {
+    httpOnly: true,
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+  })
+}
+
+/* ── ADMIN: NEW BOOKINGS COUNT (since last seen) ── */
+export async function getNewBookingsCount(since: Date) {
+  await connectDb()
+  return Booking.countDocuments({ createdAt: { $gt: since } })
 }
 
 /* ── ADMIN: UPDATE STATUS ── */

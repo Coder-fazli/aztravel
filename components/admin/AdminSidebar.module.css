@@ -63,14 +63,36 @@
 }
 .item:hover { background: #f5f5f7; color: var(--base-13); }
 
-.icon {
+.iconWrap {
+  position: relative;
   width: 19px;
   height: 19px;
   flex-shrink: 0;
+}
+.icon {
+  width: 19px;
+  height: 19px;
   color: #9a9aa6;
   transition: color 0.18s ease;
 }
 .item:hover .icon { color: var(--base-13); }
+
+/* green new-bookings dot on the icon */
+.dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 1.5px solid var(--base-1);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+  50%       { box-shadow: 0 0 0 4px rgba(34,197,94,0); }
+}
 
 .active {
   background: var(--primary-12);
