@@ -127,6 +127,9 @@ export default function BlogForm({
               slug={slug}
               defaultMetaTitle={post?.metaTitle ?? ''}
               defaultMetaDescription={post?.metaDescription ?? ''}
+              defaultNoindex={post?.noindex ?? false}
+              defaultNofollow={post?.nofollow ?? false}
+              defaultCanonical={post?.canonicalUrl ?? ''}
               onChange={() => setIsDirty(true)}
             />
           </div>

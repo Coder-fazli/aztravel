@@ -7,17 +7,20 @@ import { useLocale } from 'next-intl'
 import GlobeIcon from '@/components/ui/GlobeIcon'
 import styles from './Navbar.module.css'
 
-const navLinks = [
-  { label: 'Home',       href: '/' },
-  { label: 'Tours',      href: '/tours' },
-  { label: 'Catalog',    href: '/catalog' },
-  { label: 'Rent a car', href: '/rent-a-car' },
-  { label: 'E-visa',     href: '/e-visa' },
-  { label: 'Blog',       href: '/blog' },
-  { label: 'Shop',       href: '/shops' },
+type NavItem = { label: string; href: string; visible: boolean }
+
+const DEFAULT_NAV: NavItem[] = [
+  { label: 'Home',       href: '/',           visible: true },
+  { label: 'Tours',      href: '/tours',      visible: true },
+  { label: 'Catalog',    href: '/catalog',    visible: true },
+  { label: 'Rent a car', href: '/rent-a-car', visible: true },
+  { label: 'E-visa',     href: '/e-visa',     visible: true },
+  { label: 'Blog',       href: '/blog',       visible: true },
+  { label: 'Shop',       href: '/shops',      visible: true },
 ]
 
-export default function Navbar({ logo }: { logo?: string }) {
+export default function Navbar({ logo, navItems }: { logo?: string; navItems?: NavItem[] }) {
+  const navLinks = (navItems?.length ? navItems : DEFAULT_NAV).filter(x => x.visible)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()

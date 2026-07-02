@@ -156,3 +156,114 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+/* noindex warning badge (shown in sidebar) */
+.robotsBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 600;
+  color: #b07200;
+  background: #fff8e6;
+  border: 1px solid #f5d67a;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 8px;
+}
+.robotsDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b07200;
+  flex-shrink: 0;
+}
+
+/* ── modal tabs ── */
+.modalTabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: #f1f1f4;
+  border-radius: 10px;
+  align-self: flex-start;
+  margin-bottom: 18px;
+  width: fit-content;
+}
+.modalTab {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--base-8);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.modalTab:hover { color: var(--base-13); }
+.modalTabActive {
+  background: #fff;
+  color: var(--base-13);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* ── advanced tab ── */
+.advanced {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.advancedSection {
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--base-8);
+  margin: 0 0 12px;
+}
+
+.checkRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f2f3f5;
+  cursor: pointer;
+}
+.checkRow:last-of-type { border-bottom: none; }
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--primary-13);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.checkLabel {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--base-13);
+  display: block;
+  margin-bottom: 3px;
+}
+.checkHint {
+  font-family: var(--font-family);
+  font-size: 12px;
+  color: var(--base-8);
+  margin: 0;
+  line-height: 18px;
+}
+.checkHint code {
+  font-family: monospace;
+  background: #f1f1f4;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+}

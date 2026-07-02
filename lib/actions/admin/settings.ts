@@ -21,12 +21,23 @@ export async function saveSettingsFromForm(formData: FormData) {
     if (raw) heroSlides = JSON.parse(raw)
   } catch {}
 
+  // parse nav items
+  let navItems: any[] = []
+  try {
+    const raw = get('navItems')
+    if (raw) navItems = JSON.parse(raw)
+  } catch {}
+
   await updateSettings({
     metaTitle,
     metaDescription,
-    logo:       get('logo'),
-    favicon:    get('favicon'),
+    logo:           get('logo'),
+    favicon:        get('favicon'),
     heroSlides,
+    robotsNoindex:  get('robotsNoindex')  === 'true',
+    robotsNofollow: get('robotsNofollow') === 'true',
+    canonicalUrl:   get('canonicalUrl'),
+    navItems,
   })
 
   redirect('/admin/home')

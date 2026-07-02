@@ -41,8 +41,11 @@ function formToBlog(formData: FormData) {
         excerpt: parseJson(get('excerpt')),
         content,
 
-        metaTitle: get('metaTitle'),
+        metaTitle:       get('metaTitle'),
         metaDescription: get('metaDescription'),
+        noindex:         get('noindex')   === 'true',
+        nofollow:        get('nofollow')  === 'true',
+        canonicalUrl:    get('canonicalUrl'),
 
         translationGroupId: get('translationGroupId') ||
                             randomUUID(),

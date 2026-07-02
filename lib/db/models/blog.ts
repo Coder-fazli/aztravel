@@ -11,8 +11,11 @@ export const BlogSchema = new Schema({
     content: { type: Schema.Types.Mixed, default: null },
 
     // SEO (Rank Math-style snippet)
-    metaTitle: { type: String, default: '' },
-    metaDescription: { type: String, default: '' },
+    metaTitle:       { type: String,  default: '' },
+    metaDescription: { type: String,  default: '' },
+    noindex:         { type: Boolean, default: false },
+    nofollow:        { type: Boolean, default: false },
+    canonicalUrl:    { type: String,  default: '' },
 
     translationGroupId: { type: String, required: true },
 

@@ -10,9 +10,20 @@ const LABELS: Record<string, string> = { en: 'English', es: 'Español', ar: 'ا�
 const T_MAX = 60
 const D_MAX = 160
 
-// current hardcoded defaults (so the admin shows the existing logo/favicon/slides)
-const DEFAULT_LOGO = '/images/nav-logo-icon.svg'
+const DEFAULT_LOGO    = '/images/nav-logo-icon.svg'
 const DEFAULT_FAVICON = '/favicon.ico'
+
+type NavItem = { label: string; href: string; visible: boolean }
+
+const DEFAULT_NAV_ITEMS: NavItem[] = [
+  { label: 'Home',       href: '/',           visible: true },
+  { label: 'Tours',      href: '/tours',      visible: true },
+  { label: 'Catalog',    href: '/catalog',    visible: true },
+  { label: 'Rent a car', href: '/rent-a-car', visible: true },
+  { label: 'E-visa',     href: '/e-visa',     visible: true },
+  { label: 'Blog',       href: '/blog',       visible: true },
+  { label: 'Shop',       href: '/shops',      visible: true },
+]
 
 type HeroSlide = {
   image: string
@@ -31,6 +42,32 @@ export default function SettingsForm({ settings }: { settings: any }) {
   const [dirty,       setDirty]      = useState(false)
   const [activeLoc,   setActiveLoc]  = useState<string>(routing.defaultLocale)
   const [sliderOpen,  setSliderOpen] = useState(false)
+  const [seoTab,      setSeoTab]     = useState<'snippet' | 'advanced'>('snippet')
+  const [noindex,     setNoindex]    = useState<boolean>(settings?.robotsNoindex  ?? false)
+  const [nofollow,    setNofollow]   = useState<boolean>(settings?.robotsNofollow ?? false)
+  const [canonical,   setCanonical]  = useState<string>(settings?.canonicalUrl    ?? '')
+
+  const [navItems, setNavItems] = useState<NavItem[]>(
+    Array.isArray(settings?.navItems) && settings.navItems.length
+      ? settings.navItems
+      : DEFAULT_NAV_ITEMS
+  )
+
+  const toggleNav    = (i: number) => { setNavItems(v => v.map((x, idx) => idx === i ? { ...x, visible: !x.visible } : x)); setDirty(true) }
+  const setNavLabel  = (i: number, val: string) => { setNavItems(v => v.map((x, idx) => idx === i ? { ...x, label: val } : x)); setDirty(true) }
+  const setNavHref   = (i: number, val: string) => { setNavItems(v => v.map((x, idx) => idx === i ? { ...x, href: val } : x)); setDirty(true) }
+  const removeNav    = (i: number) => { setNavItems(v => v.filter((_, idx) => idx !== i)); setDirty(true) }
+  const addNav       = () => { setNavItems(v => [...v, { label: '', href: '/', visible: true }]); setDirty(true) }
+  const moveNav      = (i: number, dir: -1 | 1) => {
+    setNavItems(v => {
+      const a = [...v]
+      const j = i + dir
+      if (j < 0 || j >= a.length) return a
+      ;[a[i], a[j]] = [a[j], a[i]]
+      return a
+    })
+    setDirty(true)
+  }
 
   // controlled meta values (all locales) so the preview updates live + all submit
   const [vals, setVals] = useState<Record<string, string>>(() => {
@@ -88,58 +125,90 @@ export default function SettingsForm({ settings }: { settings: any }) {
       <div className={styles.panel}>
         <span className={styles.panelLabel}>SEO</span>
 
+        {/* snippet / advanced mode tabs */}
         <div className={styles.tabs}>
-          {routing.locales.map((loc) => (
-            <button
-              type="button"
-              key={loc}
-              className={`${styles.tab} ${activeLoc === loc ? styles.tabActive : ''}`}
-              onClick={() => setActiveLoc(loc)}
-            >
-              {LABELS[loc] ?? loc}
-            </button>
-          ))}
+          <button type="button" className={`${styles.tab} ${seoTab === 'snippet'  ? styles.tabActive : ''}`} onClick={() => setSeoTab('snippet')}>Snippet</button>
+          <button type="button" className={`${styles.tab} ${seoTab === 'advanced' ? styles.tabActive : ''}`} onClick={() => setSeoTab('advanced')}>Advanced</button>
         </div>
 
-        {/* live Google snippet for the active language */}
-        <div className={styles.preview}>
-          <div className={styles.pUrl}>azerbaijantravel.com{urlPath}</div>
-          <div className={styles.pTitle}>{t || 'Your title appears here'}</div>
-          <div className={styles.pDesc}>{d || 'Your meta description appears here.'}</div>
-        </div>
+        {seoTab === 'snippet' && (
+          <>
+            {/* language tabs */}
+            <div className={styles.tabs}>
+              {routing.locales.map((loc) => (
+                <button type="button" key={loc}
+                  className={`${styles.tab} ${activeLoc === loc ? styles.tabActive : ''}`}
+                  onClick={() => setActiveLoc(loc)}
+                >
+                  {LABELS[loc] ?? loc}
+                </button>
+              ))}
+            </div>
 
-        <label className={styles.field}>
-          <div className={styles.labelRow}>
-            <span>Meta title</span>
-            <span className={t.length > T_MAX ? styles.over : styles.count}>{t.length} / {T_MAX}</span>
+            {/* live Google snippet */}
+            <div className={styles.preview}>
+              <div className={styles.pUrl}>azerbaijantravel.com{urlPath}</div>
+              <div className={styles.pTitle}>{t || 'Your title appears here'}</div>
+              <div className={styles.pDesc}>{d || 'Your meta description appears here.'}</div>
+            </div>
+
+            <label className={styles.field}>
+              <div className={styles.labelRow}>
+                <span>Meta title</span>
+                <span className={t.length > T_MAX ? styles.over : styles.count}>{t.length} / {T_MAX}</span>
+              </div>
+              <input dir={dir} value={t} onChange={(e) => set(`metaTitle_${activeLoc}`, e.target.value)} placeholder="AzTravel — Discover Azerbaijan" />
+            </label>
+
+            <label className={styles.field}>
+              <div className={styles.labelRow}>
+                <span>Meta description</span>
+                <span className={d.length > D_MAX ? styles.over : styles.count}>{d.length} / {D_MAX}</span>
+              </div>
+              <textarea dir={dir} rows={3} value={d} onChange={(e) => set(`metaDescription_${activeLoc}`, e.target.value)} placeholder="Plan your trip to Azerbaijan — tours, e-visa, destinations…" />
+            </label>
+          </>
+        )}
+
+        {seoTab === 'advanced' && (
+          <div className={styles.advancedSeo}>
+            <p className={styles.advancedSeoSection}>Robots</p>
+
+            <label className={styles.checkRow}>
+              <input type="checkbox" className={styles.checkbox} checked={noindex}
+                onChange={(e) => { setNoindex(e.target.checked); setDirty(true) }} />
+              <div>
+                <span className={styles.checkLabel}>No index</span>
+                <p className={styles.checkHint}>Adds <code>noindex</code> — hides the home page from search engines.</p>
+              </div>
+            </label>
+
+            <label className={styles.checkRow}>
+              <input type="checkbox" className={styles.checkbox} checked={nofollow}
+                onChange={(e) => { setNofollow(e.target.checked); setDirty(true) }} />
+              <div>
+                <span className={styles.checkLabel}>No follow</span>
+                <p className={styles.checkHint}>Adds <code>nofollow</code> — tells crawlers not to follow links from the home page.</p>
+              </div>
+            </label>
+
+            <p className={styles.advancedSeoSection} style={{ marginTop: 20 }}>Canonical URL</p>
+            <label className={styles.field}>
+              <input value={canonical} placeholder="https://azerbaijantravel.com/"
+                onChange={(e) => { setCanonical(e.target.value); setDirty(true) }} />
+              <p className={styles.hint}>Leave blank to use the default. Only set if you have duplicate content issues.</p>
+            </label>
           </div>
-          <input
-            dir={dir}
-            value={t}
-            onChange={(e) => set(`metaTitle_${activeLoc}`, e.target.value)}
-            placeholder="AzTravel — Discover Azerbaijan"
-          />
-        </label>
+        )}
 
-        <label className={styles.field}>
-          <div className={styles.labelRow}>
-            <span>Meta description</span>
-            <span className={d.length > D_MAX ? styles.over : styles.count}>{d.length} / {D_MAX}</span>
-          </div>
-          <textarea
-            dir={dir}
-            rows={3}
-            value={d}
-            onChange={(e) => set(`metaDescription_${activeLoc}`, e.target.value)}
-            placeholder="Plan your trip to Azerbaijan — tours, e-visa, destinations…"
-          />
-        </label>
-
-        {/* hidden inputs carry EVERY language's value to the form on submit */}
+        {/* hidden inputs — every language's value + robots */}
         {routing.locales.flatMap((loc) => [
-          <input key={`mt-${loc}`} type="hidden" name={`metaTitle_${loc}`} value={vals[`metaTitle_${loc}`] ?? ''} readOnly />,
-          <input key={`md-${loc}`} type="hidden" name={`metaDescription_${loc}`} value={vals[`metaDescription_${loc}`] ?? ''} readOnly />,
+          <input key={`mt-${loc}`}  type="hidden" name={`metaTitle_${loc}`}       value={vals[`metaTitle_${loc}`] ?? ''}        readOnly />,
+          <input key={`md-${loc}`}  type="hidden" name={`metaDescription_${loc}`} value={vals[`metaDescription_${loc}`] ?? ''}  readOnly />,
         ])}
+        <input type="hidden" name="robotsNoindex"  value={noindex  ? 'true' : 'false'} readOnly />
+        <input type="hidden" name="robotsNofollow" value={nofollow ? 'true' : 'false'} readOnly />
+        <input type="hidden" name="canonicalUrl"   value={canonical}                   readOnly />
       </div>
 
       {/* ── hero slider ── */}
@@ -212,6 +281,42 @@ export default function SettingsForm({ settings }: { settings: any }) {
 
       {/* slides submit as one JSON field */}
       <input type="hidden" name="heroSlides" value={JSON.stringify(heroSlides)} readOnly />
+
+      {/* ── navigation menu ── */}
+      <div className={styles.panel}>
+        <span className={styles.panelLabel}>Navigation menu</span>
+
+        <div className={styles.navList}>
+          {navItems.map((item, i) => (
+            <div key={i} className={`${styles.navRow} ${!item.visible ? styles.navRowHidden : ''}`}>
+              <div className={styles.navMoveCol}>
+                <button type="button" className={styles.navMove} onClick={() => moveNav(i, -1)} disabled={i === 0} title="Move up">↑</button>
+                <button type="button" className={styles.navMove} onClick={() => moveNav(i, 1)}  disabled={i === navItems.length - 1} title="Move down">↓</button>
+              </div>
+              <input
+                className={styles.navInput}
+                value={item.label}
+                onChange={(e) => setNavLabel(i, e.target.value)}
+                placeholder="Label"
+              />
+              <input
+                className={`${styles.navInput} ${styles.navHrefInput}`}
+                value={item.href}
+                onChange={(e) => setNavHref(i, e.target.value)}
+                placeholder="/path"
+              />
+              <label className={styles.navToggle} title={item.visible ? 'Visible' : 'Hidden'}>
+                <input type="checkbox" checked={item.visible} onChange={() => toggleNav(i)} />
+                <span className={styles.navToggleSlider} />
+              </label>
+              <button type="button" className={styles.navRemove} onClick={() => removeNav(i)} title="Remove">×</button>
+            </div>
+          ))}
+        </div>
+
+        <button type="button" className={styles.addSlide} onClick={addNav}>+ Add menu item</button>
+        <input type="hidden" name="navItems" value={JSON.stringify(navItems)} readOnly />
+      </div>
 
       {/* branding */}
       <div className={styles.panel}>

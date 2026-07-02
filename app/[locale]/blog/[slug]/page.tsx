@@ -32,7 +32,14 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { languages },
+    robots: (post.noindex || post.nofollow) ? {
+      index:  !post.noindex,
+      follow: !post.nofollow,
+    } : undefined,
+    alternates: {
+      canonical: post.canonicalUrl || undefined,
+      languages,
+    },
     openGraph: {
       title,
       description,

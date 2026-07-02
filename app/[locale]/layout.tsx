@@ -22,7 +22,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <Navbar logo={settings?.logo || undefined} />
+      <Navbar logo={settings?.logo || undefined} navItems={settings?.navItems || undefined} />
       <main>{children}</main>
       <Footer />
     </NextIntlClientProvider>
