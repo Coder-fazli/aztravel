@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
+import { createBooking } from '@/lib/actions/bookings'
 import styles from './BookingWidget.module.css'
 
 type TimeSlot = {
@@ -12,6 +13,7 @@ type TimeSlot = {
 }
 
 type Props = {
+  tourId:              string
   priceFinal:          number
   priceOriginal:       number
   currency:            string
@@ -24,6 +26,9 @@ type Props = {
   bookedLast24h:       number
 }
 
+type Step = 'select' | 'checkout' | 'confirmed'
+type BookingResult = { bookingRef: string; tourTitle: string; totalPrice: number; currency: string }
+
 function isSameDay(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
@@ -35,10 +40,16 @@ function formatDate(d: Date) {
 }
 
 export default function BookingWidget({
+  tourId,
   priceFinal, priceOriginal, currency, capacityMax,
   availableDates, timeSlots,
   cancellationFree, cancellationHours, payLater, bookedLast24h,
 }: Props) {
+  const [step,          setStep]         = useState<Step>('select')
+  const [result,        setResult]       = useState<BookingResult | null>(null)
+  const [isPending,     startTransition] = useTransition()
+  const [formError,     setFormError]    = useState('')
+
   const [adults,        setAdults]        = useState(1)
   const [children,      setChildren]      = useState(0)
   const [draftAdults,   setDraftAdults]   = useState(1)
@@ -81,6 +92,84 @@ export default function BookingWidget({
     setAdults(draftAdults)
     setChildren(draftChildren)
     setGuestOpen(false)
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setFormError('')
+    const fd = new FormData(e.currentTarget)
+    fd.set('tourId',   tourId)
+    fd.set('date',     selectedDate!.toISOString())
+    fd.set('timeSlot', selectedTime ?? '')
+    fd.set('adults',   String(adults))
+    fd.set('children', String(children))
+    startTransition(async () => {
+      try {
+        const res = await createBooking(fd)
+        setResult(res)
+        setStep('confirmed')
+      } catch {
+        setFormError('Something went wrong. Please try again.')
+      }
+    })
+  }
+
+  /* ── CONFIRMED SCREEN ── */
+  if (step === 'confirmed' && result) {
+    return (
+      <div className={styles.widget}>
+        <div className={styles.confirmedIcon}>✓</div>
+        <h3 className={styles.confirmedTitle}>Booking Confirmed!</h3>
+        <p className={styles.confirmedRef}>{result.bookingRef}</p>
+        <p className={styles.confirmedText}>
+          A confirmation has been sent to your email. We'll be in touch shortly.
+        </p>
+        <div className={styles.confirmedSummary}>
+          <span>{result.tourTitle}</span>
+          <span className={styles.confirmedPrice}>{result.totalPrice} {result.currency}</span>
+        </div>
+      </div>
+    )
+  }
+
+  /* ── CHECKOUT FORM ── */
+  if (step === 'checkout') {
+    return (
+      <div className={styles.widget}>
+        <button type="button" className={styles.backBtn} onClick={() => setStep('select')}>
+          ← Back
+        </button>
+        <h3 className={styles.checkoutTitle}>Your details</h3>
+        <div className={styles.checkoutSummary}>
+          <span>{selectedDate?.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</span>
+          <span>{adults + children} guest{adults + children !== 1 ? 's' : ''}</span>
+          <span className={styles.checkoutPrice}>{(adults + children) * priceFinal} {currency}</span>
+        </div>
+
+        <form onSubmit={handleSubmit} className={styles.checkoutForm}>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Full name *</label>
+            <input name="guestName" required className={styles.formInput} placeholder="Your name" />
+          </div>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Email *</label>
+            <input name="guestEmail" type="email" required className={styles.formInput} placeholder="your@email.com" />
+          </div>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Phone</label>
+            <input name="guestPhone" type="tel" className={styles.formInput} placeholder="+994 ..." />
+          </div>
+          <div className={styles.formField}>
+            <label className={styles.formLabel}>Notes</label>
+            <textarea name="notes" className={styles.formTextarea} rows={2} placeholder="Any special requests?" />
+          </div>
+          {formError && <p className={styles.formError}>{formError}</p>}
+          <button type="submit" className={styles.ctaPrimary} disabled={isPending}>
+            {isPending ? 'Submitting…' : 'Confirm booking'}
+          </button>
+        </form>
+      </div>
+    )
   }
 
   return (
@@ -231,6 +320,7 @@ export default function BookingWidget({
         type="button"
         className={styles.ctaPrimary}
         disabled={!selectedDate}
+        onClick={() => selectedDate && setStep('checkout')}
       >
         {selectedDate ? 'Book now' : 'Check availability'}
       </button>

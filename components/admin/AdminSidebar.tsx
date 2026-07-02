@@ -22,7 +22,7 @@ const nav = [
   { label: 'Users', href: '/admin/users', icon: 'users' },
 ]
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ pendingBookings = 0 }: { pendingBookings?: number }) {
   const pathname = usePathname()
 
   return (
@@ -38,6 +38,7 @@ export default function AdminSidebar() {
             item.href === '/admin'
               ? pathname === '/admin'
               : pathname.startsWith(item.href)
+          const isBookings = item.href === '/admin/bookings'
           return (
             <Link
               key={item.href}
@@ -46,6 +47,11 @@ export default function AdminSidebar() {
             >
               <SidebarIcon name={item.icon} className={styles.icon} />
               {item.label}
+              {isBookings && pendingBookings > 0 && (
+                <span className={`${styles.badge} ${active ? styles.badgeActive : ''}`}>
+                  {pendingBookings > 99 ? '99+' : pendingBookings}
+                </span>
+              )}
             </Link>
           )
         })}

@@ -199,6 +199,7 @@ export default async function TourDetailPage({ params }: { params: Params }) {
           {/* ── RIGHT STICKY SIDEBAR ── */}
           <aside className={styles.sidebar}>
             <BookingWidget
+              tourId={tour._id.toString()}
               priceFinal={tour.price?.final ?? 0}
               priceOriginal={tour.price?.original ?? 0}
               currency={tour.price?.currency ?? '$'}

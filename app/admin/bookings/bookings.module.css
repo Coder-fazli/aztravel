@@ -1,0 +1,161 @@
+.page {
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #eef0f3;
+  padding-bottom: 0;
+}
+.tab {
+  padding: 8px 18px;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--base-8);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab:hover { color: var(--base-13); }
+.tabActive { color: var(--primary-13); border-bottom-color: var(--primary-13); font-weight: 600; }
+
+/* table */
+.tableWrap {
+  background: var(--base-1);
+  border: 1px solid #eef0f3;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-family);
+  font-size: 13px;
+}
+.table thead tr {
+  background: #fafafa;
+  border-bottom: 1px solid #eef0f3;
+}
+.table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--base-8);
+  white-space: nowrap;
+}
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f2f3f5;
+  color: var(--base-13);
+  vertical-align: top;
+}
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover { background: #fafbfc; }
+
+.empty {
+  text-align: center;
+  color: var(--base-8);
+  padding: 48px 16px !important;
+  font-style: italic;
+}
+
+/* cells */
+.ref {
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--secondary-13);
+  background: #f4f4fe;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.tourCell { max-width: 200px; }
+.tourName {
+  font-weight: 600;
+  color: var(--base-13);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+.timeSlot {
+  font-size: 11px;
+  color: var(--base-8);
+  margin-top: 2px;
+  display: block;
+}
+
+.guestName  { font-weight: 600; margin: 0; }
+.guestEmail { font-size: 11px; color: var(--base-8); margin: 2px 0 0; }
+
+.price {
+  font-weight: 700;
+  color: var(--primary-13);
+  white-space: nowrap;
+}
+
+.muted { color: var(--base-8); font-size: 12px; }
+
+/* status badges */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.pending   { background: #fff8e6; color: #b07200; }
+.confirmed { background: #e6faf0; color: #1a7a45; }
+.cancelled { background: #fff0f0; color: #c23b3b; }
+
+/* action buttons */
+.actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.btnConfirm {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #1a7a45;
+  background: none;
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 600;
+  color: #1a7a45;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.btnConfirm:hover { background: #1a7a45; color: #fff; }
+
+.btnCancel {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #c23b3b;
+  background: none;
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: 600;
+  color: #c23b3b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.btnCancel:hover { background: #c23b3b; color: #fff; }

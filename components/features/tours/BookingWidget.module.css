@@ -276,6 +276,142 @@
   color: #fff;
 }
 
+/* ── back button ── */
+.backBtn {
+  background: none;
+  border: none;
+  font: 500 13px/20px var(--font-family);
+  color: var(--base-8);
+  cursor: pointer;
+  padding: 0;
+  align-self: flex-start;
+  transition: color 0.15s;
+}
+.backBtn:hover { color: var(--base-13); }
+
+/* ── checkout form ── */
+.checkoutTitle {
+  font: 700 18px/24px var(--font-family);
+  color: var(--base-13);
+  margin: 0;
+}
+.checkoutSummary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--base-2);
+  border-radius: 12px;
+  font: 500 13px/20px var(--font-family);
+  color: var(--base-8);
+  flex-wrap: wrap;
+}
+.checkoutPrice {
+  margin-left: auto;
+  font: 700 15px/20px var(--font-family);
+  color: var(--primary-13);
+}
+
+.checkoutForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.formLabel {
+  font: 600 12px/18px var(--font-family);
+  color: var(--base-8);
+}
+.formInput {
+  padding: 10px 14px;
+  border: 1.5px solid #d8dbe0;
+  border-radius: 10px;
+  background: #fff;
+  font: 400 14px/20px var(--font-family);
+  color: var(--base-13);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.formInput:focus { border-color: var(--primary-13); }
+.formInput::placeholder { color: #b0b4bc; }
+
+.formTextarea {
+  padding: 10px 14px;
+  border: 1.5px solid #d8dbe0;
+  border-radius: 10px;
+  background: #fff;
+  font: 400 14px/20px var(--font-family);
+  color: var(--base-13);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+.formTextarea:focus { border-color: var(--primary-13); }
+
+.formError {
+  font: 500 12px/18px var(--font-family);
+  color: var(--error-13);
+  margin: 0;
+}
+
+/* ── confirmed screen ── */
+.confirmedIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #e6faf0;
+  color: #1a7a45;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+}
+.confirmedTitle {
+  font: 700 20px/28px var(--font-family);
+  color: var(--base-13);
+  margin: 0;
+  text-align: center;
+}
+.confirmedRef {
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-13);
+  text-align: center;
+  letter-spacing: 1.5px;
+  margin: 0;
+  padding: 10px 16px;
+  background: #fef3f0;
+  border: 1.5px solid var(--primary-13);
+  border-radius: 10px;
+}
+.confirmedText {
+  font: 400 13px/20px var(--font-family);
+  color: var(--base-8);
+  text-align: center;
+  margin: 0;
+}
+.confirmedSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--base-2);
+  border-radius: 12px;
+  font: 500 13px/20px var(--font-family);
+  color: var(--base-13);
+}
+.confirmedPrice {
+  font: 700 15px/20px var(--font-family);
+  color: var(--primary-13);
+}
+
 /* perks */
 .perks {
   display: flex;
