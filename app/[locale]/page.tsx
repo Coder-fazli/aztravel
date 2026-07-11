@@ -39,10 +39,12 @@ export default async function HomePage({
 
   // resolve each slide's per-language text down to the active locale
   const heroSlides = (Array.isArray(s?.heroSlides) ? s.heroSlides : []).map((sl: any) => ({
-    image: sl.image || '',
-    title: sl.title?.[locale] || '',
-    buttonText: sl.buttonText?.[locale] || '',
-    buttonLink: sl.buttonLink?.[locale] || '',
+    // support both old single-image slides and new desktop/mobile split
+    imageDesktop: sl.imageDesktop || sl.image || '',
+    imageMobile:  sl.imageMobile  || sl.image || '',
+    title:        sl.title?.[locale]      || '',
+    buttonText:   sl.buttonText?.[locale] || '',
+    buttonLink:   sl.buttonLink?.[locale] || '',
   }))
 
   return (

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import BlogHeroSlider from '@/components/features/blog/BlogHeroSlider'
 import SectionHeadline from '@/components/features/home/SectionHeadline'
 import BlogCard from '@/components/features/home/BlogCard'
@@ -6,6 +7,13 @@ import { getBlogs } from '@/lib/actions/content'
 import { postUrl } from '@/lib/postUrl'
 import { tiptapText } from '@/lib/tiptapText'
 import styles from './page.module.css'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Azerbaijan Travel Blog — Tips, Guides & Destinations | AzTravel',
+    description: 'Read our Azerbaijan travel blog — best places to visit, travel tips, cultural guides, food recommendations and itinerary ideas.',
+  }
+}
 
 export default async function BlogArchivePage({
   params,

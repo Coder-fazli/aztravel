@@ -16,6 +16,8 @@ const SettingsSchema = new Schema (
         canonicalUrl:   { type: String,  default: '' },
         // navigation menu items: [{ label, href, visible }]
         navItems: { type: Schema.Types.Mixed, default: [] },
+        // downloadable e-book PDF
+        ebookUrl: { type: String, default: '' },
     },
     { timestamps: true }
 )

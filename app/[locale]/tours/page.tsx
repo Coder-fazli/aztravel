@@ -1,4 +1,5 @@
 import { Suspense }      from 'react'
+import type { Metadata } from 'next'
 import { getTours }      from '@/lib/actions/tours'
 import TourCard          from '@/components/features/tours/TourCard'
 import TourCardGrid      from '@/components/features/tours/TourCardGrid'
@@ -6,6 +7,13 @@ import TourFilters       from '@/components/features/tours/TourFilters'
 import ToursPagination   from '@/components/features/tours/ToursPagination'
 import ViewToggle        from '@/components/features/tours/ViewToggle'
 import styles            from './page.module.css'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Azerbaijan Tour Packages — Holidays & Day Trips | AzTravel',
+    description: 'Browse all Azerbaijan tour packages — Baku city tours, day trips, mountain adventures and cultural holidays. Book online with AzTravel.',
+  }
+}
 
 type Params = Promise<{ locale: string }>
 type SearchParams = Promise<{
@@ -62,7 +70,7 @@ export default async function ToursPage({
             <div className={styles.headlineText}>
               <h1 className={styles.title}>Holiday packages</h1>
               <p className={styles.subtitle}>
-                Integer fringilla tellus ullamcorper ac mauris potenti amet commodo amet enim.
+                Explore curated Azerbaijan tours — from Baku city breaks to mountain adventures and cultural escapes.
               </p>
             </div>
             <Suspense>

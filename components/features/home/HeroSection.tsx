@@ -4,12 +4,18 @@ import { useState, useEffect, useRef } from 'react'
 import styles from './HeroSection.module.css'
 
 // each field already resolved to the current locale by the page
-export type HeroSlide = { image: string; title: string; buttonText: string; buttonLink: string }
+export type HeroSlide = {
+  imageDesktop: string
+  imageMobile:  string
+  title:        string
+  buttonText:   string
+  buttonLink:   string
+}
 
 const FALLBACK: HeroSlide[] = [
-  { image: '/images/hero-slide-1.jpg', title: 'Enjoy exploring Azerbaijan and its nature!', buttonText: 'Explore', buttonLink: '/tours' },
-  { image: '/images/hero-slide-2.jpg', title: 'Everything you search for is here, hurry up!', buttonText: 'Explore', buttonLink: '/tours' },
-  { image: '/images/hero-slide-3.jpg', title: 'Azerbaijani culture, music, cuisine is waiting.', buttonText: 'Explore', buttonLink: '/tours' },
+  { imageDesktop: '/images/hero-slide-1.jpg', imageMobile: '/images/hero-slide-1.jpg', title: 'Enjoy exploring Azerbaijan and its nature!', buttonText: 'Explore', buttonLink: '/tours' },
+  { imageDesktop: '/images/hero-slide-2.jpg', imageMobile: '/images/hero-slide-2.jpg', title: 'Everything you search for is here, hurry up!', buttonText: 'Explore', buttonLink: '/tours' },
+  { imageDesktop: '/images/hero-slide-3.jpg', imageMobile: '/images/hero-slide-3.jpg', title: 'Azerbaijani culture, music, cuisine is waiting.', buttonText: 'Explore', buttonLink: '/tours' },
 ]
 
 export default function HeroSection({ slides: input }: { slides?: HeroSlide[] }) {
@@ -37,21 +43,26 @@ export default function HeroSection({ slides: input }: { slides?: HeroSlide[] })
     touchX.current = null
   }
 
-  const prevBg = slides[(active - 1 + slides.length) % slides.length].image
-  const nextBg = slides[(active + 1) % slides.length].image
+  const prevBg = slides[(active - 1 + slides.length) % slides.length].imageDesktop
+  const nextBg = slides[(active + 1) % slides.length].imageDesktop
 
   return (
     <section className={styles.hero} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
 
-      {/* FULLSCREEN BACKGROUND — LCP image: load eagerly with high priority */}
-      <img
-        src={slides[active].image}
-        alt=""
-        className={styles.slideBg}
-        fetchPriority="high"
-        loading="eager"
-        decoding="async"
-      />
+      {/* FULLSCREEN BACKGROUND — desktop vs mobile served via <picture> */}
+      <picture>
+        {slides[active].imageMobile && (
+          <source media="(max-width: 900px)" srcSet={slides[active].imageMobile} />
+        )}
+        <img
+          src={slides[active].imageDesktop}
+          alt=""
+          className={styles.slideBg}
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+        />
+      </picture>
       <div className={styles.slideOverlay} />
 
       {/* TITLE — changes per slide, positioned at Figma: x=232, y=235 */}

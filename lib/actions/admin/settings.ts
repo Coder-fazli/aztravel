@@ -38,6 +38,7 @@ export async function saveSettingsFromForm(formData: FormData) {
     robotsNofollow: get('robotsNofollow') === 'true',
     canonicalUrl:   get('canonicalUrl'),
     navItems,
+    ebookUrl:       get('ebookUrl'),
   })
 
   redirect('/admin/home')

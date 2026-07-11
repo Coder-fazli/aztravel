@@ -304,6 +304,18 @@
   border-top: 1px solid #eef0f3;
 }
 
+/* ── hero slide image split (desktop / mobile) ── */
+.slideImages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.slideImageCol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 /* ── hero slide cards ── */
 .slideCard {
   border: 1px solid #e4e4ec;

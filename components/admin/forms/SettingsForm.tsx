@@ -26,16 +26,17 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
 ]
 
 type HeroSlide = {
-  image: string
-  title: Record<string, string>
-  buttonText: Record<string, string>
-  buttonLink: Record<string, string>
+  imageDesktop: string
+  imageMobile:  string
+  title:        Record<string, string>
+  buttonText:   Record<string, string>
+  buttonLink:   Record<string, string>
 }
 
 const DEFAULT_HERO_SLIDES: HeroSlide[] = [
-  { image: '/images/hero-slide-1.jpg', title: { en: 'Enjoy exploring Azerbaijan and its nature!' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
-  { image: '/images/hero-slide-2.jpg', title: { en: 'Everything you search for is here, hurry up!' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
-  { image: '/images/hero-slide-3.jpg', title: { en: 'Azerbaijani culture, music, cuisine is waiting.' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
+  { imageDesktop: '/images/hero-slide-1.jpg', imageMobile: '/images/hero-slide-1.jpg', title: { en: 'Enjoy exploring Azerbaijan and its nature!' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
+  { imageDesktop: '/images/hero-slide-2.jpg', imageMobile: '/images/hero-slide-2.jpg', title: { en: 'Everything you search for is here, hurry up!' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
+  { imageDesktop: '/images/hero-slide-3.jpg', imageMobile: '/images/hero-slide-3.jpg', title: { en: 'Azerbaijani culture, music, cuisine is waiting.' }, buttonText: { en: 'Explore' }, buttonLink: { en: '/tours' } },
 ]
 
 export default function SettingsForm({ settings }: { settings: any }) {
@@ -90,15 +91,19 @@ export default function SettingsForm({ settings }: { settings: any }) {
       : DEFAULT_HERO_SLIDES
   )
   const addSlide = () => {
-    setHeroSlides((s) => [...s, { image: '', title: {}, buttonText: {}, buttonLink: {} }])
+    setHeroSlides((s) => [...s, { imageDesktop: '', imageMobile: '', title: {}, buttonText: {}, buttonLink: {} }])
     setDirty(true)
   }
   const removeSlide = (i: number) => {
     setHeroSlides((s) => s.filter((_, idx) => idx !== i))
     setDirty(true)
   }
-  const setSlideImage = (i: number, url: string) => {
-    setHeroSlides((s) => s.map((sl, idx) => (idx === i ? { ...sl, image: url } : sl)))
+  const setSlideImageDesktop = (i: number, url: string) => {
+    setHeroSlides((s) => s.map((sl, idx) => (idx === i ? { ...sl, imageDesktop: url } : sl)))
+    setDirty(true)
+  }
+  const setSlideImageMobile = (i: number, url: string) => {
+    setHeroSlides((s) => s.map((sl, idx) => (idx === i ? { ...sl, imageMobile: url } : sl)))
     setDirty(true)
   }
   const setSlideField = (
@@ -226,7 +231,7 @@ export default function SettingsForm({ settings }: { settings: any }) {
           <div className={styles.collapseBody}>
             {heroSlides.length === 0 && (
               <p className={styles.hint}>
-                No slides yet. Image is shared across languages; title, button text and link are per language.
+                No slides yet. Upload separate images for desktop and mobile per slide; title, button text and link are per language.
               </p>
             )}
 
@@ -239,10 +244,25 @@ export default function SettingsForm({ settings }: { settings: any }) {
                   </button>
                 </div>
 
-                <CoverImageUpload
-                  defaultValue={slide.image}
-                  onValueChange={(url) => setSlideImage(i, url)}
-                />
+                {/* Two image upload zones side by side */}
+                <div className={styles.slideImages}>
+                  <div className={styles.slideImageCol}>
+                    <span className={styles.langTag}>Desktop image</span>
+                    <p className={styles.hint} style={{ marginBottom: 8 }}>Landscape · 1440×810px recommended</p>
+                    <CoverImageUpload
+                      defaultValue={slide.imageDesktop || (slide as any).image || ''}
+                      onValueChange={(url) => setSlideImageDesktop(i, url)}
+                    />
+                  </div>
+                  <div className={styles.slideImageCol}>
+                    <span className={styles.langTag}>Mobile image</span>
+                    <p className={styles.hint} style={{ marginBottom: 8 }}>Portrait · 390×747px recommended</p>
+                    <CoverImageUpload
+                      defaultValue={slide.imageMobile || (slide as any).image || ''}
+                      onValueChange={(url) => setSlideImageMobile(i, url)}
+                    />
+                  </div>
+                </div>
 
                 {routing.locales.map((loc) => {
                   const ldir = loc === 'ar' ? 'rtl' : 'ltr'
