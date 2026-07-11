@@ -98,7 +98,6 @@ export default function HeroSection({ slides: input }: { slides?: HeroSlide[] })
             aria-label={`Slide ${i + 1}`}
           />
         ))}
-        <div className={styles.vLine} />
       </div>
 
       {/* SCROLL DOWN */}
