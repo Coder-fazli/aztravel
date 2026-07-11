@@ -4,13 +4,28 @@ import { useState } from 'react'
 import CityCard from './CityCard'
 import styles from './DestinationsSection.module.css'
 
-const desc = 'Integer fringilla tellus ullamcorper ac mauris potenti amet commodo  amet enim.'
-const links = ['Link 1', 'Link 2', 'Link 13', 'Link 14']
-
 const cities = [
-  { name: 'Ganja City', image: '/images/city-ganja.jpg', desc, links, href: '/destinations/ganja' },
-  { name: 'Baku City',  image: '/images/city-baku.jpg',  desc, links, href: '/destinations/baku' },
-  { name: 'Shaki City', image: '/images/city-shaki.jpg', desc, links, href: '/destinations/shaki' },
+  {
+    name: 'Ganja City',
+    image: '/images/city-ganja.jpg',
+    desc: "Azerbaijan's second city carries centuries of Silk Road history. Explore the Bottle House, the Javadkhan mausoleum, and the lively central bazaar.",
+    links: ['Ganja Day Trip', 'Bottle House', 'Nizami Street', 'Javadkhan Tomb'],
+    href: '/destinations/ganja',
+  },
+  {
+    name: 'Baku City',
+    image: '/images/city-baku.jpg',
+    desc: "Azerbaijan's capital blends medieval fortress walls with flame-shaped skyscrapers. Walk the Old City, visit the Heydar Aliyev Centre, and dine by the Caspian — all within one afternoon.",
+    links: ['Baku City Tour', 'Old City', 'Flame Towers', 'Heydar Aliyev Centre'],
+    href: '/destinations/baku',
+  },
+  {
+    name: 'Shaki City',
+    image: '/images/city-shaki.jpg',
+    desc: "Nestled in forested foothills, Shaki is known for its ornate Khan's Palace, silk workshops, and the finest piti stew in the country.",
+    links: ['Shaki City Tour', "Khan's Palace", 'Silk Road Trail', 'Sheki Bazaar'],
+    href: '/destinations/shaki',
+  },
 ]
 
 export default function DestinationsSection() {
@@ -26,7 +41,7 @@ export default function DestinationsSection() {
       {/* HEADLINE */}
       <div className={styles.headline}>
         <h2 className={styles.title}>
-          Sea, mountains, resorts and culture <b>in one place.</b> We&rsquo;ve got you covered.
+          Sea, mountains, history and modern life — <b>all in one country.</b>
         </h2>
         {/* orange curved decorative arrow — real Figma asset */}
         <img src="/images/curve-arrow.svg" alt="" className={styles.curveArrow} />

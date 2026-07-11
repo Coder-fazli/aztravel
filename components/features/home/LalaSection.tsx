@@ -12,12 +12,12 @@ export default function LalaSection() {
         {/* LEFT — text + CTA */}
         <div className={styles.content}>
           <h2 className={styles.title}>
-            Try our new AI agent <b>Lala!</b>
+            Have questions about travelling to Azerbaijan? Ask <b>Lala!</b>
           </h2>
           <p className={styles.desc}>
-            In venenatis tincidunt tristique ipsum. Interdum tristique eu blandit ultrices
-            justo at tortor ut. Fermentum nunc nulla <b>adipiscing</b> cum vitae mattis.
-            Iaculis <b>pharetra</b> ac tristique dapibus.
+            Lala is your AI travel assistant — powered by local expertise. Ask about <b>visa requirements</b>,
+            best time to visit, what to pack, or hidden gems off the tourist trail.
+            Available <b>24/7</b>, answers in seconds.
           </p>
           <Button href="/ai" variant="white" size="md">Ask Lala</Button>
         </div>

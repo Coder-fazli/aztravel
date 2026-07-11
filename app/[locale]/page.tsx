@@ -22,10 +22,10 @@ export async function generateMetadata({
   const { locale } = await params
   const s = await getSettings()
   return {
-    title: s?.metaTitle?.[locale] || 'AzTravel — Discover Azerbaijan',
+    title: s?.metaTitle?.[locale] || 'Azerbaijan Tours & Travel Packages — AzTravel Agency',
     description:
       s?.metaDescription?.[locale] ||
-      'Discover Azerbaijan — tours, destinations, e-visa and travel guides.',
+      'Book Azerbaijan tour packages with AzTravel — your expert travel agency for Baku city tours, mountain getaways, and e-visa assistance. Explore Azerbaijan your way.',
   }
 }
 
@@ -58,7 +58,7 @@ export default async function HomePage({
         <DestinationsSection />
         <LalaSection />
         <ShortcutsSection />
-        <LearnMoreSection />
+        <LearnMoreSection locale={locale} />
         <VisaSection />
         <TopDestinationsSection />
         <EventsSection />

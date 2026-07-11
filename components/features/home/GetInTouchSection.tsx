@@ -8,10 +8,10 @@ const socials = [
 ]
 
 const links = [
-  { title: 'Visit our blogs',   sub: 'Visit our latest blogs', href: '/blog' },
-  { title: 'Visit bot Layla',   sub: 'Visit our latest blogs', href: '/lala' },
-  { title: 'Ask your question', sub: 'Visit our latest blogs', href: '/faq' },
-  { title: 'Onether link',      sub: 'Visit our latest blogs', href: '#' },
+  { title: 'Visit our blogs',   sub: 'Travel guides, tips & stories from Azerbaijan', href: '/blog' },
+  { title: 'Visit bot Lala',    sub: 'Ask your Azerbaijan travel questions instantly', href: '/lala' },
+  { title: 'Ask your question', sub: 'Browse answers to common travel questions',     href: '/faq' },
+  { title: 'Plan your trip',    sub: 'Plan your custom Azerbaijan itinerary',         href: '/tours' },
 ]
 
 function ArrowUpRight() {

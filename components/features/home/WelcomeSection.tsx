@@ -3,7 +3,12 @@ import SeasonCard from './SeasonCard'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import styles from './WelcomeSection.module.css'
 
-const desc = 'Integer fringilla tellus ullamcorper ac mauris potenti amet commodo  amet enim.'
+const seasonDescs: Record<string, string> = {
+  Summer: 'Sun-drenched Caspian beaches, rooftop cafés in the Old City, and mountain resorts under clear skies.',
+  Winter: 'Ski resorts in Shahdag, steaming teahouses in the bazaars, and the warmth of Azerbaijani hospitality.',
+  Spring: 'Orchards in bloom, Novruz celebrations in full colour, and mild weather perfect for city walks.',
+  Autumn: 'Golden forests in Lahij and Sheki, harvest festivals, and the most comfortable temperatures of the year.',
+}
 
 export default function WelcomeSection() {
   return (
@@ -12,9 +17,9 @@ export default function WelcomeSection() {
       {/* HEADLINE */}
       <div className={styles.headline}>
         <div className={styles.headTexts}>
-          <h2 className={styles.title}>365 Days With Azerbaijan!</h2>
+          <h2 className={styles.title}>Azerbaijan in Every Season — Always Worth the Journey</h2>
           <p className={styles.subtitle}>
-            Integer fringilla tellus ullamcorper ac mauris potenti amet commodo  amet enim.
+            From Baku&rsquo;s skyline in winter to Gabala&rsquo;s forests in autumn — Azerbaijan offers a completely different experience every time you visit. Pick your season, we&rsquo;ll handle the rest.
           </p>
         </div>
         <Link href="/catalog" className={styles.seeMore}>
@@ -29,7 +34,7 @@ export default function WelcomeSection() {
         {/* LEFT — tall Summer card (368 x 616) */}
         <SeasonCard
           name="Summer"
-          desc={desc}
+          desc={seasonDescs.Summer}
           image="/images/season-summer.jpg"
           width={368}
           height={616}
@@ -42,14 +47,14 @@ export default function WelcomeSection() {
           <div className={styles.topRow}>
             <SeasonCard
               name="Winter"
-              desc={desc}
+              desc={seasonDescs.Winter}
               image="/images/season-winter.jpg"
               width={368}
               height={300}
             />
             <SeasonCard
               name="Spring"
-              desc={desc}
+              desc={seasonDescs.Spring}
               image="/images/season-spring.jpg"
               width={368}
               height={300}
@@ -58,7 +63,7 @@ export default function WelcomeSection() {
           {/* bottom — wide Autumn card (752 x 300) */}
           <SeasonCard
             name="Autumn"
-            desc={desc}
+            desc={seasonDescs.Autumn}
             image="/images/season-autumn.jpg"
             width={752}
             height={300}

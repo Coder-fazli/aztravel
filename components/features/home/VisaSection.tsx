@@ -21,12 +21,12 @@ export default function VisaSection() {
 
           <div className={styles.subtitle}>
             <p>
-              Adipiscing in tortor in sem. <b>Accumsan</b> molestie metus gravida faucibus
-              vestibulum tincidunt. Porttitor suscipit cursus eget etiam nulla pellentesque dolor.
+              Citizens of most countries can obtain an <b>Azerbaijan e-visa</b> in under 3 business
+              days through ASAN Visa — the official online platform. No embassy visit required.
             </p>
             <p>
-              Malesuada <b>pellentesque</b> faucibus consectetur nisi. <b>Diam proin</b> mattis
-              tristique vitae.
+              Need to travel sooner? Our <b>urgent e-visa</b> service processes your application
+              in as little as 3 hours — so you can book your flight and sort the paperwork on the same day.
             </p>
           </div>
         </div>
