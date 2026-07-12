@@ -4,7 +4,7 @@ import SectionHeadline from '@/components/features/home/SectionHeadline'
 import BlogCard from '@/components/features/home/BlogCard'
 import GetInTouchSection from '@/components/features/home/GetInTouchSection'
 import RichContent from '@/components/blog/RichContent'
-import { getBlogBySlug, getBlogTranslations } from '@/lib/actions/content'
+import { getBlogBySlug, getBlogTranslations, getBlogs } from '@/lib/actions/content'
 import { tiptapText } from '@/lib/tiptapText'
 import { postUrl } from '@/lib/postUrl'
 import { SITE_URL } from '@/lib/site'
@@ -37,7 +37,7 @@ export async function generateMetadata({
       follow: !post.nofollow,
     } : undefined,
     alternates: {
-      canonical: post.canonicalUrl || undefined,
+      canonical: post.canonicalUrl || `${SITE_URL}${postUrl(locale, slug)}`,
       languages,
     },
     openGraph: {
@@ -48,30 +48,10 @@ export async function generateMetadata({
   }
 }
 
-const para =
-  'Join teeth tent growth staircase sky invested win ladder building. Needle ensure die responsible streamline. Globalize high-level ensure rundown catching tentative hit so. In third uat reference waste inclusion asserts lean. Socialize unlock savvy cost our needed. Data individual power journey domains.'
-
-const bullets = [
-  "Invested stop ourselves driver's resources join closer incentivization. Wheel feed that's web unpack.",
-  'Plan info invested read define my time pain supervisor ourselves. Practices start going backwards pin loop important.',
-  "Catching disband manager view native files member exploratory dogpile protocol. Submit scraps awareness we've member back-end.",
-]
-
-const gallery = [
-  '/images/dest-1.jpg', '/images/dest-2.jpg', '/images/dest-3.jpg',
-  '/images/dest-4.jpg', '/images/city-ganja.jpg', '/images/city-shaki.jpg',
-]
-
 const reviews = [
   { text: 'Pole native incompetent run slipstream about pivot highlights. Recap pin 30,000ft do policy welcome space busy alpha. Opportunity viral responsible are exploratory.', name: 'Brandon Franci', role: 'CEO Universal', avatar: '/images/dest-1.jpg' },
   { text: "Fured calculator q1 would my accountable. Well brainstorming gmail but underlying up solutions driver's break. Productive group back here based production.", name: 'Carla Calzoni', role: 'CEO Universal', avatar: '/images/dest-2.jpg' },
   { text: 'Caught closing other meeting t-shaped digital launch customer. Weaponize pants moving savvy fruit pivot be. Alarming manager key anyway tomorrow.', name: 'Marcus Culhane', role: 'CEO Universal', avatar: '/images/dest-3.jpg' },
-]
-
-const related = [
-  { title: 'Ut in tristique id tempor odio ultricies facilisis varius...', desc: 'Integer fringilla tellus ullamcorper ac mauris potenti amet commodo amet enim.', image: '/images/blog-1.jpg', date: '29 Avq 2022', readTime: '5 min read', href: '/blog/post-1' },
-  { title: 'Ut in tristique id tempor odio ultricies facilisis varius...', desc: 'Integer fringilla tellus ullamcorper ac mauris potenti amet commodo amet enim.', image: '/images/blog-2.jpg', date: '29 Avq 2022', readTime: '5 min read', href: '/blog/post-2' },
-  { title: 'Ut in tristique id tempor odio ultricies facilisis varius...', desc: 'Integer fringilla tellus ullamcorper ac mauris potenti amet commodo amet enim.', image: '/images/blog-3.jpg', date: '29 Avq 2022', readTime: '5 min read', href: '/blog/post-3' },
 ]
 
 function ClockIcon() {
@@ -102,8 +82,50 @@ export default async function BlogPostPage({
   if (!post) notFound()
   const date = post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ''
 
+  const allPosts = await getBlogs(loc)
+  const related = allPosts
+    .filter((p: any) => p.slug !== slug)
+    .slice(0, 3)
+    .map((p: any) => ({
+      title:    p.title,
+      desc:     tiptapText(p.excerpt, 120),
+      image:    p.coverImage || '/images/blog-1.jpg',
+      date:     p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '',
+      readTime: p.readTime ? `${p.readTime} min read` : '',
+      href:     postUrl(loc, p.slug),
+    }))
+
+  const canonicalUrl = post.canonicalUrl || `${SITE_URL}${postUrl(loc, slug)}`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: tiptapText(post.excerpt || post.content, 160),
+    image: post.coverImage ? [post.coverImage] : undefined,
+    datePublished: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+    dateModified: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
+    author: {
+      '@type': 'Organization',
+      name: 'AzTravel',
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'AzTravel',
+      url: SITE_URL,
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalUrl,
+    },
+  }
+
   return (
     <div className={styles.page}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <article className={styles.article}>
         {/* header */}
         <header className={styles.header}>
@@ -165,13 +187,15 @@ export default async function BlogPostPage({
         </div>
       </section>
 
-      {/* related blogs */}
-      <section className={styles.related}>
-        <SectionHeadline watermark="Learn more about" title="See related blogs" subtitle="Integer fringilla tellus ullamcorper ac mauris potenti amet commodo amet enim." />
-        <div className={styles.relatedCards}>
-          {related.map((p, i) => <BlogCard key={i} {...p} />)}
-        </div>
-      </section>
+      {/* related blogs — only rendered when real posts exist */}
+      {related.length > 0 && (
+        <section className={styles.related}>
+          <SectionHeadline watermark="Learn more about" title="See related blogs" subtitle="More travel guides and tips from Azerbaijan." />
+          <div className={styles.relatedCards}>
+            {related.map((p: any, i: number) => <BlogCard key={i} {...p} />)}
+          </div>
+        </section>
+      )}
 
       <GetInTouchSection />
     </div>
