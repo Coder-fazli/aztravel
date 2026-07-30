@@ -18,6 +18,12 @@ const SettingsSchema = new Schema (
         navItems: { type: Schema.Types.Mixed, default: [] },
         // downloadable e-book PDF
         ebookUrl: { type: String, default: '' },
+        // eVisa payment config — secret keys (Stripe secret, Skrill password,
+        // Telegram bot token) belong in env vars, never here.
+        evisaPayment: {
+            activeGateway:      { type: String, enum: ['stripe', 'skrill'], default: 'stripe' },
+            paymentNoticeEmail: { type: String, default: '' }, // admin email for "new paid application" alerts
+        },
     },
     { timestamps: true }
 )

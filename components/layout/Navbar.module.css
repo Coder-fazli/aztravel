@@ -207,6 +207,42 @@
   gap: 8px;
 }
 
+.langWrap {
+  position: relative;
+}
+
+.langMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 140px;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--base-1);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.28);
+  border: 1px solid #ececf0;
+  list-style: none;
+  z-index: 50;
+}
+
+.langOption {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--base-13);
+  transition: background 0.15s;
+}
+.langOption:hover { background: #f5f5f7; }
+.langOptionActive { color: var(--primary-12); background: rgba(240, 112, 84, 0.08); }
+
 .langBtn,
 .aiBtn {
   display: flex;

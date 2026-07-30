@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import BlogHeroSlider from '@/components/features/blog/BlogHeroSlider'
 import SectionHeadline from '@/components/features/home/SectionHeadline'
 import BlogCard from '@/components/features/home/BlogCard'
 import GetInTouchSection from '@/components/features/home/GetInTouchSection'
@@ -23,18 +22,8 @@ export default async function BlogArchivePage({
   const { locale } = await params
   const posts = await getBlogs(locale as any) // published posts in this language
 
-  // top few posts feed the hero slider (falls back to defaults if none)
-  const heroSlides = posts.slice(0, 5).map((p: any) => ({
-    title: p.title,
-    image: p.coverImage || '/images/blog/slide-1.jpg',
-    href: postUrl(locale, p.slug),
-    desc: tiptapText(p.content, 160),
-  }))
-
   return (
     <>
-      <BlogHeroSlider slides={heroSlides} />
-
       <section className={styles.grid}>
         <img src="/images/blog/arrow-curve.svg" alt="" className={styles.arrow} aria-hidden="true" />
 
