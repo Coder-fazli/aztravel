@@ -139,6 +139,12 @@ export default function ApplyWizard({
 
               <div className={styles.inputArea}>
                 <label className={styles.fLabel}>Processing Type<span className={styles.req}>*</span></label>
+                {visaTypes.length === 0 && (
+                  <div className={styles.warnBox}>
+                    <h5>⚠ No visa types available yet</h5>
+                    <p>An admin needs to add at least one country with pricing in Admin → E-visa → Countries before applicants can apply.</p>
+                  </div>
+                )}
                 <div className={styles.visaGrid}>
                   {visaTypes.map(vt => (
                     <label
