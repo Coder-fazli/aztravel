@@ -1,6 +1,40 @@
 import { connectDb } from './connect'
 import Location from './models/Location'
 import Banner from './models/Banner'
+import Country from './models/evisa/Country'
+
+// NOTE: this is a development starter set, not verified official ASAN e-Visa
+// data. The real eligible-country list + pricing lived only in the old
+// Laravel app's live MySQL database (never available in code). These 24
+// countries + the $69/$99 base prices are pulled from evisa-next's own real
+// SEO copy (the only grounded source available) -- confirm real eligibility
+// and pricing with the business before this goes live for real applicants.
+const STARTER_COUNTRIES = [
+  ['EG', '🇪🇬', 'Egypt'],
+  ['SA', '🇸🇦', 'Saudi Arabia'],
+  ['PK', '🇵🇰', 'Pakistan'],
+  ['MY', '🇲🇾', 'Malaysia'],
+  ['CN', '🇨🇳', 'China'],
+  ['IR', '🇮🇷', 'Iran'],
+  ['AE', '🇦🇪', 'United Arab Emirates'],
+  ['IN', '🇮🇳', 'India'],
+  ['TR', '🇹🇷', 'Turkey'],
+  ['US', '🇺🇸', 'United States'],
+  ['GB', '🇬🇧', 'United Kingdom'],
+  ['DE', '🇩🇪', 'Germany'],
+  ['FR', '🇫🇷', 'France'],
+  ['IT', '🇮🇹', 'Italy'],
+  ['ES', '🇪🇸', 'Spain'],
+  ['CA', '🇨🇦', 'Canada'],
+  ['AU', '🇦🇺', 'Australia'],
+  ['JP', '🇯🇵', 'Japan'],
+  ['KR', '🇰🇷', 'South Korea'],
+  ['ID', '🇮🇩', 'Indonesia'],
+  ['PH', '🇵🇭', 'Philippines'],
+  ['KW', '🇰🇼', 'Kuwait'],
+  ['QA', '🇶🇦', 'Qatar'],
+  ['BD', '🇧🇩', 'Bangladesh'],
+] as const
 
 
 async function seed(){
@@ -81,6 +115,23 @@ async function seed(){
       },
     ])
     console.log('Banners seeded successfully')
+
+    await Country.deleteMany({})
+    await Country.insertMany(
+      STARTER_COUNTRIES.map(([code, flag, name], i) => ({
+        code,
+        flag,
+        name: { en: name, es: name, ar: name },
+        eligible: true,
+        orderNum: i,
+        pricing: [
+          { key: 'standard', label: { en: 'Standard', es: 'Estándar', ar: 'قياسي' }, price: 69 },
+          { key: 'urgent',   label: { en: 'Urgent',   es: 'Urgente',  ar: 'عاجل' },   price: 99 },
+        ],
+        conditions: [],
+      })),
+    )
+    console.log('Countries seeded successfully (dev starter set -- confirm real pricing/eligibility before going live)')
 
     process.exit(0)
 
