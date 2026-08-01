@@ -82,6 +82,36 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
 
 .errMsg { font: 500 12px/18px var(--font-family); color: var(--error-13); margin-top: 6px; }
 
+/* visa_date summary widget — Start Date / validity+stay / Finish Date,
+   matching the original site's exact layout (visa_start_date / visa_center_info
+   / visa_finish_date), restyled with the site's own tokens */
+.visaDateWidget {
+  display: flex; align-items: stretch; gap: 14px;
+  background: var(--base-3); border: 1px solid var(--base-5);
+  border-radius: 14px; padding: 16px; margin-top: 12px; overflow-x: auto;
+}
+.visaStartDate, .visaFinishDate {
+  position: relative; flex: 1; min-width: 130px;
+  background: var(--base-1); border-radius: 10px; padding: 12px 14px;
+}
+.visaStartDate b, .visaFinishDate b { font: 600 11px/16px var(--font-family); color: var(--base-8); text-transform: uppercase; letter-spacing: .3px; }
+.visaStartDate hr, .visaFinishDate hr { border: none; border-top: 1px solid var(--base-5); margin: 6px 0; }
+.visaStartDate span, .visaFinishDate span { font: 700 14px/20px var(--font-family); color: var(--base-13); }
+.dateArrowBadge {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 26px; height: 26px; border-radius: 50%; background: var(--base-1);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.visaStartDate .dateArrowBadge { right: -13px; border: 1.5px solid var(--primary-13); color: var(--primary-13); z-index: 1; }
+.visaFinishDate .dateArrowBadge { left: -13px; border: 1.5px solid var(--error-13); color: var(--error-13); z-index: 1; }
+.visaCenterInfo {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; color: var(--base-8); font: 400 12px/17px var(--font-family); padding: 0 10px; min-width: 90px;
+}
+.visaCenterInfo div:first-child { font: 700 15px/20px var(--font-family); color: var(--base-13); }
+.visaCenterInfo hr { width: 100%; border: none; border-top: 1px solid var(--base-5); margin: 8px 0; }
+@media (max-width: 480px) { .visaDateWidget { flex-direction: column; } .visaStartDate .dateArrowBadge, .visaFinishDate .dateArrowBadge { display: none; } }
+
 .nav { display: flex; align-items: center; justify-content: space-between; margin-top: 26px; gap: 12px; flex-wrap: wrap; }
 .navRight { display: flex; align-items: center; gap: 12px; }
 .btnBack { background: none; border: none; font: 500 13px/20px var(--font-family); color: var(--base-8); cursor: pointer; padding: 8px 4px; transition: color .15s; }

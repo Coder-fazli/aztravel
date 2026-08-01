@@ -24,7 +24,7 @@ export const BlogSchema = new Schema({
     coverImageAlt: { type: String, default: '' },
     images: [String],
     tags: [String],
-    category: [String],
+    categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
     status:  { type: String, enum: ['draft','published'], default: 'draft' },
     readTime: Number,
     publishedAt: Date,
@@ -38,7 +38,7 @@ export const BlogSchema = new Schema({
   BlogSchema.index({ translationGroupId: 1, locale: 1 }, {
   unique: true })
   BlogSchema.index({ status: 1 })
-  BlogSchema.index({ category: 1 })
+  BlogSchema.index({ categories: 1 })
   BlogSchema.index({ publishedAt: -1 })
 
   export default mongoose.models.Blog ?? mongoose.model('Blog', BlogSchema)

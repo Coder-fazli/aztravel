@@ -3,12 +3,13 @@ import ArrowIcon from '@/components/ui/ArrowIcon'
 import styles from './BlogCard.module.css'
 
 type Props = {
-  title:    string
-  desc:     string
-  image:    string
-  date:     string
-  readTime: string
-  href:     string
+  title:      string
+  desc:       string
+  image:      string
+  date:       string
+  readTime:   string
+  href:       string
+  categories?: { name: string; slug: string }[]
 }
 
 function CalendarIcon() {
@@ -33,7 +34,7 @@ function ClockIcon() {
   )
 }
 
-export default function BlogCard({ title, desc, image, date, readTime, href }: Props) {
+export default function BlogCard({ title, desc, image, date, readTime, href, categories }: Props) {
   return (
     <Link href={href} className={styles.card}>
       <div className={styles.imgWrap}>
@@ -50,6 +51,11 @@ export default function BlogCard({ title, desc, image, date, readTime, href }: P
 
       <div className={styles.text}>
         <div className={styles.texts}>
+          {categories && categories.length > 0 && (
+            <div className={styles.catRow}>
+              {categories.map(c => <span key={c.slug} className={styles.catChip}>{c.name}</span>)}
+            </div>
+          )}
           <h3 className={styles.title}>{title}</h3>
           <p className={styles.desc}>{desc}</p>
         </div>

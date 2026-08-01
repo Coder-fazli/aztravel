@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import AdminTopbar from '@/components/admin/AdminTopbar'
 import BlogForm from '@/components/admin/forms/BlogForm'
 import { getBlogById } from '@/lib/actions/content'
+import { getCategoriesAdmin } from '@/lib/actions/admin/categories'
 
 export default async function EditBlogPage({
   params,
@@ -11,6 +12,7 @@ export default async function EditBlogPage({
   const { id } = await params
   const post = await getBlogById(id)
   if (!post) notFound()
+  const categories = await getCategoriesAdmin()
 
   return (
     <>
@@ -19,6 +21,7 @@ export default async function EditBlogPage({
         post={post}
         locale={post.locale}
         translationGroupId={post.translationGroupId}
+        categories={categories}
       />
     </>
   )

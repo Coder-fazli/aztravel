@@ -132,6 +132,22 @@ export default async function BlogPostPage({
           <div className={styles.titleRow}>
             <img src="/images/blog/arrow-curve.svg" alt="" className={styles.curve} aria-hidden="true" />
             <h1 className={styles.title} dir={loc === 'ar' ? 'rtl' : 'ltr'}>{post.title}</h1>
+            {post.categories?.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                {post.categories.map((c: any) => (
+                  <a
+                    key={c.slug}
+                    href={`/${loc}/blog/category/${c.slug}`}
+                    style={{
+                      padding: '3px 10px', borderRadius: 999, background: 'var(--secondary-4)',
+                      color: 'var(--secondary-13)', fontFamily: 'var(--font-family)', fontSize: 11, fontWeight: 700,
+                    }}
+                  >
+                    {c.name?.[loc] || c.name?.en || c.slug}
+                  </a>
+                ))}
+              </div>
+            )}
             <div className={styles.meta}>
               {date && (
                 <span className={styles.metaItem}>

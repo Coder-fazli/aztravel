@@ -26,16 +26,26 @@ export default function BlogForm({
   locale = 'en',
   translationGroupId = '',
   post,
+  categories = [],
 }: {
   locale?: string
   translationGroupId?: string
   post?: any
+  categories?: any[]
 }) {
   const [isDirty, setIsDirty] = useState(false)
   const guard = useUnsavedChanges(isDirty)
   const dir = locale === 'ar' ? 'rtl' : 'ltr'
 
   const [title, setTitle] = useState(post?.title ?? '')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    (post?.categories ?? []).map((c: any) => (typeof c === 'string' ? c : c._id)),
+  )
+
+  function toggleCategory(id: string) {
+    setSelectedCategories(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id])
+    setIsDirty(true)
+  }
   const [slug, setSlug] = useState(post?.slug ?? '')
   const [slugTouched, setSlugTouched] = useState(Boolean(post?.slug))
 
@@ -139,10 +149,37 @@ export default function BlogForm({
             <span className={styles.panelLabel}>Organize</span>
             {/* slug is edited via the SEO “Edit snippet” permalink — submitted hidden */}
             <input type="hidden" name="slug" value={slug} />
-            <label className={styles.field}>
-              <span>Category (comma separated)</span>
-              <input name="category" defaultValue={post?.category?.join(', ') ?? ''} placeholder="guide, city" />
-            </label>
+            <div className={styles.field}>
+              <span>Categories</span>
+              {categories.length === 0 && (
+                <span style={{ fontSize: 12, color: 'var(--base-8)' }}>
+                  No categories yet — <a href="/admin/blog/categories/new" style={{ color: 'var(--primary-12)' }}>create one</a>.
+                </span>
+              )}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {categories.map((c: any) => {
+                  const checked = selectedCategories.includes(c._id)
+                  return (
+                    <label
+                      key={c._id}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px',
+                        borderRadius: 999, border: '1.5px solid #e4e4ec', cursor: 'pointer',
+                        background: checked ? 'var(--primary-12)' : '#fff',
+                        color: checked ? '#fff' : 'var(--base-9)',
+                        fontFamily: 'var(--font-family)', fontSize: 12.5, fontWeight: 600,
+                      }}
+                    >
+                      <input type="checkbox" checked={checked} onChange={() => toggleCategory(c._id)} style={{ display: 'none' }} />
+                      {c.name?.en || c.slug}
+                    </label>
+                  )
+                })}
+              </div>
+              {selectedCategories.map(id => (
+                <input key={id} type="hidden" name="categories" value={id} />
+              ))}
+            </div>
             <label className={styles.field}>
               <span>Tags (comma separated)</span>
               <input name="tags" defaultValue={post?.tags?.join(', ') ?? ''} placeholder="baku, food" />

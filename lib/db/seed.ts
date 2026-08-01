@@ -2,6 +2,7 @@ import { connectDb } from './connect'
 import Location from './models/Location'
 import Banner from './models/Banner'
 import Country from './models/evisa/Country'
+import FormElement from './models/evisa/FormElement'
 
 // NOTE: this is a development starter set, not verified official ASAN e-Visa
 // data. The real eligible-country list + pricing lived only in the old
@@ -34,6 +35,62 @@ const STARTER_COUNTRIES = [
   ['KW', '🇰🇼', 'Kuwait'],
   ['QA', '🇶🇦', 'Qatar'],
   ['BD', '🇧🇩', 'Bangladesh'],
+] as const
+
+// Starter form questions, matching the original site's actual apply form
+// fields (Full Name, Email, Passport Number, Travel Document type, Purpose
+// of Visit, travel date with validity/stay window, Passport Photo).
+const opt = (value: string, en: string) => ({ value, label: { en, es: en, ar: en } })
+
+const STARTER_FORM_ELEMENTS = [
+  {
+    fieldKey: 'full_name', type: 'text', orderNum: 1,
+    label: { en: 'Full Name', es: 'Nombre completo', ar: 'الاسم الكامل' },
+    placeholder: { en: 'As shown on your passport', es: '', ar: '' },
+    required: true, isNewPerson: true,
+  },
+  {
+    fieldKey: 'email', type: 'email', orderNum: 2,
+    label: { en: 'Email Address', es: 'Correo electrónico', ar: 'البريد الإلكتروني' },
+    placeholder: { en: 'you@example.com', es: '', ar: '' },
+    required: true, isNewPerson: false, // asked once for the whole party
+  },
+  {
+    fieldKey: 'passport_number', type: 'text', orderNum: 3,
+    label: { en: 'Passport Number', es: 'Número de pasaporte', ar: 'رقم جواز السفر' },
+    placeholder: { en: 'e.g. A1234567', es: '', ar: '' },
+    required: true, isNewPerson: true,
+  },
+  {
+    fieldKey: 'travel_document', type: 'select', orderNum: 4,
+    label: { en: 'Travel Document', es: 'Documento de viaje', ar: 'وثيقة السفر' },
+    placeholder: { en: 'Travel document type', es: '', ar: '' },
+    required: true, isNewPerson: true,
+    options: { options: [opt('ordinary', 'Ordinary Passport'), opt('diplomatic', 'Diplomatic Passport'), opt('service', 'Service Passport')] },
+  },
+  {
+    fieldKey: 'purpose_of_visit', type: 'select', orderNum: 5,
+    label: { en: 'Purpose of Visit', es: 'Motivo de la visita', ar: 'الغرض من الزيارة' },
+    placeholder: { en: 'Purpose of visit', es: '', ar: '' },
+    required: true, isNewPerson: true,
+    options: { options: [opt('tourism', 'Tourism'), opt('business', 'Business'), opt('transit', 'Transit'), opt('other', 'Other')] },
+  },
+  {
+    fieldKey: 'travel_date', type: 'visa_date', orderNum: 6,
+    label: { en: 'Date', es: 'Fecha', ar: 'التاريخ' },
+    description: {
+      en: 'Your e-Visa is valid from [start_date] to [finish_date] for a total period of ([validity_day] days). You can enter Azerbaijan any date during the validity period ([validity_day] days) of your e-visa. However, your stay cannot exceed [stay_day] days.',
+      es: '', ar: '',
+    },
+    required: true, isNewPerson: true,
+    options: { defaultProc: 'today', validityDays: 90, stayDays: 30 },
+  },
+  {
+    fieldKey: 'passport_photo', type: 'image', orderNum: 7,
+    label: { en: 'Passport Photo Page', es: 'Página de foto del pasaporte', ar: 'صفحة صورة جواز السفر' },
+    required: true, isNewPerson: true,
+    options: { maxFileSizeKb: 4096 },
+  },
 ] as const
 
 
@@ -132,6 +189,10 @@ async function seed(){
       })),
     )
     console.log('Countries seeded successfully (dev starter set -- confirm real pricing/eligibility before going live)')
+
+    await FormElement.deleteMany({})
+    await FormElement.insertMany(STARTER_FORM_ELEMENTS.map(el => ({ ...el, conditions: [] })))
+    console.log('Form elements seeded successfully')
 
     process.exit(0)
 

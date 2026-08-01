@@ -23,7 +23,7 @@ export interface VisaDateInfo {
   defaultDate: string // the field's computed default ("start_date" placeholder)
   minDate?: string // `min` days before defaultDate — earliest date pickable
   maxDate?: string // `max` days after defaultDate — latest date pickable
-  validityDate?: string // defaultDate minus validityDays ("finish_date" placeholder)
+  validityDate?: string // defaultDate plus validityDays — end of the validity window ("finish_date" placeholder)
   closedRanges: { from: string; to: string }[]
 }
 
@@ -43,7 +43,8 @@ export function computeVisaDateInfo(
 
   if (max != null) info.maxDate = toISODate(addDays(defaultDate, max))
   if (min != null) info.minDate = toISODate(addDays(defaultDate, -min))
-  if (opts?.validityDays != null) info.validityDate = toISODate(addDays(defaultDate, -opts.validityDays))
+  // e.g. "valid from Aug 8 to Nov 6" for a 90-day validity window starting Aug 8 — forward, not backward.
+  if (opts?.validityDays != null) info.validityDate = toISODate(addDays(defaultDate, opts.validityDays))
 
   return info
 }

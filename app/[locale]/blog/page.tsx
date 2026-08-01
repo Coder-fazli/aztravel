@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import SectionHeadline from '@/components/features/home/SectionHeadline'
 import BlogCard from '@/components/features/home/BlogCard'
 import GetInTouchSection from '@/components/features/home/GetInTouchSection'
-import { getBlogs } from '@/lib/actions/content'
+import { getBlogs, getCategories } from '@/lib/actions/content'
 import { postUrl } from '@/lib/postUrl'
 import { tiptapText } from '@/lib/tiptapText'
 import styles from './page.module.css'
@@ -20,7 +21,10 @@ export default async function BlogArchivePage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const posts = await getBlogs(locale as any) // published posts in this language
+  const [posts, categories] = await Promise.all([
+    getBlogs(locale as any), // published posts in this language
+    getCategories(),
+  ])
 
   return (
     <>
@@ -32,6 +36,23 @@ export default async function BlogArchivePage({
           title="Learn more about Azerbaijan!"
           subtitle="Integer fringilla tellus ullamcorper ac mauris potenti amet commodo  amet enim."
         />
+
+        {categories.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 32 }}>
+            {categories.map((c: any) => (
+              <Link
+                key={c._id}
+                href={`/${locale}/blog/category/${c.slug}`}
+                style={{
+                  padding: '7px 16px', borderRadius: 999, border: '1.5px solid var(--base-5)',
+                  fontFamily: 'var(--font-family)', fontSize: 13, fontWeight: 600, color: 'var(--base-9)',
+                }}
+              >
+                {c.name?.[locale] || c.name?.en || c.slug}
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className={styles.cards}>
           {posts.length === 0 && (
@@ -46,6 +67,7 @@ export default async function BlogArchivePage({
               date={p.publishedAt ? new Date(p.publishedAt).toLocaleDateString() : ''}
               readTime={p.readTime ? `${p.readTime} min read` : ''}
               href={postUrl(locale, p.slug)}
+              categories={(p.categories ?? []).map((c: any) => ({ name: c.name?.[locale] || c.name?.en || c.slug, slug: c.slug }))}
             />
           ))}
         </div>

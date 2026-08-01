@@ -52,8 +52,7 @@ function formToBlog(formData: FormData) {
 
         coverImage: get('coverImage'),
         coverImageAlt: get('coverImageAlt'),
-        category: get('category').split(',').map((s) =>
-         s.trim()).filter(Boolean),
+        categories: formData.getAll('categories') as string[],
         tags:  get('tags').split(',').map((s) =>
         s.trim()).filter(Boolean),
         readTime: estimateReadTime(content),   // auto-detected, not user-entered

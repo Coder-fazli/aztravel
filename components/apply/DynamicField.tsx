@@ -1,8 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
 import { resolveDescriptionPlaceholders, type VisaDateInfo } from '@/lib/evisa/dateRules'
 import styles from '../../app/[locale]/apply/apply.module.css'
+
+function toISODate(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+function fromISODate(s: string) {
+  const [y, m, d] = s.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
 
 type Locale = 'en' | 'es' | 'ar'
 
@@ -24,6 +34,7 @@ export default function DynamicField({
   error?: string
 }) {
   const [uploading, setUploading] = useState(false)
+  const [calOpen, setCalOpen] = useState(false)
 
   const label = element.label?.[locale] || element.label?.en || element.fieldKey
   const placeholder = element.placeholder?.[locale] || element.placeholder?.en || ''
@@ -96,18 +107,56 @@ export default function DynamicField({
   }
 
   if (element.type === 'date' || element.type === 'visa_date') {
+    const currentValue = value ?? dateInfo?.defaultDate ?? ''
+
     return (
       <div className={styles.inputArea}>
         {header}
         {description && <span className={styles.fHint} dangerouslySetInnerHTML={{ __html: description }} />}
-        <input
-          className={inputClass}
-          type="date"
-          value={value ?? dateInfo?.defaultDate ?? ''}
-          min={dateInfo?.minDate}
-          max={dateInfo?.maxDate}
-          onChange={e => onChange(e.target.value)}
-        />
+
+        <Popover open={calOpen} onOpenChange={setCalOpen}>
+          <PopoverTrigger className={inputClass} style={{ textAlign: 'left', cursor: 'pointer' }}>
+            {currentValue || 'Select date'}
+          </PopoverTrigger>
+          <PopoverContent align="start" sideOffset={8}>
+            <Calendar
+              mode="single"
+              selected={currentValue ? fromISODate(currentValue) : undefined}
+              onSelect={(d) => { if (d) { onChange(toISODate(d)); setCalOpen(false) } }}
+              disabled={(d) => (
+                (dateInfo?.minDate ? d < fromISODate(dateInfo.minDate) : false) ||
+                (dateInfo?.maxDate ? d > fromISODate(dateInfo.maxDate) : false)
+              )}
+            />
+          </PopoverContent>
+        </Popover>
+
+        {element.type === 'visa_date' && dateInfo && (
+          <div className={styles.visaDateWidget}>
+            <div className={styles.visaStartDate}>
+              <div className={styles.dateArrowBadge}>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h6M6 3l3 3-3 3" /></svg>
+              </div>
+              <b>Start Date</b><hr />
+              <span>{currentValue}</span>
+            </div>
+            <div className={styles.visaCenterInfo}>
+              <div>{element.options?.validityDays} days</div>
+              <div>validity period</div>
+              <hr />
+              <div>{element.options?.stayDays} days</div>
+              <div>period of stay</div>
+            </div>
+            <div className={styles.visaFinishDate}>
+              <div className={styles.dateArrowBadge}>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h6M6 3l3 3-3 3" /></svg>
+              </div>
+              <b>Finish Date</b><hr />
+              <span>{dateInfo.validityDate}</span>
+            </div>
+          </div>
+        )}
+
         {error && <div className={styles.errMsg}>{error}</div>}
       </div>
     )

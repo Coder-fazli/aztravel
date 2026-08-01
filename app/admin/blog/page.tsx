@@ -74,8 +74,11 @@ export default async function AdminBlogList({ searchParams }: {
   color: 'var(--base-8)', fontSize: 14 }}>
             {posts.length} posts
           </p>
-          <Link href={`/admin/blog/new?lang=${active}`}
-  className={styles.primaryBtn}>+ New post</Link>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Link href="/admin/blog/categories" style={{ fontFamily: 'var(--font-family)', fontSize: 14, fontWeight: 600, color: 'var(--base-8)', display: 'flex', alignItems: 'center' }}>Manage categories</Link>
+            <Link href={`/admin/blog/new?lang=${active}`}
+    className={styles.primaryBtn}>+ New post</Link>
+          </div>
         </div>
 
         <div className={styles.card} style={{ padding: 0,
