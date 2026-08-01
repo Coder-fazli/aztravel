@@ -7,9 +7,22 @@ const intlMiddleware = createIntlMiddleware(routing);
 
 export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
+    const hostname = req.nextUrl.hostname
 
-    // Public API routes — no auth required (read-only proxies, no sensitive data).
-    if (pathname.startsWith('/api/tripadvisor')) {
+    // apply.azerbaijantravel.com — the public e-Visa wizard lives at /apply
+    // internally. Rewritten (not redirected) so the address bar keeps
+    // showing the subdomain. English-only for now — no locale routing here.
+    if (hostname.startsWith('apply.') && !pathname.startsWith('/api')) {
+        const url = req.nextUrl.clone()
+        url.pathname = pathname === '/' ? '/apply' : `/apply${pathname}`
+        return NextResponse.rewrite(url)
+    }
+
+    // Public API routes — no auth required.
+    // - tripadvisor: read-only proxy, no sensitive data
+    // - upload: used by the public apply wizard (passport photo) — visitors
+    //   submitting a visa application are never signed in
+    if (pathname.startsWith('/api/tripadvisor') || pathname.startsWith('/api/upload')) {
         return NextResponse.next()
     }
 

@@ -32,8 +32,8 @@ export default function VisaSection() {
         </div>
 
         <div className={styles.buttons}>
-          <Button href="/apply?type=urgent" variant="primary" size="lg">Urgent e-visa</Button>
-          <Button href="/apply?type=standard" variant="glass" size="lg">Standart e-visa</Button>
+          <Button href="https://apply.azerbaijantravel.com/?type=urgent" variant="primary" size="lg">Urgent e-visa</Button>
+          <Button href="https://apply.azerbaijantravel.com/?type=standard" variant="glass" size="lg">Standart e-visa</Button>
         </div>
       </div>
 

@@ -20,7 +20,7 @@ const DEFAULT_NAV: NavItem[] = [
   { label: 'Tours',      href: '/tours',      visible: true },
   { label: 'Catalog',    href: '/catalog',    visible: true },
   { label: 'Rent a car', href: '/rent-a-car', visible: true },
-  { label: 'E-visa',     href: '/apply',      visible: true },
+  { label: 'E-visa',     href: 'https://apply.azerbaijantravel.com/', visible: true },
   { label: 'Blog',       href: '/blog',       visible: true },
   { label: 'Shop',       href: '/shops',      visible: true },
 ]
