@@ -157,3 +157,73 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
 }
 .payBtn:hover:not(:disabled) { opacity: .92; }
 .payBtn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE — ported directly from the original apply.blade.php's own
+   mobile rules (same breakpoints, same shrink values), not reinvented.
+═══════════════════════════════════════════════════════════════════ */
+
+/* Prevent horizontal scroll (< 991px) */
+@media (max-width: 991px) {
+  .container { padding-left: 12px; padding-right: 12px; }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+  /* Stepper: hide text labels, shrink circles so 4 fit */
+  .stepLbl  { display: none; }
+  .bubble   { width: 36px; height: 36px; font-size: 13px; }
+  .stepLine { min-width: 16px; max-width: 40px; margin: 0 4px; margin-bottom: 20px; }
+  .stepper  { margin-bottom: 14px; }
+
+  /* Reference badge wraps neatly */
+  .refBadge { font-size: 11px; padding: 5px 12px; flex-wrap: wrap; gap: 4px; }
+
+  /* Card header: icon + text stay in one row, price chip drops below */
+  .cardHead { gap: 10px; padding-bottom: 14px; margin-bottom: 18px; }
+  .cardIcon { width: 38px; height: 38px; font-size: 16px; border-radius: 10px; }
+  .cardHead > div:nth-child(2) { flex: 1; min-width: 0; }
+  .cardTag   { font-size: 9px; margin-bottom: 1px; }
+  .cardTitle { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cardSub   { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .priceChip {
+    margin-left: 0; align-self: stretch; flex-direction: row;
+    justify-content: space-between; align-items: center; padding: 10px 16px; width: 100%;
+  }
+  .priceChipVal { font-size: 22px; }
+
+  /* Visa type cards: single column, more compact */
+  .visaGrid  { grid-template-columns: 1fr; }
+  .visaInner { padding: 18px 16px; gap: 8px; }
+  .visaName  { font-size: 16px; }
+  .visaPrice { font-size: 22px; }
+  .visaCheck { top: 10px; right: 12px; font-size: 18px; }
+
+  /* Inputs: full width, slightly smaller */
+  .inputText { height: 48px; font-size: 14px; }
+  textarea.inputText { height: auto; }
+  .fLabel { font-size: 12px; }
+
+  /* Navigation: stack buttons vertically, full width */
+  .nav      { flex-direction: column; gap: 10px; }
+  .navRight { width: 100%; flex-direction: column; gap: 10px; }
+  .btnBack  { width: 100%; text-align: center; }
+  .btnBackHidden { display: none; } /* hide instead of just invisible on mobile */
+  .btnNext  { width: 100%; justify-content: center; height: 48px; }
+  .btnAddPerson { width: 100%; justify-content: center; }
+
+  /* Breadcrumb: smaller */
+  .crumb { font-size: 12px; margin-bottom: 12px; }
+
+  /* Photo preview */
+  .uploadPreview { max-height: 150px; }
+}
+
+/* Small phones (< 400px) */
+@media (max-width: 400px) {
+  .card      { padding: 16px 12px; }
+  .bubble    { width: 30px; height: 30px; font-size: 11px; }
+  .stepLine  { min-width: 10px; }
+  .cardTitle { font-size: 17px; }
+  .cardIcon  { width: 42px; height: 42px; font-size: 18px; border-radius: 10px; }
+}

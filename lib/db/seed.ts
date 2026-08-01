@@ -37,46 +37,77 @@ const STARTER_COUNTRIES = [
   ['BD', '🇧🇩', 'Bangladesh'],
 ] as const
 
-// Starter form questions, matching the original site's actual apply form
-// fields (Full Name, Email, Passport Number, Travel Document type, Purpose
-// of Visit, travel date with validity/stay window, Passport Photo).
+// Starter form questions. Field set is grounded in real evidence, not
+// invented: app/Http/Controllers/Traits/SendsTelegramNotification.php in the
+// original Laravel app hardcodes references like $d['input_20'] (first name),
+// $d['input_21'] (last name), $d['input_23'] (occupation), $d['input_25']
+// (phone), $d['input_26'] (address), $d['input_28'] (passport expiry),
+// $d['input_35'] (stay in AZ) -- proof these fields exist in production,
+// even though their exact admin-configured order/wording isn't recoverable.
 const opt = (value: string, en: string) => ({ value, label: { en, es: en, ar: en } })
 
 const STARTER_FORM_ELEMENTS = [
   {
-    fieldKey: 'full_name', type: 'text', orderNum: 1,
-    label: { en: 'Full Name', es: 'Nombre completo', ar: 'الاسم الكامل' },
+    fieldKey: 'first_name', type: 'text', orderNum: 1,
+    label: { en: 'First Name', es: 'Nombre', ar: 'الاسم الأول' },
     placeholder: { en: 'As shown on your passport', es: '', ar: '' },
     required: true, isNewPerson: true,
   },
   {
-    fieldKey: 'email', type: 'email', orderNum: 2,
+    fieldKey: 'last_name', type: 'text', orderNum: 2,
+    label: { en: 'Last Name', es: 'Apellido', ar: 'اسم العائلة' },
+    placeholder: { en: 'As shown on your passport', es: '', ar: '' },
+    required: true, isNewPerson: true,
+  },
+  {
+    fieldKey: 'email', type: 'email', orderNum: 3,
     label: { en: 'Email Address', es: 'Correo electrónico', ar: 'البريد الإلكتروني' },
     placeholder: { en: 'you@example.com', es: '', ar: '' },
     required: true, isNewPerson: false, // asked once for the whole party
   },
   {
-    fieldKey: 'passport_number', type: 'text', orderNum: 3,
+    fieldKey: 'phone', type: 'text', orderNum: 4,
+    label: { en: 'Phone Number', es: 'Número de teléfono', ar: 'رقم الهاتف' },
+    placeholder: { en: '+1 555 123 4567', es: '', ar: '' },
+    required: true, isNewPerson: false, // asked once for the whole party
+  },
+  {
+    fieldKey: 'occupation', type: 'text', orderNum: 5,
+    label: { en: 'Occupation', es: 'Ocupación', ar: 'المهنة' },
+    required: true, isNewPerson: true,
+  },
+  {
+    fieldKey: 'address', type: 'text', orderNum: 6,
+    label: { en: 'Home Address', es: 'Dirección', ar: 'العنوان' },
+    required: true, isNewPerson: false, // asked once for the whole party
+  },
+  {
+    fieldKey: 'passport_number', type: 'text', orderNum: 7,
     label: { en: 'Passport Number', es: 'Número de pasaporte', ar: 'رقم جواز السفر' },
     placeholder: { en: 'e.g. A1234567', es: '', ar: '' },
     required: true, isNewPerson: true,
   },
   {
-    fieldKey: 'travel_document', type: 'select', orderNum: 4,
+    fieldKey: 'passport_expiry', type: 'date', orderNum: 8,
+    label: { en: 'Passport Expiry Date', es: 'Fecha de caducidad del pasaporte', ar: 'تاريخ انتهاء جواز السفر' },
+    required: true, isNewPerson: true,
+  },
+  {
+    fieldKey: 'travel_document', type: 'select', orderNum: 9,
     label: { en: 'Travel Document', es: 'Documento de viaje', ar: 'وثيقة السفر' },
     placeholder: { en: 'Travel document type', es: '', ar: '' },
     required: true, isNewPerson: true,
     options: { options: [opt('ordinary', 'Ordinary Passport'), opt('diplomatic', 'Diplomatic Passport'), opt('service', 'Service Passport')] },
   },
   {
-    fieldKey: 'purpose_of_visit', type: 'select', orderNum: 5,
+    fieldKey: 'purpose_of_visit', type: 'select', orderNum: 10,
     label: { en: 'Purpose of Visit', es: 'Motivo de la visita', ar: 'الغرض من الزيارة' },
     placeholder: { en: 'Purpose of visit', es: '', ar: '' },
     required: true, isNewPerson: true,
     options: { options: [opt('tourism', 'Tourism'), opt('business', 'Business'), opt('transit', 'Transit'), opt('other', 'Other')] },
   },
   {
-    fieldKey: 'travel_date', type: 'visa_date', orderNum: 6,
+    fieldKey: 'travel_date', type: 'visa_date', orderNum: 11,
     label: { en: 'Date', es: 'Fecha', ar: 'التاريخ' },
     description: {
       en: 'Your e-Visa is valid from [start_date] to [finish_date] for a total period of ([validity_day] days). You can enter Azerbaijan any date during the validity period ([validity_day] days) of your e-visa. However, your stay cannot exceed [stay_day] days.',
@@ -86,7 +117,14 @@ const STARTER_FORM_ELEMENTS = [
     options: { defaultProc: 'today', validityDays: 90, stayDays: 30 },
   },
   {
-    fieldKey: 'passport_photo', type: 'image', orderNum: 7,
+    fieldKey: 'stay_in_az', type: 'number', orderNum: 12,
+    label: { en: 'Length of Stay (days)', es: 'Duración de la estancia (días)', ar: 'مدة الإقامة (أيام)' },
+    placeholder: { en: 'e.g. 14', es: '', ar: '' },
+    required: true, isNewPerson: true,
+    min: 1, max: 30,
+  },
+  {
+    fieldKey: 'passport_photo', type: 'image', orderNum: 13,
     label: { en: 'Passport Photo Page', es: 'Página de foto del pasaporte', ar: 'صفحة صورة جواز السفر' },
     required: true, isNewPerson: true,
     options: { maxFileSizeKb: 4096 },
