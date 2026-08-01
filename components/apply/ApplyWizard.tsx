@@ -9,6 +9,41 @@ import styles from '../../app/[locale]/apply/apply.module.css'
 type Locale = 'en' | 'es' | 'ar'
 type WizardStep = 'visaType' | 'details' | 'confirmation'
 
+// Inline icons matching the site's own style (see BookingWidget.tsx's
+// CalendarIcon/GuestsIcon/CheckIcon) — plain strokes, no emoji.
+function PassportIcon() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="2" width="13" height="15" rx="2" />
+      <circle cx="9.5" cy="7.5" r="2" />
+      <path d="M6.5 13c0-1.7 1.3-3 3-3s3 1.3 3 3" />
+    </svg>
+  )
+}
+function DetailsIcon() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 3h8l3 3v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+      <path d="M6.5 9h6M6.5 12h6M6.5 6h3" />
+    </svg>
+  )
+}
+function ClockIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="8" r="6.5" />
+      <path d="M8 4.5V8l2.5 1.5" />
+    </svg>
+  )
+}
+function BoltIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 1.5 3 9.5h4l-1 5 6-8H8l1-5Z" />
+    </svg>
+  )
+}
+
 export default function ApplyWizard({
   formElements,
   countries,
@@ -129,7 +164,7 @@ export default function ApplyWizard({
           <div className={styles.grid}>
             <div className={styles.card}>
               <div className={styles.cardHead}>
-                <div className={styles.cardIcon}>🛂</div>
+                <div className={styles.cardIcon}><PassportIcon /></div>
                 <div>
                   <div className={styles.cardTag}>STEP 01</div>
                   <div className={styles.cardTitle}>Visa Type</div>
@@ -141,7 +176,7 @@ export default function ApplyWizard({
                 <label className={styles.fLabel}>Processing Type<span className={styles.req}>*</span></label>
                 {visaTypes.length === 0 && (
                   <div className={styles.warnBox}>
-                    <h5>⚠ No visa types available yet</h5>
+                    <h5>No visa types available yet</h5>
                     <p>An admin needs to add at least one country with pricing in Admin → E-visa → Countries before applicants can apply.</p>
                   </div>
                 )}
@@ -153,7 +188,7 @@ export default function ApplyWizard({
                       onClick={() => setVisaType(vt.key)}
                     >
                       <div className={styles.visaInner}>
-                        <div className={styles.visaIconWrap}>{vt.key === 'urgent' ? '⚡' : '⏱'}</div>
+                        <div className={styles.visaIconWrap}>{vt.key === 'urgent' ? <BoltIcon /> : <ClockIcon />}</div>
                         <div className={styles.visaName}>{vt.label?.[locale] || vt.label?.en || vt.key}</div>
                         <div className={styles.visaPrice}>from ${vt.fromPrice}</div>
                       </div>
@@ -164,10 +199,10 @@ export default function ApplyWizard({
               </div>
 
               <div className={styles.nav}>
-                <button className={`${styles.btnBack} ${styles.btnBackHidden}`}>← Back</button>
+                <button className={`${styles.btnBack} ${styles.btnBackHidden}`}>Back</button>
                 <div className={styles.navRight}>
                   <button className={styles.btnNext} disabled={!visaType} onClick={() => setStep('details')}>
-                    Continue <span className={styles.arr}>→</span>
+                    Continue
                   </button>
                 </div>
               </div>
@@ -175,7 +210,7 @@ export default function ApplyWizard({
 
             <div className={styles.sidebar}>
               <div className={styles.warnBox}>
-                <h5>⚠ Before you start</h5>
+                <h5>Before you start</h5>
                 <p>Have your passport, a digital photo, and a valid email address ready.</p>
               </div>
             </div>
@@ -187,7 +222,7 @@ export default function ApplyWizard({
           <div className={styles.grid}>
             <div className={styles.card}>
               <div className={styles.cardHead}>
-                <div className={styles.cardIcon}>📝</div>
+                <div className={styles.cardIcon}><DetailsIcon /></div>
                 <div>
                   <div className={styles.cardTag}>STEP 02</div>
                   <div className={styles.cardTitle}>{isFirstPerson ? 'Your Details' : `Applicant ${personIndex}`}</div>
@@ -226,13 +261,13 @@ export default function ApplyWizard({
                 ))}
 
               <div className={styles.nav}>
-                <button className={styles.btnBack} onClick={() => setStep('visaType')}>← Back</button>
+                <button className={styles.btnBack} onClick={() => setStep('visaType')}>Back</button>
                 <div className={styles.navRight}>
                   <button className={styles.btnAddPerson} onClick={handleAddPerson} disabled={submitting}>
                     + Add Another Person
                   </button>
                   <button className={styles.btnNext} onClick={handleSubmit} disabled={submitting}>
-                    {submitting ? 'Submitting…' : 'Submit Application'} <span className={styles.arr}>✈</span>
+                    {submitting ? 'Submitting…' : 'Submit Application'}
                   </button>
                 </div>
               </div>
@@ -245,7 +280,7 @@ export default function ApplyWizard({
               </div>
               {applicants.length > 0 && (
                 <div className={styles.warnBox}>
-                  <h5>👥 Party so far</h5>
+                  <h5>Party so far</h5>
                   <p>{applicants.length} applicant{applicants.length !== 1 ? 's' : ''} added. Complete this person to submit the whole application.</p>
                 </div>
               )}
@@ -258,12 +293,12 @@ export default function ApplyWizard({
           <div className={styles.grid}>
             <div>
               <div className={styles.successBanner}>
-                <div className={styles.successIcon}>✅</div>
+                <div className={styles.successIcon}>✓</div>
                 <div>
                   <div className={styles.successTitle}>Application Submitted</div>
                   <div className={styles.successSub}>Save your reference number — you'll need it to check status and pay</div>
                 </div>
-                <div className={styles.confRefBadge}>Ref <strong>#{result.applicationNumber}</strong></div>
+                <div className={styles.confRefBadge}>#{result.applicationNumber}</div>
               </div>
 
               <div className={styles.priceRow}>
@@ -274,7 +309,7 @@ export default function ApplyWizard({
               </div>
 
               <button className={styles.payBtn} disabled title="Payment integration is coming soon">
-                💳 Proceed to Payment (coming soon)
+                Proceed to Payment (coming soon)
               </button>
             </div>
           </div>

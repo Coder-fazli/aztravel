@@ -194,9 +194,15 @@ export default function DynamicField({
         {header}
         {description && <span className={styles.fHint}>{description}</span>}
         <label className={styles.uploadBox}>
-          <div className="ic">📷</div>
-          <div className="txt">{uploading ? 'Uploading…' : value ? 'Change photo' : 'Click to upload or drag and drop'}</div>
-          <div className="sub">JPG, PNG, or WebP, max {Math.round((element.options?.maxFileSizeKb ?? 4096) / 1024)}MB</div>
+          <div className={styles.ic}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="5" width="16" height="12" rx="2" />
+              <path d="M6 5l1.5-2h5L14 5" />
+              <circle cx="10" cy="11" r="3" />
+            </svg>
+          </div>
+          <div className={styles.txt}>{uploading ? 'Uploading…' : value ? 'Change photo' : 'Click to upload or drag and drop'}</div>
+          <div className={styles.sub}>JPG, PNG, or WebP, max {Math.round((element.options?.maxFileSizeKb ?? 4096) / 1024)}MB</div>
           <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={handleFileChange} />
         </label>
         {value && <img src={value} alt={label} className={styles.uploadPreview} />}
