@@ -3,10 +3,13 @@
 
 .page {
   background: var(--base-3);
-  min-height: calc(100vh - 80px);
-  padding: 28px 16px 64px;
+  min-height: 100vh;
+  padding: 100px 16px 64px; /* top padding clears the fixed navbar (matches blog page's 80px + margin) */
   color: var(--base-13);
   font-family: var(--font-family);
+}
+@media (max-width: 767px) {
+  .page { padding-top: 90px; }
 }
 .container { max-width: 1180px; margin: 0 auto; }
 
