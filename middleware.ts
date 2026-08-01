@@ -18,6 +18,13 @@ export default clerkMiddleware(async (auth, req) => {
         return NextResponse.rewrite(url)
     }
 
+    // azerbaijantravel.com/e-visa (and locale-prefixed variants) — bounce
+    // over to the real apply subdomain instead of 404ing. Covers old
+    // links/bookmarks to the path that used to exist before the subdomain.
+    if (!hostname.startsWith('apply.') && /^\/(es\/|ar\/)?e-visa\/?$/.test(pathname)) {
+        return NextResponse.redirect('https://apply.azerbaijantravel.com/', 301)
+    }
+
     // Public API routes — no auth required.
     // - tripadvisor: read-only proxy, no sensitive data
     // - upload: used by the public apply wizard (passport photo) — visitors
