@@ -21,6 +21,14 @@ const STEP_META: Record<Exclude<WizardStep, 'confirmation'>, { tag: string; titl
 }
 const STEP_ORDER: Exclude<WizardStep, 'confirmation'>[] = ['visaType', 'trip', 'personal', 'documents']
 
+// Provisional reference shown before submission, matching the original's
+// $app_ref = 'AZ-' . strtoupper(substr(md5(...), 0, 8)) — a client-side
+// placeholder only; the real applicationNumber is assigned server-side on submit.
+function generateProvisionalRef() {
+  const hex = Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join('')
+  return `AZ-${hex.toUpperCase()}`
+}
+
 const TRIP_FIELDS = new Set(['travel_document', 'purpose_of_visit', 'travel_date'])
 const PERSONAL_FIELDS = new Set(['first_name', 'last_name', 'occupation', 'email', 'phone', 'address', 'stay_in_az'])
 const DOCUMENT_FIELDS = new Set(['passport_number', 'passport_expiry', 'passport_photo'])
@@ -102,6 +110,7 @@ export default function ApplyWizard({
   locale: Locale
   initialVisaType?: string
 }) {
+  const [provisionalRef] = useState(generateProvisionalRef)
   const [step, setStep] = useState<WizardStep>('visaType')
   const [visaType, setVisaType] = useState<string>(
     (initialVisaType && visaTypes.some(v => v.key === initialVisaType)) ? initialVisaType : (visaTypes[0]?.key ?? ''),
@@ -129,6 +138,18 @@ export default function ApplyWizard({
   )
 
   const currentPrice = evaluation.price
+
+  // Running total for the whole party — sums every already-added applicant's
+  // own price plus whoever's currently being filled in. Recomputed per
+  // applicant (not just summed once) since each person can have a different
+  // country/answers and therefore a different price.
+  const partyTotal = useMemo(() => {
+    const priorTotal = applicants.reduce((sum, a) => {
+      const c = countries.find(cc => cc.code === a.country) ?? null
+      return sum + evaluateForm(formElements as any, c as any, a.visaType, a.answers).price
+    }, 0)
+    return priorTotal + currentPrice
+  }, [applicants, countries, formElements, currentPrice])
 
   const fieldsByStep = useMemo(() => {
     const groups: Record<'trip' | 'personal' | 'documents', any[]> = { trip: [], personal: [], documents: [] }
@@ -227,6 +248,10 @@ export default function ApplyWizard({
           <>
             <div className={styles.crumb}><a href="#">Home</a><span>›</span><span className={styles.cur}>e-Visa Application</span></div>
 
+            <div className={styles.refBadge}>
+              Provisional ref <strong>{provisionalRef}</strong>&nbsp;<span style={{ color: '#9ca3af' }}>(confirmed after submission)</span>
+            </div>
+
             <div className={styles.stepper}>
               {STEP_ORDER.map((s, i) => (
                 <div key={s} style={{ display: 'contents' }}>
@@ -316,8 +341,8 @@ export default function ApplyWizard({
                   <div className={styles.cardSub}>Fill in all required fields to continue</div>
                 </div>
                 <div className={styles.priceChip}>
-                  <div className={styles.priceChipLbl}>Price</div>
-                  <div className={styles.priceChipVal}>${currentPrice}</div>
+                  <div className={styles.priceChipLbl}>Total price</div>
+                  <div className={styles.priceChipVal}>${partyTotal}</div>
                 </div>
               </div>
 
@@ -343,7 +368,18 @@ export default function ApplyWizard({
             </div>
 
             <div className={styles.sidebar}>
-              <div className={styles.priceCard}><h5>Price</h5><h3>${currentPrice}</h3></div>
+              <div className={styles.priceCard}><h5>Total price</h5><h3>${partyTotal}</h3></div>
+              <div className={styles.warnBox}>
+                <h5>PAY ATTENTION!</h5>
+                <p>
+                  Visa issuance periods are determined according to the selected visa type. A standard visa is
+                  issued within 1-3 business days, while an urgent visa is issued within 4 hours. When obtaining
+                  a visa, the passport must be valid for at least 6 months from the start date of the visa. When
+                  uploading the passport photo, ensure that the image is clear and all information is legible.
+                  Please accurately verify the correctness of the information provided. If you have any question
+                  about form filling feel free to ask our professional support team.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -360,8 +396,8 @@ export default function ApplyWizard({
                   <div className={styles.cardSub}>Fill in all required fields to continue</div>
                 </div>
                 <div className={styles.priceChip}>
-                  <div className={styles.priceChipLbl}>Price</div>
-                  <div className={styles.priceChipVal}>${currentPrice}</div>
+                  <div className={styles.priceChipLbl}>Total price</div>
+                  <div className={styles.priceChipVal}>${partyTotal}</div>
                 </div>
               </div>
 
@@ -376,7 +412,7 @@ export default function ApplyWizard({
             </div>
 
             <div className={styles.sidebar}>
-              <div className={styles.priceCard}><h5>{currentTitle}</h5><h3>${currentPrice}</h3></div>
+              <div className={styles.priceCard}><h5>Total price</h5><h3>${partyTotal}</h3></div>
               {applicants.length > 0 && (
                 <div className={styles.warnBox}>
                   <h5>Party so far</h5>
@@ -399,8 +435,8 @@ export default function ApplyWizard({
                   <div className={styles.cardSub}>Fill in all required fields to continue</div>
                 </div>
                 <div className={styles.priceChip}>
-                  <div className={styles.priceChipLbl}>Price</div>
-                  <div className={styles.priceChipVal}>${currentPrice}</div>
+                  <div className={styles.priceChipLbl}>Total price</div>
+                  <div className={styles.priceChipVal}>${partyTotal}</div>
                 </div>
               </div>
 
@@ -420,7 +456,7 @@ export default function ApplyWizard({
             </div>
 
             <div className={styles.sidebar}>
-              <div className={styles.priceCard}><h5>{currentTitle}</h5><h3>${currentPrice}</h3></div>
+              <div className={styles.priceCard}><h5>Total price</h5><h3>${partyTotal}</h3></div>
               {applicants.length > 0 && (
                 <div className={styles.warnBox}>
                   <h5>Party so far</h5>
