@@ -35,6 +35,7 @@ export default function DynamicField({
 }) {
   const [uploading, setUploading] = useState(false)
   const [calOpen, setCalOpen] = useState(false)
+  const [confirmEmail, setConfirmEmail] = useState('')
 
   const label = element.label?.[locale] || element.label?.en || element.fieldKey
   const placeholder = element.placeholder?.[locale] || element.placeholder?.en || ''
@@ -49,7 +50,7 @@ export default function DynamicField({
     const file = e.target.files?.[0]
     if (!file) return
 
-    const maxKb = element.options?.maxFileSizeKb ?? 4096
+    const maxKb = element.options?.maxFileSizeKb ?? 10000
     if (file.size / 1024 > maxKb) {
       alert(`File too large. Max ${maxKb}KB`)
       return
@@ -75,6 +76,7 @@ export default function DynamicField({
   )
 
   if (element.type === 'text' || element.type === 'email' || element.type === 'number') {
+    const mismatch = element.type === 'email' && confirmEmail.length > 0 && confirmEmail !== (value ?? '')
     return (
       <div className={styles.inputArea}>
         {header}
@@ -91,6 +93,21 @@ export default function DynamicField({
           min={element.type === 'number' ? element.min : undefined}
         />
         {error && <div className={styles.errMsg}>{error}</div>}
+
+        {element.type === 'email' && (
+          <div style={{ marginTop: 14 }}>
+            <label className={styles.fLabel}>Confirm email address<span className={styles.req}>*</span></label>
+            <span className={styles.fHint}>Re-enter your email to avoid typos</span>
+            <input
+              className={`${styles.inputText} ${mismatch ? styles.err : ''}`}
+              type="email"
+              placeholder={placeholder}
+              value={confirmEmail}
+              onChange={e => setConfirmEmail(e.target.value)}
+            />
+            {mismatch && <div className={styles.errMsg}>Email addresses do not match</div>}
+          </div>
+        )}
       </div>
     )
   }
@@ -251,7 +268,7 @@ export default function DynamicField({
             </svg>
           </div>
           <div className={styles.txt}>{uploading ? 'Uploading…' : value ? 'Change photo' : 'Click to upload or drag and drop'}</div>
-          <div className={styles.sub}>JPG, PNG, or WebP, max {Math.round((element.options?.maxFileSizeKb ?? 4096) / 1024)}MB</div>
+          <div className={styles.sub}>JPG, PNG, or WebP, max {Math.round((element.options?.maxFileSizeKb ?? 10000) / 1024)}MB</div>
           <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={handleFileChange} />
         </label>
         {value && <img src={value} alt={label} className={styles.uploadPreview} />}

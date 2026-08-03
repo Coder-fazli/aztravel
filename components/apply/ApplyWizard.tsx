@@ -30,8 +30,8 @@ function generateProvisionalRef() {
 }
 
 const TRIP_FIELDS = new Set(['travel_document', 'purpose_of_visit', 'travel_date'])
-const PERSONAL_FIELDS = new Set(['first_name', 'last_name', 'occupation', 'email', 'phone', 'address', 'stay_in_az'])
-const DOCUMENT_FIELDS = new Set(['passport_number', 'passport_expiry', 'passport_photo'])
+const PERSONAL_FIELDS = new Set(['surname', 'given_names', 'occupation', 'email', 'phone', 'permanent_address', 'place_of_stay'])
+const DOCUMENT_FIELDS = new Set(['passport_expiry', 'passport_image', 'terms'])
 
 function stepForField(fieldKey: string): Exclude<WizardStep, 'confirmation' | 'visaType'> {
   if (TRIP_FIELDS.has(fieldKey)) return 'trip'
