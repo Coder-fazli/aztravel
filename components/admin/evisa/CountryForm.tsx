@@ -25,9 +25,7 @@ export default function CountryForm({ country }: { country?: any }) {
   const [eligible, setEligible] = useState<boolean>(country?.eligible ?? true)
   const [orderNum, setOrderNum] = useState<string>(String(country?.orderNum ?? 0))
 
-  const [pricingJson, setPricingJson] = useState<string>(
-    country?.pricing ? JSON.stringify(country.pricing, null, 2) : '[\n  { "key": "tourist", "label": { "en": "Tourist" }, "price": 69 }\n]',
-  )
+  const [baseFee, setBaseFee] = useState<string>(String(country?.baseFee ?? 0))
   const [conditionsJson, setConditionsJson] = useState<string>(
     country?.conditions ? JSON.stringify(country.conditions, null, 2) : '[]',
   )
@@ -71,13 +69,11 @@ export default function CountryForm({ country }: { country?: any }) {
           </div>
 
           <div className={styles.panel}>
-            <span className={styles.panelLabel}>Pricing (JSON — one entry per visa type)</span>
-            <textarea
-              className={styles.textarea}
-              name="pricing_json"
-              value={pricingJson}
-              onChange={e => setPricingJson(e.target.value)}
-            />
+            <span className={styles.panelLabel}>Base fee</span>
+            <div className={styles.field}>
+              <span>This country's flat visa fee — the selected visa type's surcharge (set in General Settings) is added on top</span>
+              <input type="number" name="baseFee" value={baseFee} onChange={e => setBaseFee(e.target.value)} min={0} />
+            </div>
           </div>
 
           <div className={styles.panel}>

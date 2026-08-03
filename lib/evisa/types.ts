@@ -15,6 +15,9 @@ export interface DateFieldOptions {
   validityDays?: number
   stayDays?: number
   closedDays?: string[] // 'YYYY-MM-DD' strings the date picker should block
+  // e.g. passport expiry must be >= today + 180 days — a forward-only floor,
+  // distinct from `min`/`max` which define a picking window around defaultDate.
+  minFutureDays?: number
 }
 
 export interface ConditionRule {
@@ -52,18 +55,21 @@ export interface FormElementDoc {
   conditions: ConditionRule[]
 }
 
-export interface CountryPricing {
-  key: string
-  label: LocalizedText
-  price: number
-}
-
 export interface CountryDoc {
   code: string
   name: LocalizedText
   eligible: boolean
-  pricing: CountryPricing[]
+  baseFee: number // this country's flat base visa fee, before the visa-type surcharge
   conditions: ConditionRule[]
+}
+
+// Visa types (Standard/Urgent/...) are global, not per-country — a flat
+// surcharge added on top of the selected country's baseFee. Matches the live
+// site's "Estimated total = country fee + processing fee" behavior.
+export interface VisaTypeOption {
+  key: string
+  label: LocalizedText
+  surcharge: number
 }
 
 // current in-progress form state: fieldKey -> answer

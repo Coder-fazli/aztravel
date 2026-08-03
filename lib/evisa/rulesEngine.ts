@@ -71,11 +71,16 @@ export interface EvaluationResult {
  * call this both client-side (live preview as the user fills the form) and
  * server-side (to re-derive price/dates before trusting anything the client
  * submitted).
+ *
+ * Price = country's flat baseFee + the selected visa type's global surcharge
+ * (e.g. Standard +$60 / Urgent +$120, same for every country) + any
+ * condition-triggered price_add/price_remove — matches the live site's
+ * "Estimated total = country fee + processing fee".
  */
 export function evaluateForm(
   formElements: FormElementDoc[],
   country: CountryDoc | null,
-  visaType: string,
+  visaTypeSurcharge: number,
   answers: AnswersMap,
   today: Date = new Date(),
 ): EvaluationResult {
@@ -83,7 +88,7 @@ export function evaluateForm(
   const visibleFields = new Set<string>()
   const dateInfoByField: Record<string, VisaDateInfo> = {}
 
-  let price = country?.pricing.find((p) => p.key === visaType)?.price ?? 0
+  let price = (country?.baseFee ?? 0) + (visaTypeSurcharge || 0)
 
   for (const el of formElements) {
     if (resolveVisibility(el.conditions ?? [], answers, countryCode)) {

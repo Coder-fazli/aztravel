@@ -35,7 +35,7 @@ function formToCountry(f: FormData) {
     eligible: bool(f, 'eligible'),
     orderNum: num(f, 'orderNum') ?? 0,
 
-    pricing:    json(f, 'pricing_json', []),
+    baseFee:    num(f, 'baseFee') ?? 0,
     conditions: json(f, 'conditions_json', []),
   }
 }

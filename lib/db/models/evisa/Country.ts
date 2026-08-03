@@ -14,13 +14,10 @@ export const CountrySchema = new Schema({
 
   eligible: { type: Boolean, default: true }, // can citizens of this country apply at all
 
-  // one entry per visa type offered for this country, e.g. 'tourist' | 'business' | 'urgent' | 'standard'
-  pricing: [{
-    key:            { type: String, required: true },
-    label:          i18n,
-    price:          { type: Number, required: true },
-    processingTime: i18n,
-  }],
+  // Flat base visa fee for this country. Visa type (Standard/Urgent) adds a
+  // separate global surcharge on top — see Settings.evisaVisaTypes — matching
+  // the live site's "Estimated total = country fee + processing fee".
+  baseFee: { type: Number, default: 0 },
 
   conditions: [ConditionRuleSchema],
 

@@ -106,7 +106,7 @@ export default function ApplyWizard({
 }: {
   formElements: any[]
   countries: any[]
-  visaTypes: { key: string; label: any; fromPrice: number }[]
+  visaTypes: { key: string; label: any; surcharge: number }[]
   locale: Locale
   initialVisaType?: string
 }) {
@@ -132,9 +132,14 @@ export default function ApplyWizard({
     [formElements, isFirstPerson],
   )
 
+  const visaTypeSurcharge = useMemo(
+    () => visaTypes.find(v => v.key === visaType)?.surcharge ?? 0,
+    [visaTypes, visaType],
+  )
+
   const evaluation = useMemo(
-    () => evaluateForm(formElements as any, selectedCountry as any, visaType, answers),
-    [formElements, selectedCountry, visaType, answers],
+    () => evaluateForm(formElements as any, selectedCountry as any, visaTypeSurcharge, answers),
+    [formElements, selectedCountry, visaTypeSurcharge, answers],
   )
 
   const currentPrice = evaluation.price
@@ -146,10 +151,11 @@ export default function ApplyWizard({
   const partyTotal = useMemo(() => {
     const priorTotal = applicants.reduce((sum, a) => {
       const c = countries.find(cc => cc.code === a.country) ?? null
-      return sum + evaluateForm(formElements as any, c as any, a.visaType, a.answers).price
+      // whole party shares one visaType (chosen once in Step 1), so the same surcharge applies
+      return sum + evaluateForm(formElements as any, c as any, visaTypeSurcharge, a.answers).price
     }, 0)
     return priorTotal + currentPrice
-  }, [applicants, countries, formElements, currentPrice])
+  }, [applicants, countries, formElements, visaTypeSurcharge, currentPrice])
 
   const fieldsByStep = useMemo(() => {
     const groups: Record<'trip' | 'personal' | 'documents', any[]> = { trip: [], personal: [], documents: [] }
@@ -302,7 +308,7 @@ export default function ApplyWizard({
                       <div className={styles.visaInner}>
                         <div className={styles.visaIconWrap}>{vt.key === 'urgent' ? <BoltIcon /> : <ClockIcon />}</div>
                         <div className={styles.visaName}>{vt.label?.[locale] || vt.label?.en || vt.key}</div>
-                        <div className={styles.visaPrice}>from ${vt.fromPrice}</div>
+                        <div className={styles.visaPrice}>+${vt.surcharge}</div>
                       </div>
                       <div className={styles.visaCheck}>✓</div>
                     </label>

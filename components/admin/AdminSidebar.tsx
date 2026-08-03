@@ -23,6 +23,7 @@ const navTop = [
 const evisaSub = [
   { label: 'Form Elements', href: '/admin/evisa' },
   { label: 'Countries', href: '/admin/evisa/countries' },
+  { label: 'Visa Types', href: '/admin/evisa/visa-types' },
   { label: 'Applications', href: '/admin/evisa/applications' },
 ]
 

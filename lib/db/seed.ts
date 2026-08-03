@@ -3,6 +3,7 @@ import Location from './models/Location'
 import Banner from './models/Banner'
 import Country from './models/evisa/Country'
 import FormElement from './models/evisa/FormElement'
+import Settings from './models/Settings'
 
 // NOTE: this is a development starter set, not verified official ASAN e-Visa
 // data. The real eligible-country list + pricing lived only in the old
@@ -138,6 +139,9 @@ const STARTER_FORM_ELEMENTS = [
     fieldKey: 'passport_expiry', type: 'date', orderNum: 11,
     label: { en: 'Passport expiry date', es: 'Fecha de caducidad del pasaporte', ar: 'تاريخ انتهاء جواز السفر' },
     required: true, isNewPerson: true,
+    // matches the live site's "PAY ATTENTION" copy: passport must be valid
+    // at least 6 months from the visa start date
+    options: { minFutureDays: 180 },
   },
   {
     fieldKey: 'passport_image', type: 'image', orderNum: 12,
@@ -249,10 +253,7 @@ async function seed(){
         name: { en: name, es: name, ar: name },
         eligible: true,
         orderNum: i,
-        pricing: [
-          { key: 'standard', label: { en: 'Standard', es: 'Estándar', ar: 'قياسي' }, price: 69 },
-          { key: 'urgent',   label: { en: 'Urgent',   es: 'Urgente',  ar: 'عاجل' },   price: 99 },
-        ],
+        baseFee: 0, // dev placeholder -- confirm real per-country base fees with the business
         conditions: [],
       })),
     )
@@ -261,6 +262,18 @@ async function seed(){
     await FormElement.deleteMany({})
     await FormElement.insertMany(STARTER_FORM_ELEMENTS.map(el => ({ ...el, conditions: [] })))
     console.log('Form elements seeded successfully')
+
+    // Global visa type surcharges -- verified against the live site
+    // (Standard +$60, Urgent +$120), same surcharge for every country.
+    await Settings.findOneAndUpdate(
+      { key: 'site' },
+      { $set: { evisaVisaTypes: [
+        { key: 'standard', label: { en: 'Standard', es: 'Estándar', ar: 'قياسي' }, surcharge: 60 },
+        { key: 'urgent',   label: { en: 'Urgent',   es: 'Urgente',  ar: 'عاجل' },   surcharge: 120 },
+      ] } },
+      { upsert: true },
+    )
+    console.log('Visa types seeded successfully')
 
     process.exit(0)
 

@@ -24,6 +24,10 @@ const SettingsSchema = new Schema (
             activeGateway:      { type: String, enum: ['stripe', 'skrill'], default: 'stripe' },
             paymentNoticeEmail: { type: String, default: '' }, // admin email for "new paid application" alerts
         },
+        // Global visa types (Standard/Urgent/...) — a flat surcharge added on top
+        // of whichever country's baseFee, same surcharge for every country.
+        // e.g. [{ key: 'standard', label: {en:'Standard',...}, surcharge: 60 }]
+        evisaVisaTypes: { type: Schema.Types.Mixed, default: [] },
     },
     { timestamps: true }
 )

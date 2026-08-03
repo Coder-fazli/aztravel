@@ -4,6 +4,7 @@ import { connectDb } from '@/lib/db/connect'
 import FormElement from '@/lib/db/models/evisa/FormElement'
 import Country from '@/lib/db/models/evisa/Country'
 import Evisa from '@/lib/db/models/evisa/Evisa'
+import Settings from '@/lib/db/models/Settings'
 import { evaluateForm } from '@/lib/evisa/rulesEngine'
 import type { AnswersMap } from '@/lib/evisa/types'
 
@@ -21,21 +22,13 @@ export async function getPublicCountries() {
   return plain(all)
 }
 
-// visa types aren't their own model — they're whatever pricing keys admins
-// have attached to countries. Derive the distinct set + a "from $x" price.
-export async function getVisaTypes() {
-  const countries = await getPublicCountries()
-  const byKey = new Map<string, { key: string; label: any; fromPrice: number }>()
-
-  for (const c of countries) {
-    for (const p of c.pricing ?? []) {
-      const existing = byKey.get(p.key)
-      if (!existing || p.price < existing.fromPrice) {
-        byKey.set(p.key, { key: p.key, label: p.label, fromPrice: p.price })
-      }
-    }
-  }
-  return Array.from(byKey.values())
+// Visa types (Standard/Urgent/...) are global — a flat surcharge on top of
+// whichever country's baseFee, same surcharge for every country. Configured
+// once in Settings, not per-country.
+export async function getVisaTypes(): Promise<{ key: string; label: any; surcharge: number }[]> {
+  await connectDb()
+  const settings = await Settings.findOne({ key: 'site' }).lean() as any
+  return settings?.evisaVisaTypes ?? []
 }
 
 function generateApplicationNumber() {
@@ -55,9 +48,10 @@ export type ApplicantDraft = {
 export async function submitApplication(applicants: ApplicantDraft[]) {
   await connectDb()
 
-  const [formElements, countries] = await Promise.all([
+  const [formElements, countries, visaTypes] = await Promise.all([
     FormElement.find({}).lean(),
     Country.find({}).lean(),
+    getVisaTypes(),
   ])
 
   const applicationNumber = generateApplicationNumber()
@@ -65,7 +59,8 @@ export async function submitApplication(applicants: ApplicantDraft[]) {
 
   const docs = applicants.map((applicant, i) => {
     const country = countries.find((c: any) => c.code === applicant.country) ?? null
-    const { price } = evaluateForm(formElements as any, country as any, applicant.visaType, applicant.answers)
+    const surcharge = visaTypes.find((v) => v.key === applicant.visaType)?.surcharge ?? 0
+    const { price } = evaluateForm(formElements as any, country as any, surcharge, applicant.answers)
     totalPrice += price
 
     const answers = Object.entries(applicant.answers)

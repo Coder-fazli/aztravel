@@ -45,6 +45,9 @@ export function computeVisaDateInfo(
   if (min != null) info.minDate = toISODate(addDays(defaultDate, -min))
   // e.g. "valid from Aug 8 to Nov 6" for a 90-day validity window starting Aug 8 — forward, not backward.
   if (opts?.validityDays != null) info.validityDate = toISODate(addDays(defaultDate, opts.validityDays))
+  // Forward-only floor (e.g. passport expiry must be >= today + 180 days) — takes
+  // priority over the min/max window above, which don't fit a "must be X days out" rule.
+  if (opts?.minFutureDays != null) info.minDate = toISODate(addDays(today, opts.minFutureDays))
 
   return info
 }
