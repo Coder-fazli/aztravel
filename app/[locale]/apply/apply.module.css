@@ -4,12 +4,15 @@
 .page {
   background: var(--base-3);
   min-height: 100vh;
-  padding: 100px 16px 64px; /* top padding clears the fixed navbar (matches blog page's 80px + margin) */
+  /* Navbar measured at 143.6px tall in production (topBar + mainNav row) --
+     100px wasn't enough and left the breadcrumb rendering half-hidden
+     underneath it. 24px breathing room on top of the real height. */
+  padding: 168px 16px 64px;
   color: var(--base-13);
   font-family: var(--font-family);
 }
 @media (max-width: 767px) {
-  .page { padding-top: 90px; }
+  .page { padding-top: 120px; }
 }
 .container { max-width: 1180px; margin: 0 auto; }
 

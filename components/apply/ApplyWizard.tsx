@@ -295,7 +295,7 @@ export default function ApplyWizard({
                 {visaTypes.length === 0 && (
                   <div className={styles.warnBox}>
                     <h5>No visa types available yet</h5>
-                    <p>An admin needs to add at least one country with pricing in Admin → E-visa → Countries before applicants can apply.</p>
+                    <p>An admin needs to add at least one visa type in Admin → E-visa → Visa Types before applicants can apply.</p>
                   </div>
                 )}
                 <div className={styles.visaGrid}>
