@@ -188,6 +188,10 @@ export default function ApplyWizard({
   // Country only needs validating once, on the first content step (Trip Details).
   function validateStep(stepFields: any[], includeCountry: boolean): boolean {
     const nextErrors: Record<string, string> = {}
+    const orderedKeys: string[] = []
+    if (includeCountry) orderedKeys.push('country')
+    for (const el of stepFields) orderedKeys.push(el.fieldKey)
+
     if (includeCountry && !country) nextErrors.country = 'Please select your country'
 
     for (const el of stepFields) {
@@ -198,6 +202,17 @@ export default function ApplyWizard({
     }
 
     setErrors(prev => ({ ...prev, ...nextErrors }))
+
+    // Errors alone are easy to miss if they land off-screen (especially with
+    // the redirect-to-top-of-step scroll on every step change) -- jump the
+    // user straight to the first thing that's actually wrong.
+    const firstErrorKey = orderedKeys.find(k => nextErrors[k])
+    if (firstErrorKey) {
+      requestAnimationFrame(() => {
+        document.getElementById(`field-${firstErrorKey}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      })
+    }
+
     return Object.keys(nextErrors).length === 0
   }
 
@@ -243,16 +258,17 @@ export default function ApplyWizard({
 
   function renderFields(fields: any[]) {
     return fields.map(el => (
-      <DynamicField
-        key={el.fieldKey}
-        element={el}
-        value={answers[el.fieldKey]}
-        onChange={v => setAnswer(el.fieldKey, v)}
-        locale={locale}
-        countries={countries}
-        dateInfo={evaluation.dateInfoByField[el.fieldKey]}
-        error={errors[el.fieldKey]}
-      />
+      <div id={`field-${el.fieldKey}`} key={el.fieldKey}>
+        <DynamicField
+          element={el}
+          value={answers[el.fieldKey]}
+          onChange={v => setAnswer(el.fieldKey, v)}
+          locale={locale}
+          countries={countries}
+          dateInfo={evaluation.dateInfoByField[el.fieldKey]}
+          error={errors[el.fieldKey]}
+        />
+      </div>
     ))
   }
 
@@ -371,7 +387,7 @@ export default function ApplyWizard({
                 </div>
               </div>
 
-              <div className={styles.inputArea}>
+              <div className={styles.inputArea} id="field-country">
                 <label className={styles.fLabel}>Your country<span className={styles.req}>*</span></label>
                 <select className={styles.inputText} value={country} onChange={e => setCountry(e.target.value)}>
                   <option value="">Select country of your travel document</option>
