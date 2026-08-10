@@ -110,7 +110,12 @@ export default function ApplyWizard({
   locale: Locale
   initialVisaType?: string
 }) {
-  const [provisionalRef] = useState(generateProvisionalRef)
+  // generateProvisionalRef() is random -- calling it in the initializer ran
+  // it once during SSR and again on client hydration, producing two
+  // different strings for the same text node (React hydration error #418).
+  // Render nothing until after mount, then generate it client-side only.
+  const [provisionalRef, setProvisionalRef] = useState('')
+  useEffect(() => { setProvisionalRef(generateProvisionalRef()) }, [])
   const [step, setStep] = useState<WizardStep>('visaType')
   const [visaType, setVisaType] = useState<string>(
     (initialVisaType && visaTypes.some(v => v.key === initialVisaType)) ? initialVisaType : (visaTypes[0]?.key ?? ''),

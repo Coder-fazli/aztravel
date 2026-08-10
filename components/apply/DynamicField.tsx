@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { resolveDescriptionPlaceholders, type VisaDateInfo } from '@/lib/evisa/dateRules'
@@ -45,6 +45,17 @@ export default function DynamicField({
     : rawDescription
 
   const inputClass = `${styles.inputText} ${error ? styles.err : ''}`
+
+  // visa_date shows a computed default (e.g. today) in the trigger before the
+  // user ever opens the calendar -- looks filled in, but until now nothing
+  // wrote that default into `answers`, so required-validation rejected it as
+  // missing even though the screen showed a date. Commit the default once
+  // it's known, so what's on screen matches what's actually answered.
+  useEffect(() => {
+    if (element.type === 'visa_date' && (value === undefined || value === null || value === '') && dateInfo?.defaultDate) {
+      onChange(dateInfo.defaultDate)
+    }
+  }, [element.type, value, dateInfo?.defaultDate])
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -139,6 +150,12 @@ export default function DynamicField({
             <Calendar
               mode="single"
               captionLayout="dropdown"
+              // react-day-picker's dropdown mode defaults endMonth to December
+              // of the current year -- with no override, a passport-expiry
+              // field (which must be 6+ months out) had no future years to
+              // pick from at all. Give it 15 years of headroom (typical
+              // passport validity) unless the field defines its own ceiling.
+              endMonth={dateInfo?.maxDate ? fromISODate(dateInfo.maxDate) : new Date(new Date().getFullYear() + 15, 11)}
               defaultMonth={currentValue ? fromISODate(currentValue) : dateInfo?.minDate ? fromISODate(dateInfo.minDate) : undefined}
               selected={currentValue ? fromISODate(currentValue) : undefined}
               onSelect={(d) => { if (d) { onChange(toISODate(d)); setCalOpen(false) } }}
