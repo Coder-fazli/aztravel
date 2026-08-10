@@ -147,7 +147,7 @@ const STARTER_FORM_ELEMENTS = [
     fieldKey: 'passport_image', type: 'image', orderNum: 12,
     label: { en: 'Passport image', es: 'Imagen del pasaporte', ar: 'صورة جواز السفر' },
     description: {
-      en: 'Upload the full passport photo page like the rightmost example. Avoid glare, cropping, and tilting. JPG or PNG only, max 10000KB. Ensure all text on the document is clear and legible.',
+      en: 'Upload the full passport photo page like the rightmost example. Avoid glare, cropping, and tilting. JPG, PNG, or HEIC, max 10000KB. Ensure all text on the document is clear and legible.',
       es: '', ar: '',
     },
     required: true, isNewPerson: true,

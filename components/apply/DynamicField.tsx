@@ -287,8 +287,7 @@ export default function DynamicField({
             </svg>
           </div>
           <div className={styles.txt}>{uploading ? 'Uploading…' : value ? 'Change photo' : 'Click to upload or drag and drop'}</div>
-          <div className={styles.sub}>JPG, PNG, or WebP, max {Math.round((element.options?.maxFileSizeKb ?? 10000) / 1024)}MB</div>
-          <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={handleFileChange} />
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" hidden onChange={handleFileChange} />
         </label>
         {value && <img src={value} alt={label} className={styles.uploadPreview} />}
         {error && <div className={styles.errMsg}>{error}</div>}

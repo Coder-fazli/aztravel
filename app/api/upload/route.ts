@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import { randomUUID } from 'crypto'
+import heicConvert from 'heic-convert'
 import { connectDb } from '@/lib/db/connect'
 import Media from '@/lib/db/models/Media'
 
@@ -13,10 +14,15 @@ import Media from '@/lib/db/models/Media'
 //
 // Public + unauthenticated (used by the anonymous e-Visa apply wizard), so
 // this endpoint verifies real file content rather than trusting the client's
-// declared Content-Type, and rate-limits per IP. HEIC/SVG/GIF intentionally
-// unsupported for now — a passport photo is always JPEG/PNG/WebP.
+// declared Content-Type, and rate-limits per IP. SVG/GIF intentionally
+// unsupported — a passport photo is always JPEG/PNG/WebP/HEIC.
 
-const MAX_BYTES = 5 * 1024 * 1024 // 5 MB
+// Must match (or exceed) the UI's advertised limit -- the field description
+// and the client-side check in DynamicField.tsx both say "max 10000KB".
+// This used to be a separate, lower 5MB here, so real (non-tiny) phone
+// photos between 5-10MB were silently rejected after the client had already
+// accepted them.
+const MAX_BYTES = 10000 * 1024 // 10000 KB, matches the field's own copy
 
 function detectImageType(buffer: Buffer): { mime: string; ext: string } | null {
   if (buffer.length >= 3 && buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF) {
@@ -37,6 +43,18 @@ function detectImageType(buffer: Buffer): { mime: string; ext: string } | null {
     return { mime: 'image/webp', ext: 'webp' }
   }
   return null
+}
+
+// HEIC/HEIF: ISO base media file — "ftyp" box at offset 4, brand code at
+// offset 8. iPhones default to this format, so passport photos taken
+// straight from the Camera app commonly arrive as HEIC.
+const HEIC_BRANDS = ['heic', 'heix', 'hevc', 'hevx', 'heim', 'heis', 'hevm', 'hevs', 'mif1', 'msf1']
+function isHeic(buffer: Buffer): boolean {
+  return (
+    buffer.length >= 12 &&
+    buffer[4] === 0x66 && buffer[5] === 0x74 && buffer[6] === 0x79 && buffer[7] === 0x70 && // "ftyp"
+    HEIC_BRANDS.includes(buffer.slice(8, 12).toString('ascii'))
+  )
 }
 
 // In-memory per-IP limit — resets on redeploy, fine for a single-process
@@ -76,13 +94,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No file provided' }, { status: 400 })
   }
   if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: 'File too large (max 5 MB)' }, { status: 413 })
+    return NextResponse.json({ error: `File too large (max ${Math.round(MAX_BYTES / 1024)}KB)` }, { status: 413 })
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer())
-  const detected = detectImageType(buffer)
+  let buffer = Buffer.from(await file.arrayBuffer())
+  let detected = detectImageType(buffer)
+
+  // Browsers (other than Safari) can't render HEIC in an <img> tag, so a
+  // stored-as-is HEIC would just be another broken image everywhere it's
+  // reviewed (admin panel, applicant confirmation). Decode and re-encode as
+  // JPEG here so the rest of the app never has to know HEIC was involved.
+  if (!detected && isHeic(buffer)) {
+    try {
+      const converted = await heicConvert({ buffer, format: 'JPEG', quality: 0.9 })
+      buffer = Buffer.from(converted)
+      detected = { mime: 'image/jpeg', ext: 'jpg' }
+    } catch {
+      return NextResponse.json({
+        error: 'This HEIC photo could not be converted. Please export it as JPG or PNG and try again (on iPhone: Settings → Camera → Formats → Most Compatible).',
+      }, { status: 415 })
+    }
+  }
+
   if (!detected) {
-    return NextResponse.json({ error: 'Please upload a JPG, PNG, or WebP image' }, { status: 415 })
+    return NextResponse.json({ error: 'Please upload a JPG, PNG, WebP, or HEIC image' }, { status: 415 })
   }
 
   const filename = `${randomUUID()}.${detected.ext}`
@@ -99,7 +134,7 @@ export async function POST(request: Request) {
     url,
     filename: file.name,
     mime: detected.mime,
-    size: file.size,
+    size: buffer.length, // the stored file's size, not the original upload's (differs after HEIC conversion)
   })
 
   return NextResponse.json({
@@ -107,6 +142,6 @@ export async function POST(request: Request) {
     url,
     filename: file.name,
     mime: detected.mime,
-    size: file.size,
+    size: buffer.length,
   })
 }
