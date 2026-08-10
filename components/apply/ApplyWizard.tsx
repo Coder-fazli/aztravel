@@ -251,7 +251,14 @@ export default function ApplyWizard({
     ))
   }
 
-  const currentTitle = step === 'personal' && !isFirstPerson ? `Applicant ${personIndex}` : (step === 'confirmation' ? '' : STEP_META[step].title)
+  // Person 2+ get no other visual cue that they're filling in a new applicant
+  // (fields just go blank again) -- the step title is the only signal, so it
+  // has to say so explicitly instead of repeating the generic step name.
+  const currentTitle = step === 'confirmation'
+    ? ''
+    : (!isFirstPerson && step !== 'visaType')
+      ? `Applicant ${personIndex} — ${STEP_META[step].title}`
+      : STEP_META[step].title
 
   return (
     <div className={styles.page}>
@@ -350,7 +357,7 @@ export default function ApplyWizard({
                 <div className={styles.cardIcon}>{STEP_ICON.trip}</div>
                 <div>
                   <div className={styles.cardTag}>{STEP_META.trip.tag}</div>
-                  <div className={styles.cardTitle}>{STEP_META.trip.title}</div>
+                  <div className={styles.cardTitle}>{currentTitle}</div>
                   <div className={styles.cardSub}>Fill in all required fields to continue</div>
                 </div>
                 <div className={styles.priceChip}>
@@ -382,6 +389,12 @@ export default function ApplyWizard({
 
             <div className={styles.sidebar}>
               <div className={styles.priceCard}><h5>Total price</h5><h3>${partyTotal}</h3></div>
+              {applicants.length > 0 && (
+                <div className={styles.warnBox}>
+                  <h5>Party so far</h5>
+                  <p>{applicants.length} applicant{applicants.length !== 1 ? 's' : ''} added. Now filling in the next person.</p>
+                </div>
+              )}
               <div className={styles.warnBox}>
                 <h5>PAY ATTENTION!</h5>
                 <p>
@@ -444,7 +457,7 @@ export default function ApplyWizard({
                 <div className={styles.cardIcon}>{STEP_ICON.documents}</div>
                 <div>
                   <div className={styles.cardTag}>{STEP_META.documents.tag}</div>
-                  <div className={styles.cardTitle}>{STEP_META.documents.title}</div>
+                  <div className={styles.cardTitle}>{currentTitle}</div>
                   <div className={styles.cardSub}>Fill in all required fields to continue</div>
                 </div>
                 <div className={styles.priceChip}>
