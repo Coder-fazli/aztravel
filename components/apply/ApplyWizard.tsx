@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { evaluateForm } from '@/lib/evisa/rulesEngine'
 import { submitApplication, type ApplicantDraft } from '@/lib/actions/evisa'
 import DynamicField from './DynamicField'
@@ -121,6 +121,13 @@ export default function ApplyWizard({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<{ applicationNumber: string; totalPrice: number } | null>(null)
+
+  // Without this, the browser keeps whatever scroll position the user was
+  // at on the previous (usually taller) step -- landing on a short new step
+  // already scrolled past its content, looking like it "jumped to the bottom".
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [step])
 
   const personIndex = applicants.length + 1
   const isFirstPerson = personIndex === 1

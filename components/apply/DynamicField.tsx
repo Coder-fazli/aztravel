@@ -138,6 +138,8 @@ export default function DynamicField({
           <PopoverContent align="start" sideOffset={8}>
             <Calendar
               mode="single"
+              captionLayout="dropdown"
+              defaultMonth={currentValue ? fromISODate(currentValue) : dateInfo?.minDate ? fromISODate(dateInfo.minDate) : undefined}
               selected={currentValue ? fromISODate(currentValue) : undefined}
               onSelect={(d) => { if (d) { onChange(toISODate(d)); setCalOpen(false) } }}
               disabled={(d) => (
