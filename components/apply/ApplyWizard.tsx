@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { evaluateForm } from '@/lib/evisa/rulesEngine'
 import { submitApplication, type ApplicantDraft } from '@/lib/actions/evisa'
 import DynamicField from './DynamicField'
+import PayButton from './PayButton'
 import styles from '../../app/[locale]/apply/apply.module.css'
 
 type Locale = 'en' | 'es' | 'ar'
@@ -534,9 +535,7 @@ export default function ApplyWizard({
                 <div className={styles.priceRowVal}>${result.totalPrice}</div>
               </div>
 
-              <button className={styles.payBtn} disabled title="Payment integration is coming soon">
-                Proceed to Payment (coming soon)
-              </button>
+              <PayButton applicationNumber={result.applicationNumber} />
             </div>
           </div>
         )}

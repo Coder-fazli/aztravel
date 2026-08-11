@@ -29,7 +29,13 @@ export default clerkMiddleware(async (auth, req) => {
     // - tripadvisor: read-only proxy, no sensitive data
     // - upload: used by the public apply wizard (passport photo) — visitors
     //   submitting a visa application are never signed in
-    if (pathname.startsWith('/api/tripadvisor') || pathname.startsWith('/api/upload')) {
+    // - webhooks/stripe: called directly by Stripe's servers, never by a
+    //   signed-in user — it authenticates itself via signature, not Clerk
+    if (
+        pathname.startsWith('/api/tripadvisor') ||
+        pathname.startsWith('/api/upload') ||
+        pathname.startsWith('/api/webhooks/stripe')
+    ) {
         return NextResponse.next()
     }
 
