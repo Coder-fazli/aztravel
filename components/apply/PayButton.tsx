@@ -1,10 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { createCheckoutSession } from '@/lib/actions/payments'
 import styles from '../../app/[locale]/apply/apply.module.css'
 
-export default function PayButton({ applicationNumber }: { applicationNumber: string }) {
+export default function PayButton({
+  applicationNumber,
+  locale,
+}: {
+  applicationNumber: string
+  locale?: 'en' | 'es' | 'ar'
+}) {
+  const t = useTranslations('apply.pay')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -12,15 +20,15 @@ export default function PayButton({ applicationNumber }: { applicationNumber: st
     setLoading(true)
     setError('')
     try {
-      const url = await createCheckoutSession(applicationNumber)
+      const url = await createCheckoutSession(applicationNumber, locale)
       if (url) {
         window.location.href = url
       } else {
-        setError('Could not start payment. Please try again.')
+        setError(t('error'))
         setLoading(false)
       }
     } catch {
-      setError('Could not start payment. Please try again.')
+      setError(t('error'))
       setLoading(false)
     }
   }
@@ -28,7 +36,7 @@ export default function PayButton({ applicationNumber }: { applicationNumber: st
   return (
     <>
       <button className={styles.payBtn} onClick={handlePay} disabled={loading}>
-        {loading ? 'Redirecting to payment…' : 'Proceed to Payment'}
+        {loading ? t('redirecting') : t('proceed')}
       </button>
       {error && <div className={styles.errMsg}>{error}</div>}
     </>

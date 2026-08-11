@@ -5,7 +5,12 @@ import { connectDb } from '@/lib/db/connect'
 import Evisa from '@/lib/db/models/evisa/Evisa'
 import { stripe } from '@/lib/payments/stripe'
 
-export async function createCheckoutSession(applicationNumber: string) {
+// Stripe's own Checkout page is separately localized from our site -- it
+// needs its own `locale` param or it just guesses from the browser,
+// independent of whatever language the applicant was actually using here.
+const STRIPE_LOCALES: Record<string, 'en' | 'es' | 'ar'> = { en: 'en', es: 'es', ar: 'ar' }
+
+export async function createCheckoutSession(applicationNumber: string, locale?: string) {
   await connectDb()
 
   const applicants = await Evisa.find({ applicationNumber }).lean()
@@ -26,6 +31,7 @@ export async function createCheckoutSession(applicationNumber: string) {
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     payment_method_types: ['card'],
+    locale: (locale && STRIPE_LOCALES[locale]) || 'auto',
     client_reference_id: applicationNumber,
     line_items: [{
       price_data: {

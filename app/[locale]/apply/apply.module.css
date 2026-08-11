@@ -31,7 +31,7 @@
 .stepLblDone { color: var(--base-13); }
 .stepLine { flex: 1; height: 1.5px; background: var(--base-5); margin: 0 8px; margin-bottom: 24px; min-width: 28px; max-width: 80px; flex-shrink: 0; }
 .stepLineDone { background: var(--base-13); }
-.progressTxt { text-align: right; font: 700 12px/18px var(--font-family); color: var(--base-8); margin-bottom: 8px; }
+.progressTxt { text-align: end; font: 700 12px/18px var(--font-family); color: var(--base-8); margin-bottom: 8px; }
 
 .grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
 @media (max-width: 991px) { .grid { grid-template-columns: 1fr; } }
@@ -43,7 +43,7 @@
 .cardTag { font: 700 10px/14px var(--font-family); letter-spacing: 1.5px; text-transform: uppercase; color: var(--primary-13); margin-bottom: 3px; }
 .cardTitle { font: 700 20px/26px var(--font-family); color: var(--base-13); margin: 0; }
 .cardSub { font: 400 13px/18px var(--font-family); color: var(--base-8); margin: 2px 0 0; }
-.priceChip { margin-left: auto; background: #fef3f0; border: 1.5px solid var(--primary-13); border-radius: 12px; padding: 8px 16px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.priceChip { margin-inline-start: auto; background: #fef3f0; border: 1.5px solid var(--primary-13); border-radius: 12px; padding: 8px 16px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
 .priceChipLbl { font: 700 10px/14px var(--font-family); letter-spacing: 1px; text-transform: uppercase; color: var(--base-8); }
 .priceChipVal { font: 700 19px/24px var(--font-family); color: var(--primary-13); }
 
@@ -56,12 +56,12 @@
 .visaIconWrap { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; background: rgba(239,100,69,0.1); color: var(--primary-13); }
 .visaName { font: 700 16px/22px var(--font-family); color: var(--base-13); }
 .visaPrice { font: 700 22px/28px var(--font-family); margin-top: 2px; color: var(--primary-13); }
-.visaCheck { position: absolute; top: 14px; right: 14px; color: var(--primary-13); font-size: 17px; opacity: 0; transition: opacity .15s; }
+.visaCheck { position: absolute; top: 14px; inset-inline-end: 14px; color: var(--primary-13); font-size: 17px; opacity: 0; transition: opacity .15s; }
 .visaCardSelected .visaCheck { opacity: 1; }
 
 .inputArea { margin-bottom: 20px; }
 .fLabel { display: block; font: 600 12px/18px var(--font-family); color: var(--base-8); margin-bottom: 6px; }
-.req { color: var(--error-13); margin-left: 2px; }
+.req { color: var(--error-13); margin-inline-start: 2px; }
 .fHint { display: block; font: 400 12px/18px var(--font-family); color: var(--base-8); margin-bottom: 8px; }
 .fHint b { color: var(--base-13); }
 .inputText {
@@ -108,8 +108,12 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
   width: 26px; height: 26px; border-radius: 50%; background: var(--base-1);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.visaStartDate .dateArrowBadge { right: -13px; border: 1.5px solid var(--primary-13); color: var(--primary-13); z-index: 1; }
-.visaFinishDate .dateArrowBadge { left: -13px; border: 1.5px solid var(--error-13); color: var(--error-13); z-index: 1; }
+.visaStartDate .dateArrowBadge { inset-inline-end: -13px; border: 1.5px solid var(--primary-13); color: var(--primary-13); z-index: 1; }
+.visaFinishDate .dateArrowBadge { inset-inline-start: -13px; border: 1.5px solid var(--error-13); color: var(--error-13); z-index: 1; }
+/* The arrow glyph itself points right regardless of CSS direction -- flip it
+   under RTL so it still points from Start toward Finish visually, since the
+   two boxes swap physical sides when the flex row reverses under dir="rtl". */
+:global([dir="rtl"]) .dateArrowBadge svg { transform: scaleX(-1); }
 .visaCenterInfo {
   flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; color: var(--base-8); font: 400 12px/17px var(--font-family); padding: 0 10px; min-width: 90px;
@@ -151,7 +155,7 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
 .successIcon { width: 52px; height: 52px; border-radius: 50%; background: #e6faf0; color: #1a7a45; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .successTitle { font: 700 19px/24px var(--font-family); color: var(--base-13); margin: 0 0 3px; }
 .successSub { font: 400 13px/19px var(--font-family); color: var(--base-8); }
-.confRefBadge { margin-left: auto; font-family: monospace; font-size: 16px; font-weight: 700; color: var(--primary-13); letter-spacing: 1px; padding: 10px 18px; background: #fef3f0; border: 1.5px solid var(--primary-13); border-radius: 10px; white-space: nowrap; }
+.confRefBadge { margin-inline-start: auto; font-family: monospace; font-size: 16px; font-weight: 700; color: var(--primary-13); letter-spacing: 1px; padding: 10px 18px; background: #fef3f0; border: 1.5px solid var(--primary-13); border-radius: 10px; white-space: nowrap; }
 .confRefBadge strong { font-weight: 800; }
 .priceRow { display: flex; align-items: center; justify-content: space-between; background: var(--base-2); border-radius: 14px; padding: 14px 20px; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
 .priceRowLbl { font: 700 12px/18px var(--font-family); color: var(--base-8); text-transform: uppercase; letter-spacing: .5px; }
@@ -171,7 +175,7 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
 
 /* Prevent horizontal scroll (< 991px) */
 @media (max-width: 991px) {
-  .container { padding-left: 12px; padding-right: 12px; }
+  .container { padding-inline: 12px; }
 }
 
 /* Mobile (< 768px) */
@@ -193,7 +197,7 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
   .cardTitle { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cardSub   { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .priceChip {
-    margin-left: 0; align-self: stretch; flex-direction: row;
+    margin-inline-start: 0; align-self: stretch; flex-direction: row;
     justify-content: space-between; align-items: center; padding: 10px 16px; width: 100%;
   }
   .priceChipVal { font-size: 22px; }
@@ -203,7 +207,7 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
   .visaInner { padding: 18px 16px; gap: 8px; }
   .visaName  { font-size: 16px; }
   .visaPrice { font-size: 22px; }
-  .visaCheck { top: 10px; right: 12px; font-size: 18px; }
+  .visaCheck { top: 10px; inset-inline-end: 12px; font-size: 18px; }
 
   /* Inputs: full width, slightly smaller */
   .inputText { height: 48px; font-size: 14px; }

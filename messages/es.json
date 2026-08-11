@@ -21,5 +21,83 @@
       "loading": "Loading...",
       "save": "Save",
       "cancel": "Cancel"
+    },
+    "apply": {
+      "breadcrumb": { "home": "Inicio", "current": "Solicitud de e-Visa" },
+      "provisionalRef": "Referencia provisional",
+      "provisionalRefNote": "(confirmada tras el envío)",
+      "stepOf": "Paso {current} de {total}",
+      "stepLabel": "PASO",
+      "steps": {
+        "visaType": "Tipo de visado",
+        "trip": "Detalles del viaje",
+        "personal": "Información personal",
+        "documents": "Documentos"
+      },
+      "applicantStepTitle": "Solicitante {n} — {step}",
+      "fillRequired": "Complete todos los campos obligatorios para continuar",
+      "totalPrice": "Precio total",
+      "back": "Atrás",
+      "continue": "Continuar",
+      "visaType": {
+        "processingType": "Tipo de tramitación",
+        "noneAvailableTitle": "Aún no hay tipos de visado disponibles",
+        "noneAvailableBody": "Un administrador debe añadir al menos un tipo de visado en Admin → E-visa → Tipos de visado antes de que los solicitantes puedan aplicar.",
+        "beforeYouStartTitle": "Antes de empezar",
+        "beforeYouStartBody": "Ten a mano tu pasaporte, una foto digital y una dirección de correo electrónico válida."
+      },
+      "trip": {
+        "yourCountry": "Tu país",
+        "selectCountryPlaceholder": "Selecciona el país de tu documento de viaje",
+        "countryRequired": "Selecciona tu país",
+        "partySoFarTitle": "Grupo hasta ahora",
+        "partySoFarTrip": "{count, plural, one {Se ha añadido # solicitante} other {Se han añadido # solicitantes}}. Ahora completando a la siguiente persona.",
+        "partySoFarPersonal": "{count, plural, one {Se ha añadido # solicitante} other {Se han añadido # solicitantes}}.",
+        "partySoFarDocuments": "{count, plural, one {Se ha añadido # solicitante} other {Se han añadido # solicitantes}}. Completa a esta persona para enviar toda la solicitud.",
+        "payAttentionTitle": "¡ATENCIÓN!",
+        "payAttentionBody": "Los plazos de emisión del visado dependen del tipo seleccionado. Un visado estándar se emite en 1-3 días hábiles, mientras que uno urgente se emite en 4 horas. Para obtener el visado, el pasaporte debe tener una validez mínima de 6 meses desde la fecha de inicio del visado. Al subir la foto del pasaporte, asegúrate de que la imagen sea clara y toda la información legible. Verifica cuidadosamente que la información proporcionada sea correcta. Si tienes alguna pregunta sobre cómo completar el formulario, no dudes en contactar a nuestro equipo de soporte profesional."
+      },
+      "documents": {
+        "addAnotherPerson": "+ Añadir otra persona",
+        "submitting": "Enviando…",
+        "submitApplication": "Enviar solicitud"
+      },
+      "confirmation": {
+        "title": "Solicitud enviada",
+        "subtitle": "Guarda tu número de referencia — lo necesitarás para consultar el estado y pagar",
+        "totalPrice": "Precio total"
+      },
+      "fieldRequired": "\"{label}\" es obligatorio",
+      "submitError": "Ocurrió un error al enviar tu solicitud. Inténtalo de nuevo.",
+      "field": {
+        "confirmEmail": "Confirmar correo electrónico",
+        "confirmEmailHint": "Vuelve a escribir tu correo para evitar errores",
+        "emailMismatch": "Los correos electrónicos no coinciden",
+        "selectDate": "Selecciona una fecha",
+        "selectGeneric": "Selecciona {label}",
+        "selectCountry": "Selecciona un país",
+        "startDate": "Fecha de inicio",
+        "finishDate": "Fecha de finalización",
+        "validityPeriod": "período de validez",
+        "periodOfStay": "período de estancia",
+        "days": "{count} días",
+        "uploading": "Subiendo…",
+        "changePhoto": "Cambiar foto",
+        "uploadCta": "Haz clic para subir o arrastra el archivo",
+        "fileTooLarge": "Archivo demasiado grande. Máximo {maxKb}KB",
+        "uploadFailed": "Error al subir el archivo"
+      },
+      "pay": {
+        "redirecting": "Redirigiendo al pago…",
+        "proceed": "Proceder al pago",
+        "error": "No se pudo iniciar el pago. Inténtalo de nuevo."
+      },
+      "status": {
+        "confirmedTitle": "Pago confirmado",
+        "pendingTitle": "Pago pendiente",
+        "confirmedBody": "Tu solicitud ahora está siendo procesada.",
+        "pendingBody": "Aún no hemos recibido la confirmación del pago. Si acabas de pagar, esto puede tardar unos segundos en actualizarse.",
+        "totalPrice": "Precio total"
+      }
     }
   }

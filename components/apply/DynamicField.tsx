@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { resolveDescriptionPlaceholders, type VisaDateInfo } from '@/lib/evisa/dateRules'
@@ -33,6 +34,7 @@ export default function DynamicField({
   dateInfo?: VisaDateInfo
   error?: string
 }) {
+  const t = useTranslations('apply.field')
   const [uploading, setUploading] = useState(false)
   const [calOpen, setCalOpen] = useState(false)
   const [confirmEmail, setConfirmEmail] = useState('')
@@ -63,7 +65,7 @@ export default function DynamicField({
 
     const maxKb = element.options?.maxFileSizeKb ?? 10000
     if (file.size / 1024 > maxKb) {
-      alert(`File too large. Max ${maxKb}KB`)
+      alert(t('fileTooLarge', { maxKb }))
       return
     }
 
@@ -74,7 +76,7 @@ export default function DynamicField({
       const res = await fetch('/api/upload', { method: 'POST', body: form })
       const data = await res.json()
       if (res.ok) onChange(data.url)
-      else alert(data.error || 'Upload failed')
+      else alert(data.error || t('uploadFailed'))
     } finally {
       setUploading(false)
     }
@@ -107,8 +109,8 @@ export default function DynamicField({
 
         {element.type === 'email' && (
           <div style={{ marginTop: 14 }}>
-            <label className={styles.fLabel}>Confirm email address<span className={styles.req}>*</span></label>
-            <span className={styles.fHint}>Re-enter your email to avoid typos</span>
+            <label className={styles.fLabel}>{t('confirmEmail')}<span className={styles.req}>*</span></label>
+            <span className={styles.fHint}>{t('confirmEmailHint')}</span>
             <input
               className={`${styles.inputText} ${mismatch ? styles.err : ''}`}
               type="email"
@@ -116,7 +118,7 @@ export default function DynamicField({
               value={confirmEmail}
               onChange={e => setConfirmEmail(e.target.value)}
             />
-            {mismatch && <div className={styles.errMsg}>Email addresses do not match</div>}
+            {mismatch && <div className={styles.errMsg}>{t('emailMismatch')}</div>}
           </div>
         )}
       </div>
@@ -143,8 +145,8 @@ export default function DynamicField({
         {description && <span className={styles.fHint} dangerouslySetInnerHTML={{ __html: description }} />}
 
         <Popover open={calOpen} onOpenChange={setCalOpen}>
-          <PopoverTrigger className={inputClass} style={{ textAlign: 'left', cursor: 'pointer' }}>
-            {currentValue || 'Select date'}
+          <PopoverTrigger className={inputClass} style={{ textAlign: 'start', cursor: 'pointer' }}>
+            {currentValue || t('selectDate')}
           </PopoverTrigger>
           <PopoverContent align="start" sideOffset={8}>
             <Calendar
@@ -173,21 +175,21 @@ export default function DynamicField({
               <div className={styles.dateArrowBadge}>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h6M6 3l3 3-3 3" /></svg>
               </div>
-              <b>Start Date</b><hr />
+              <b>{t('startDate')}</b><hr />
               <span>{currentValue}</span>
             </div>
             <div className={styles.visaCenterInfo}>
-              <div>{element.options?.validityDays} days</div>
-              <div>validity period</div>
+              <div>{t('days', { count: element.options?.validityDays ?? 0 })}</div>
+              <div>{t('validityPeriod')}</div>
               <hr />
-              <div>{element.options?.stayDays} days</div>
-              <div>period of stay</div>
+              <div>{t('days', { count: element.options?.stayDays ?? 0 })}</div>
+              <div>{t('periodOfStay')}</div>
             </div>
             <div className={styles.visaFinishDate}>
               <div className={styles.dateArrowBadge}>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h6M6 3l3 3-3 3" /></svg>
               </div>
-              <b>Finish Date</b><hr />
+              <b>{t('finishDate')}</b><hr />
               <span>{dateInfo.validityDate}</span>
             </div>
           </div>
@@ -206,7 +208,7 @@ export default function DynamicField({
           {header}
           {description && <span className={styles.fHint}>{description}</span>}
           <select className={inputClass} value={value ?? ''} onChange={e => onChange(e.target.value)}>
-            <option value="">{placeholder || `Select ${label.toLowerCase()}`}</option>
+            <option value="">{placeholder || t('selectGeneric', { label })}</option>
             {options.map((o: any) => (
               <option key={o.value} value={o.value}>{o.label?.[locale] || o.label?.en || o.value}</option>
             ))}
@@ -263,7 +265,7 @@ export default function DynamicField({
         {header}
         {description && <span className={styles.fHint}>{description}</span>}
         <select className={inputClass} value={value ?? ''} onChange={e => onChange(e.target.value)}>
-          <option value="">{placeholder || 'Select country'}</option>
+          <option value="">{placeholder || t('selectCountry')}</option>
           {countries.map((c: any) => (
             <option key={c.code} value={c.code}>{c.name?.[locale] || c.name?.en || c.code}</option>
           ))}
@@ -286,7 +288,7 @@ export default function DynamicField({
               <circle cx="10" cy="11" r="3" />
             </svg>
           </div>
-          <div className={styles.txt}>{uploading ? 'Uploading…' : value ? 'Change photo' : 'Click to upload or drag and drop'}</div>
+          <div className={styles.txt}>{uploading ? t('uploading') : value ? t('changePhoto') : t('uploadCta')}</div>
           <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" hidden onChange={handleFileChange} />
         </label>
         {value && <img src={value} alt={label} className={styles.uploadPreview} />}

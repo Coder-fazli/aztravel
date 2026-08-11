@@ -1,9 +1,33 @@
 import { clerkMiddleware } from '@clerk/nextjs/server';
 import createIntlMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 
 const intlMiddleware = createIntlMiddleware(routing);
+
+// The apply.* subdomain has no visible locale prefix in its URLs (by design
+// — "apply.azerbaijantravel.com/status/AZ-..." not ".../es/status/AZ-...").
+// So the visitor's language preference has to come from somewhere other than
+// the path: an explicit ?lang= override (the language switcher uses this),
+// then a previously-set cookie (so the choice sticks across the Stripe
+// redirect round-trip), then the browser's Accept-Language header.
+const SUPPORTED_LOCALES: readonly string[] = routing.locales
+
+function detectApplyLocale(req: NextRequest): string {
+    const queryLocale = req.nextUrl.searchParams.get('lang')
+    if (queryLocale && SUPPORTED_LOCALES.includes(queryLocale)) return queryLocale
+
+    const cookieLocale = req.cookies.get('NEXT_LOCALE')?.value
+    if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) return cookieLocale
+
+    const acceptLanguage = req.headers.get('accept-language') ?? ''
+    for (const part of acceptLanguage.split(',')) {
+        const code = part.trim().split(';')[0].split('-')[0].toLowerCase()
+        if (SUPPORTED_LOCALES.includes(code)) return code
+    }
+
+    return routing.defaultLocale
+}
 
 export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
@@ -11,12 +35,26 @@ export default clerkMiddleware(async (auth, req) => {
 
     // apply.azerbaijantravel.com — the public e-Visa wizard lives at /apply
     // internally. Rewritten (not redirected) so the address bar keeps
-    // showing the subdomain. English-only for now — no locale routing here.
+    // showing the subdomain.
+    //
+    // The locale prefix here is required, not decorative: every page under
+    // app/[locale]/ is wrapped by a layout that does
+    // `if (!routing.locales.includes(locale)) notFound()`. Since this rewrite
+    // bypasses next-intl's own middleware entirely (this whole branch returns
+    // before ever reaching it below), nothing else supplies that locale
+    // segment. Without it, [locale] has no valid value, so nested routes
+    // (e.g. /apply/status/[applicationNumber]) 404 in that layout guard.
     if (hostname.startsWith('apply.') && !pathname.startsWith('/api')) {
+        const detectedLocale = detectApplyLocale(req)
         const url = req.nextUrl.clone()
-        url.pathname = pathname === '/' ? '/apply' : `/apply${pathname}`
-        console.log(`[apply-middleware] host="${hostname}" incoming="${pathname}" rewritten="${url.pathname}"`)
-        return NextResponse.rewrite(url)
+        url.pathname = pathname === '/' ? `/${detectedLocale}/apply` : `/${detectedLocale}/apply${pathname}`
+        url.searchParams.delete('lang')
+        console.log(`[apply-middleware] host="${hostname}" incoming="${pathname}" locale="${detectedLocale}" rewritten="${url.pathname}"`)
+        const res = NextResponse.rewrite(url)
+        // Persist the choice for a year so it survives the trip to Stripe and
+        // back, and so a manual language switch sticks on the next visit.
+        res.cookies.set('NEXT_LOCALE', detectedLocale, { maxAge: 60 * 60 * 24 * 365, path: '/' })
+        return res
     }
 
     // azerbaijantravel.com/e-visa (and locale-prefixed variants) — bounce

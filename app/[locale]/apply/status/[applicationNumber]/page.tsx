@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { connectDb } from '@/lib/db/connect'
 import Evisa from '@/lib/db/models/evisa/Evisa'
 import PayButton from '@/components/apply/PayButton'
@@ -13,9 +14,10 @@ export const dynamic = 'force-dynamic'
 export default async function ApplicationStatusPage({
   params,
 }: {
-  params: Promise<{ locale: string; applicationNumber: string }>
+  params: Promise<{ locale: 'en' | 'es' | 'ar'; applicationNumber: string }>
 }) {
-  const { applicationNumber } = await params
+  const { locale, applicationNumber } = await params
+  const t = await getTranslations('apply.status')
   console.log(`[status-page] reached with applicationNumber="${applicationNumber}"`)
 
   await connectDb()
@@ -30,30 +32,28 @@ export default async function ApplicationStatusPage({
   const isPaid = applicants.every((a: any) => a.payment?.status === 'paid')
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className={styles.container}>
         <div className={styles.card} style={{ maxWidth: 560, margin: '0 auto' }}>
           <div className={styles.successBanner}>
             <div className={styles.successIcon}>{isPaid ? '✓' : '⏳'}</div>
             <div>
               <div className={styles.successTitle}>
-                {isPaid ? 'Payment Confirmed' : 'Payment Pending'}
+                {isPaid ? t('confirmedTitle') : t('pendingTitle')}
               </div>
               <div className={styles.successSub}>
-                {isPaid
-                  ? 'Your application is now being processed.'
-                  : "We haven't received confirmation of payment yet. If you just paid, this can take a few seconds to update."}
+                {isPaid ? t('confirmedBody') : t('pendingBody')}
               </div>
             </div>
             <div className={styles.confRefBadge}>#{applicationNumber}</div>
           </div>
 
           <div className={styles.priceRow}>
-            <div className={styles.priceRowLbl}>Total Price</div>
+            <div className={styles.priceRowLbl}>{t('totalPrice')}</div>
             <div className={styles.priceRowVal}>${totalPrice}</div>
           </div>
 
-          {!isPaid && <PayButton applicationNumber={applicationNumber} />}
+          {!isPaid && <PayButton applicationNumber={applicationNumber} locale={locale} />}
         </div>
       </div>
     </div>

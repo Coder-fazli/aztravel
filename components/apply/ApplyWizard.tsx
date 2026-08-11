@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useTranslations } from 'next-intl'
 import { evaluateForm } from '@/lib/evisa/rulesEngine'
 import { submitApplication, type ApplicantDraft } from '@/lib/actions/evisa'
 import DynamicField from './DynamicField'
@@ -14,12 +15,6 @@ type WizardStep = 'visaType' | 'trip' | 'personal' | 'documents' | 'confirmation
 // (Step 01 Visa Type / Step 02 Trip Details / Step 03 Personal Information /
 // Step 04 Documents) rather than one long form. Fields are assigned to a
 // step by fieldKey, matching the original's field groupings.
-const STEP_META: Record<Exclude<WizardStep, 'confirmation'>, { tag: string; title: string }> = {
-  visaType: { tag: 'STEP 01', title: 'Visa Type' },
-  trip: { tag: 'STEP 02', title: 'Trip Details' },
-  personal: { tag: 'STEP 03', title: 'Personal Information' },
-  documents: { tag: 'STEP 04', title: 'Documents' },
-}
 const STEP_ORDER: Exclude<WizardStep, 'confirmation'>[] = ['visaType', 'trip', 'personal', 'documents']
 
 // Provisional reference shown before submission, matching the original's
@@ -31,13 +26,12 @@ function generateProvisionalRef() {
 }
 
 const TRIP_FIELDS = new Set(['travel_document', 'purpose_of_visit', 'travel_date'])
-const PERSONAL_FIELDS = new Set(['surname', 'given_names', 'occupation', 'email', 'phone', 'permanent_address', 'place_of_stay'])
 const DOCUMENT_FIELDS = new Set(['passport_expiry', 'passport_image', 'terms'])
 
 function stepForField(fieldKey: string): Exclude<WizardStep, 'confirmation' | 'visaType'> {
   if (TRIP_FIELDS.has(fieldKey)) return 'trip'
   if (DOCUMENT_FIELDS.has(fieldKey)) return 'documents'
-  return 'personal' // PERSONAL_FIELDS + any admin-added field defaults here
+  return 'personal' // any admin-added field not listed above defaults here
 }
 
 // Inline icons matching the site's own style (see BookingWidget.tsx's
@@ -111,6 +105,12 @@ export default function ApplyWizard({
   locale: Locale
   initialVisaType?: string
 }) {
+  const t = useTranslations('apply')
+  const dir = locale === 'ar' ? 'rtl' : 'ltr'
+
+  const stepTitle = (s: Exclude<WizardStep, 'confirmation'>) => t(`steps.${s}`)
+  const stepTag = (i: number) => `${t('stepLabel')} 0${i + 1}`
+
   // generateProvisionalRef() is random -- calling it in the initializer ran
   // it once during SSR and again on client hydration, producing two
   // different strings for the same text node (React hydration error #418).
@@ -193,13 +193,13 @@ export default function ApplyWizard({
     if (includeCountry) orderedKeys.push('country')
     for (const el of stepFields) orderedKeys.push(el.fieldKey)
 
-    if (includeCountry && !country) nextErrors.country = 'Please select your country'
+    if (includeCountry && !country) nextErrors.country = t('trip.countryRequired')
 
     for (const el of stepFields) {
       if (!el.required) continue
       const v = answers[el.fieldKey]
       const empty = v === undefined || v === '' || (Array.isArray(v) && v.length === 0)
-      if (empty) nextErrors[el.fieldKey] = `"${el.label?.[locale] || el.label?.en}" is required`
+      if (empty) nextErrors[el.fieldKey] = t('fieldRequired', { label: el.label?.[locale] || el.label?.en })
     }
 
     setErrors(prev => ({ ...prev, ...nextErrors }))
@@ -251,7 +251,7 @@ export default function ApplyWizard({
       setResult(res)
       setStep('confirmation')
     } catch (e) {
-      alert('Something went wrong submitting your application. Please try again.')
+      alert(t('submitError'))
     } finally {
       setSubmitting(false)
     }
@@ -279,19 +279,37 @@ export default function ApplyWizard({
   const currentTitle = step === 'confirmation'
     ? ''
     : (!isFirstPerson && step !== 'visaType')
-      ? `Applicant ${personIndex} — ${STEP_META[step].title}`
-      : STEP_META[step].title
+      ? t('applicantStepTitle', { n: personIndex, step: stepTitle(step) })
+      : stepTitle(step)
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} dir={dir}>
       <div className={styles.container}>
 
         {step !== 'confirmation' && (
           <>
-            <div className={styles.crumb}><a href="#">Home</a><span>›</span><span className={styles.cur}>e-Visa Application</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+              <div className={styles.crumb}><a href="#">{t('breadcrumb.home')}</a><span>{dir === 'rtl' ? '‹' : '›'}</span><span className={styles.cur}>{t('breadcrumb.current')}</span></div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {(['en', 'es', 'ar'] as const).map(l => (
+                  <a
+                    key={l}
+                    href={`?lang=${l}`}
+                    style={{
+                      fontSize: 12, fontWeight: 700, padding: '4px 9px', borderRadius: 9999,
+                      textDecoration: 'none',
+                      border: l === locale ? '1.5px solid var(--primary-13)' : '1.5px solid var(--base-5)',
+                      color: l === locale ? 'var(--primary-13)' : 'var(--base-8)',
+                    }}
+                  >
+                    {l.toUpperCase()}
+                  </a>
+                ))}
+              </div>
+            </div>
 
             <div className={styles.refBadge}>
-              Provisional ref <strong>{provisionalRef}</strong>&nbsp;<span style={{ color: '#9ca3af' }}>(confirmed after submission)</span>
+              {t('provisionalRef')} <strong>{provisionalRef}</strong>&nbsp;<span style={{ color: '#9ca3af' }}>{t('provisionalRefNote')}</span>
             </div>
 
             <div className={styles.stepper}>
@@ -302,14 +320,14 @@ export default function ApplyWizard({
                       {i < stepIndex ? '✓' : i + 1}
                     </div>
                     <div className={`${styles.stepLbl} ${i === stepIndex ? styles.stepLblActive : i < stepIndex ? styles.stepLblDone : ''}`}>
-                      {STEP_META[s].title}
+                      {stepTitle(s)}
                     </div>
                   </div>
                   {i < STEP_ORDER.length - 1 && <div className={`${styles.stepLine} ${i < stepIndex ? styles.stepLineDone : ''}`} />}
                 </div>
               ))}
             </div>
-            <div className={styles.progressTxt}>Step {stepIndex + 1} of {STEP_ORDER.length}</div>
+            <div className={styles.progressTxt}>{t('stepOf', { current: stepIndex + 1, total: STEP_ORDER.length })}</div>
           </>
         )}
 
@@ -320,18 +338,18 @@ export default function ApplyWizard({
               <div className={styles.cardHead}>
                 <div className={styles.cardIcon}>{STEP_ICON.visaType}</div>
                 <div>
-                  <div className={styles.cardTag}>{STEP_META.visaType.tag}</div>
-                  <div className={styles.cardTitle}>{STEP_META.visaType.title}</div>
-                  <div className={styles.cardSub}>Fill in all required fields to continue</div>
+                  <div className={styles.cardTag}>{stepTag(0)}</div>
+                  <div className={styles.cardTitle}>{stepTitle('visaType')}</div>
+                  <div className={styles.cardSub}>{t('fillRequired')}</div>
                 </div>
               </div>
 
               <div className={styles.inputArea}>
-                <label className={styles.fLabel}>Processing Type<span className={styles.req}>*</span></label>
+                <label className={styles.fLabel}>{t('visaType.processingType')}<span className={styles.req}>*</span></label>
                 {visaTypes.length === 0 && (
                   <div className={styles.warnBox}>
-                    <h5>No visa types available yet</h5>
-                    <p>An admin needs to add at least one visa type in Admin → E-visa → Visa Types before applicants can apply.</p>
+                    <h5>{t('visaType.noneAvailableTitle')}</h5>
+                    <p>{t('visaType.noneAvailableBody')}</p>
                   </div>
                 )}
                 <div className={styles.visaGrid}>
@@ -353,10 +371,10 @@ export default function ApplyWizard({
               </div>
 
               <div className={styles.nav}>
-                <button className={`${styles.btnBack} ${styles.btnBackHidden}`}>Back</button>
+                <button className={`${styles.btnBack} ${styles.btnBackHidden}`}>{t('back')}</button>
                 <div className={styles.navRight}>
                   <button className={styles.btnNext} disabled={!visaType} onClick={goNext}>
-                    Continue
+                    {t('continue')}
                   </button>
                 </div>
               </div>
@@ -364,8 +382,8 @@ export default function ApplyWizard({
 
             <div className={styles.sidebar}>
               <div className={styles.warnBox}>
-                <h5>Before you start</h5>
-                <p>Have your passport, a digital photo, and a valid email address ready.</p>
+                <h5>{t('visaType.beforeYouStartTitle')}</h5>
+                <p>{t('visaType.beforeYouStartBody')}</p>
               </div>
             </div>
           </div>
@@ -378,20 +396,20 @@ export default function ApplyWizard({
               <div className={styles.cardHead}>
                 <div className={styles.cardIcon}>{STEP_ICON.trip}</div>
                 <div>
-                  <div className={styles.cardTag}>{STEP_META.trip.tag}</div>
+                  <div className={styles.cardTag}>{stepTag(1)}</div>
                   <div className={styles.cardTitle}>{currentTitle}</div>
-                  <div className={styles.cardSub}>Fill in all required fields to continue</div>
+                  <div className={styles.cardSub}>{t('fillRequired')}</div>
                 </div>
                 <div className={styles.priceChip}>
-                  <div className={styles.priceChipLbl}>Total price</div>
+                  <div className={styles.priceChipLbl}>{t('totalPrice')}</div>
                   <div className={styles.priceChipVal}>${partyTotal}</div>
                 </div>
               </div>
 
               <div className={styles.inputArea} id="field-country">
-                <label className={styles.fLabel}>Your country<span className={styles.req}>*</span></label>
+                <label className={styles.fLabel}>{t('trip.yourCountry')}<span className={styles.req}>*</span></label>
                 <select className={styles.inputText} value={country} onChange={e => setCountry(e.target.value)}>
-                  <option value="">Select country of your travel document</option>
+                  <option value="">{t('trip.selectCountryPlaceholder')}</option>
                   {countries.map(c => (
                     <option key={c.code} value={c.code}>{c.name?.[locale] || c.name?.en || c.code}</option>
                   ))}
@@ -402,31 +420,24 @@ export default function ApplyWizard({
               {renderFields(fieldsByStep.trip)}
 
               <div className={styles.nav}>
-                <button className={styles.btnBack} onClick={goBack}>Back</button>
+                <button className={styles.btnBack} onClick={goBack}>{t('back')}</button>
                 <div className={styles.navRight}>
-                  <button className={styles.btnNext} onClick={goNext}>Continue</button>
+                  <button className={styles.btnNext} onClick={goNext}>{t('continue')}</button>
                 </div>
               </div>
             </div>
 
             <div className={styles.sidebar}>
-              <div className={styles.priceCard}><h5>Total price</h5><h3>${partyTotal}</h3></div>
+              <div className={styles.priceCard}><h5>{t('totalPrice')}</h5><h3>${partyTotal}</h3></div>
               {applicants.length > 0 && (
                 <div className={styles.warnBox}>
-                  <h5>Party so far</h5>
-                  <p>{applicants.length} applicant{applicants.length !== 1 ? 's' : ''} added. Now filling in the next person.</p>
+                  <h5>{t('trip.partySoFarTitle')}</h5>
+                  <p>{t('trip.partySoFarTrip', { count: applicants.length })}</p>
                 </div>
               )}
               <div className={styles.warnBox}>
-                <h5>PAY ATTENTION!</h5>
-                <p>
-                  Visa issuance periods are determined according to the selected visa type. A standard visa is
-                  issued within 1-3 business days, while an urgent visa is issued within 4 hours. When obtaining
-                  a visa, the passport must be valid for at least 6 months from the start date of the visa. When
-                  uploading the passport photo, ensure that the image is clear and all information is legible.
-                  Please accurately verify the correctness of the information provided. If you have any question
-                  about form filling feel free to ask our professional support team.
-                </p>
+                <h5>{t('trip.payAttentionTitle')}</h5>
+                <p>{t('trip.payAttentionBody')}</p>
               </div>
             </div>
           </div>
@@ -439,12 +450,12 @@ export default function ApplyWizard({
               <div className={styles.cardHead}>
                 <div className={styles.cardIcon}>{STEP_ICON.personal}</div>
                 <div>
-                  <div className={styles.cardTag}>{STEP_META.personal.tag}</div>
+                  <div className={styles.cardTag}>{stepTag(2)}</div>
                   <div className={styles.cardTitle}>{currentTitle}</div>
-                  <div className={styles.cardSub}>Fill in all required fields to continue</div>
+                  <div className={styles.cardSub}>{t('fillRequired')}</div>
                 </div>
                 <div className={styles.priceChip}>
-                  <div className={styles.priceChipLbl}>Total price</div>
+                  <div className={styles.priceChipLbl}>{t('totalPrice')}</div>
                   <div className={styles.priceChipVal}>${partyTotal}</div>
                 </div>
               </div>
@@ -452,19 +463,19 @@ export default function ApplyWizard({
               {renderFields(fieldsByStep.personal)}
 
               <div className={styles.nav}>
-                <button className={styles.btnBack} onClick={goBack}>Back</button>
+                <button className={styles.btnBack} onClick={goBack}>{t('back')}</button>
                 <div className={styles.navRight}>
-                  <button className={styles.btnNext} onClick={goNext}>Continue</button>
+                  <button className={styles.btnNext} onClick={goNext}>{t('continue')}</button>
                 </div>
               </div>
             </div>
 
             <div className={styles.sidebar}>
-              <div className={styles.priceCard}><h5>Total price</h5><h3>${partyTotal}</h3></div>
+              <div className={styles.priceCard}><h5>{t('totalPrice')}</h5><h3>${partyTotal}</h3></div>
               {applicants.length > 0 && (
                 <div className={styles.warnBox}>
-                  <h5>Party so far</h5>
-                  <p>{applicants.length} applicant{applicants.length !== 1 ? 's' : ''} added.</p>
+                  <h5>{t('trip.partySoFarTitle')}</h5>
+                  <p>{t('trip.partySoFarPersonal', { count: applicants.length })}</p>
                 </div>
               )}
             </div>
@@ -478,12 +489,12 @@ export default function ApplyWizard({
               <div className={styles.cardHead}>
                 <div className={styles.cardIcon}>{STEP_ICON.documents}</div>
                 <div>
-                  <div className={styles.cardTag}>{STEP_META.documents.tag}</div>
+                  <div className={styles.cardTag}>{stepTag(3)}</div>
                   <div className={styles.cardTitle}>{currentTitle}</div>
-                  <div className={styles.cardSub}>Fill in all required fields to continue</div>
+                  <div className={styles.cardSub}>{t('fillRequired')}</div>
                 </div>
                 <div className={styles.priceChip}>
-                  <div className={styles.priceChipLbl}>Total price</div>
+                  <div className={styles.priceChipLbl}>{t('totalPrice')}</div>
                   <div className={styles.priceChipVal}>${partyTotal}</div>
                 </div>
               </div>
@@ -491,24 +502,24 @@ export default function ApplyWizard({
               {renderFields(fieldsByStep.documents)}
 
               <div className={styles.nav}>
-                <button className={styles.btnBack} onClick={goBack}>Back</button>
+                <button className={styles.btnBack} onClick={goBack}>{t('back')}</button>
                 <div className={styles.navRight}>
                   <button className={styles.btnAddPerson} onClick={handleAddPerson} disabled={submitting}>
-                    + Add Another Person
+                    {t('documents.addAnotherPerson')}
                   </button>
                   <button className={styles.btnNext} onClick={handleSubmit} disabled={submitting}>
-                    {submitting ? 'Submitting…' : 'Submit Application'}
+                    {submitting ? t('documents.submitting') : t('documents.submitApplication')}
                   </button>
                 </div>
               </div>
             </div>
 
             <div className={styles.sidebar}>
-              <div className={styles.priceCard}><h5>Total price</h5><h3>${partyTotal}</h3></div>
+              <div className={styles.priceCard}><h5>{t('totalPrice')}</h5><h3>${partyTotal}</h3></div>
               {applicants.length > 0 && (
                 <div className={styles.warnBox}>
-                  <h5>Party so far</h5>
-                  <p>{applicants.length} applicant{applicants.length !== 1 ? 's' : ''} added. Complete this person to submit the whole application.</p>
+                  <h5>{t('trip.partySoFarTitle')}</h5>
+                  <p>{t('trip.partySoFarDocuments', { count: applicants.length })}</p>
                 </div>
               )}
             </div>
@@ -522,20 +533,20 @@ export default function ApplyWizard({
               <div className={styles.successBanner}>
                 <div className={styles.successIcon}>✓</div>
                 <div>
-                  <div className={styles.successTitle}>Application Submitted</div>
-                  <div className={styles.successSub}>Save your reference number — you'll need it to check status and pay</div>
+                  <div className={styles.successTitle}>{t('confirmation.title')}</div>
+                  <div className={styles.successSub}>{t('confirmation.subtitle')}</div>
                 </div>
                 <div className={styles.confRefBadge}>#{result.applicationNumber}</div>
               </div>
 
               <div className={styles.priceRow}>
                 <div>
-                  <div className={styles.priceRowLbl}>Total Price</div>
+                  <div className={styles.priceRowLbl}>{t('confirmation.totalPrice')}</div>
                 </div>
                 <div className={styles.priceRowVal}>${result.totalPrice}</div>
               </div>
 
-              <PayButton applicationNumber={result.applicationNumber} />
+              <PayButton applicationNumber={result.applicationNumber} locale={locale} />
             </div>
           </div>
         )}

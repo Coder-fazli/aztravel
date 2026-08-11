@@ -21,5 +21,83 @@
       "loading": "Loading...",
       "save": "Save",
       "cancel": "Cancel"
+    },
+    "apply": {
+      "breadcrumb": { "home": "Home", "current": "e-Visa Application" },
+      "provisionalRef": "Provisional ref",
+      "provisionalRefNote": "(confirmed after submission)",
+      "stepOf": "Step {current} of {total}",
+      "stepLabel": "STEP",
+      "steps": {
+        "visaType": "Visa Type",
+        "trip": "Trip Details",
+        "personal": "Personal Information",
+        "documents": "Documents"
+      },
+      "applicantStepTitle": "Applicant {n} — {step}",
+      "fillRequired": "Fill in all required fields to continue",
+      "totalPrice": "Total price",
+      "back": "Back",
+      "continue": "Continue",
+      "visaType": {
+        "processingType": "Processing Type",
+        "noneAvailableTitle": "No visa types available yet",
+        "noneAvailableBody": "An admin needs to add at least one visa type in Admin → E-visa → Visa Types before applicants can apply.",
+        "beforeYouStartTitle": "Before you start",
+        "beforeYouStartBody": "Have your passport, a digital photo, and a valid email address ready."
+      },
+      "trip": {
+        "yourCountry": "Your country",
+        "selectCountryPlaceholder": "Select country of your travel document",
+        "countryRequired": "Please select your country",
+        "partySoFarTitle": "Party so far",
+        "partySoFarTrip": "{count, plural, one {# applicant} other {# applicants}} added. Now filling in the next person.",
+        "partySoFarPersonal": "{count, plural, one {# applicant} other {# applicants}} added.",
+        "partySoFarDocuments": "{count, plural, one {# applicant} other {# applicants}} added. Complete this person to submit the whole application.",
+        "payAttentionTitle": "PAY ATTENTION!",
+        "payAttentionBody": "Visa issuance periods are determined according to the selected visa type. A standard visa is issued within 1-3 business days, while an urgent visa is issued within 4 hours. When obtaining a visa, the passport must be valid for at least 6 months from the start date of the visa. When uploading the passport photo, ensure that the image is clear and all information is legible. Please accurately verify the correctness of the information provided. If you have any question about form filling feel free to ask our professional support team."
+      },
+      "documents": {
+        "addAnotherPerson": "+ Add Another Person",
+        "submitting": "Submitting…",
+        "submitApplication": "Submit Application"
+      },
+      "confirmation": {
+        "title": "Application Submitted",
+        "subtitle": "Save your reference number — you'll need it to check status and pay",
+        "totalPrice": "Total Price"
+      },
+      "fieldRequired": "\"{label}\" is required",
+      "submitError": "Something went wrong submitting your application. Please try again.",
+      "field": {
+        "confirmEmail": "Confirm email address",
+        "confirmEmailHint": "Re-enter your email to avoid typos",
+        "emailMismatch": "Email addresses do not match",
+        "selectDate": "Select date",
+        "selectGeneric": "Select {label}",
+        "selectCountry": "Select country",
+        "startDate": "Start Date",
+        "finishDate": "Finish Date",
+        "validityPeriod": "validity period",
+        "periodOfStay": "period of stay",
+        "days": "{count} days",
+        "uploading": "Uploading…",
+        "changePhoto": "Change photo",
+        "uploadCta": "Click to upload or drag and drop",
+        "fileTooLarge": "File too large. Max {maxKb}KB",
+        "uploadFailed": "Upload failed"
+      },
+      "pay": {
+        "redirecting": "Redirecting to payment…",
+        "proceed": "Proceed to Payment",
+        "error": "Could not start payment. Please try again."
+      },
+      "status": {
+        "confirmedTitle": "Payment Confirmed",
+        "pendingTitle": "Payment Pending",
+        "confirmedBody": "Your application is now being processed.",
+        "pendingBody": "We haven't received confirmation of payment yet. If you just paid, this can take a few seconds to update.",
+        "totalPrice": "Total Price"
+      }
     }
   }
