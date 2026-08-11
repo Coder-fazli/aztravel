@@ -15,6 +15,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (hostname.startsWith('apply.') && !pathname.startsWith('/api')) {
         const url = req.nextUrl.clone()
         url.pathname = pathname === '/' ? '/apply' : `/apply${pathname}`
+        console.log(`[apply-middleware] host="${hostname}" incoming="${pathname}" rewritten="${url.pathname}"`)
         return NextResponse.rewrite(url)
     }
 

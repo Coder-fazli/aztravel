@@ -14,7 +14,13 @@ export async function createCheckoutSession(applicationNumber: string) {
 
   const totalPrice = applicants.reduce((sum, a: any) => sum + a.price, 0)
 
-  const host = (await headers()).get('host')
+  const hdrs = await headers()
+  const host = hdrs.get('host')
+  // x-forwarded-host is what a reverse proxy (Cloudflare, nginx) sets to the
+  // original public hostname the browser actually requested -- if it
+  // disagrees with `host`, something between the browser and this server is
+  // rewriting the Host header, which would explain a wrong redirect URL.
+  console.log(`[create-checkout-session] host="${host}" x-forwarded-host="${hdrs.get('x-forwarded-host')}" applicationNumber="${applicationNumber}"`)
   const baseUrl = `https://${host}`
 
   const session = await stripe.checkout.sessions.create({
@@ -37,6 +43,8 @@ export async function createCheckoutSession(applicationNumber: string) {
     success_url: `${baseUrl}/status/${applicationNumber}?paid=1`,
     cancel_url: `${baseUrl}/status/${applicationNumber}?paid=0`,
   })
+
+  console.log(`[create-checkout-session] success_url="${baseUrl}/status/${applicationNumber}?paid=1"`)
 
   return session.url
 }

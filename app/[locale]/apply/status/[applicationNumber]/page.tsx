@@ -16,9 +16,11 @@ export default async function ApplicationStatusPage({
   params: Promise<{ locale: string; applicationNumber: string }>
 }) {
   const { applicationNumber } = await params
+  console.log(`[status-page] reached with applicationNumber="${applicationNumber}"`)
 
   await connectDb()
   const applicants = await Evisa.find({ applicationNumber }).lean()
+  console.log(`[status-page] found ${applicants.length} applicant record(s) for "${applicationNumber}"`)
 
   if (applicants.length === 0) notFound()
 
