@@ -1,10 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import { deleteApplicant } from '@/lib/actions/admin/evisaApplications'
+import { useRef, useState } from 'react'
+import {
+  deleteApplicant,
+  addApplicantDocument,
+  removeApplicantDocument,
+  emailApplicantDocuments,
+} from '@/lib/actions/admin/evisaApplications'
 import styles from './ApplicantCard.module.css'
 
 type FieldDef = { label: { en?: string }; type: string }
+
+function formatSentAt(d: string) {
+  return new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+}
 
 export default function ApplicantCard({
   member,
@@ -18,12 +27,67 @@ export default function ApplicantCard({
   defaultOpen?: boolean
 }) {
   const [open, setOpen] = useState(defaultOpen)
+  const [uploading, setUploading] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [removingDoc, setRemovingDoc] = useState<string | null>(null)
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const nameAnswer = (member.answers ?? []).find((a: any) => /name/i.test(a.fieldKey))
   const emailAnswer = (member.answers ?? []).find((a: any) => fieldMap[a.fieldKey]?.type === 'email')
   const name = nameAnswer?.value || `Applicant ${member.applicantIndex}`
   const hasFiles = (member.documents ?? []).length > 0
   const canEmailFiles = Boolean(emailAnswer) && hasFiles
+
+  async function handleAddFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // so picking the same file again still fires onChange
+    if (!file) return
+
+    setNotice(null)
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append('id', member._id)
+      form.append('applicationNumber', applicationNumber)
+      form.append('file', file)
+      const result = await addApplicantDocument(form)
+      setNotice(result.ok ? { ok: true, text: 'File attached' } : { ok: false, text: result.error ?? 'Upload failed' })
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  async function handleRemove(doc: string) {
+    if (!confirm('Remove this document?')) return
+    setNotice(null)
+    setRemovingDoc(doc)
+    try {
+      const form = new FormData()
+      form.append('id', member._id)
+      form.append('applicationNumber', applicationNumber)
+      form.append('url', doc)
+      const result = await removeApplicantDocument(form)
+      if (!result.ok) setNotice({ ok: false, text: result.error ?? 'Could not remove file' })
+    } finally {
+      setRemovingDoc(null)
+    }
+  }
+
+  async function handleEmail() {
+    if (!confirm(`Send ${member.documents.length} document(s) to ${emailAnswer?.value}?`)) return
+    setNotice(null)
+    setSending(true)
+    try {
+      const form = new FormData()
+      form.append('id', member._id)
+      form.append('applicationNumber', applicationNumber)
+      const result = await emailApplicantDocuments(form)
+      setNotice(result.ok ? { ok: true, text: `Sent to ${result.to}` } : { ok: false, text: result.error ?? 'Could not send email' })
+    } finally {
+      setSending(false)
+    }
+  }
 
   return (
     <div className={`${styles.card} ${open ? '' : styles.collapsed}`}>
@@ -49,9 +113,9 @@ export default function ApplicantCard({
                   <div className={styles.fieldLabel}>{label}</div>
                   <img
                     className={styles.thumb}
-                    src={`/uploads/passports/${a.value}`}
+                    src={a.value}
                     alt={label}
-                    onClick={() => window.open(`/uploads/passports/${a.value}`, '_blank')}
+                    onClick={() => window.open(a.value, '_blank')}
                   />
                 </div>
               )
@@ -70,17 +134,37 @@ export default function ApplicantCard({
             <div className={styles.fieldLabel} style={{ marginBottom: 10 }}>Attached documents</div>
             {member.documents.map((doc: string) => (
               <div key={doc} className={styles.docRow}>
-                <span className={styles.docName}>📄 {doc}</span>
-                <button type="button" className={styles.docRemove}>Remove</button>
+                <a className={styles.docName} href={doc} target="_blank" rel="noreferrer">📄 {doc.split('/').pop()}</a>
+                <button
+                  type="button"
+                  className={styles.docRemove}
+                  onClick={() => handleRemove(doc)}
+                  disabled={removingDoc === doc}
+                >
+                  {removingDoc === doc ? 'Removing…' : 'Remove'}
+                </button>
               </div>
             ))}
           </div>
         )}
 
+        {member.emailSentAt && (
+          <div className={styles.sentNote}>✓ Sent {formatSentAt(member.emailSentAt)} to {member.emailSentTo}</div>
+        )}
+
+        {notice && (
+          <div className={notice.ok ? styles.noticeOk : styles.noticeErr}>{notice.text}</div>
+        )}
+
         <div className={styles.actions}>
-          <button type="button" className={styles.ghostBtn}>+ Add file</button>
+          <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={handleAddFile} style={{ display: 'none' }} />
+          <button type="button" className={styles.ghostBtn} onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+            {uploading ? 'Uploading…' : '+ Add file'}
+          </button>
           {canEmailFiles && (
-            <button type="button" className={`${styles.ghostBtn} ${styles.mail}`}>✉ Email files to applicant</button>
+            <button type="button" className={`${styles.ghostBtn} ${styles.mail}`} onClick={handleEmail} disabled={sending}>
+              {sending ? 'Sending…' : member.emailSentAt ? '✉ Resend files to applicant' : '✉ Email files to applicant'}
+            </button>
           )}
           <form
             action={deleteApplicant}

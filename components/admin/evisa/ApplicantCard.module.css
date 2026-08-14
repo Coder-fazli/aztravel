@@ -47,3 +47,10 @@
 .mail:hover { background: #e3f8ee; }
 .del { color: var(--error-13); border-color: #f3c8c8; }
 .del:hover { background: #fdecec; }
+.ghostBtn:disabled { opacity: .55; cursor: default; }
+
+.sentNote { margin-top: 10px; font-size: 12px; color: #1a9b63; font-weight: 600; }
+
+.notice { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+.noticeOk { composes: notice; background: #e3f8ee; color: #1a9b63; }
+.noticeErr { composes: notice; background: #fdecec; color: var(--error-13); }
