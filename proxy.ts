@@ -33,6 +33,10 @@ export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
     const hostname = req.nextUrl.hostname
 
+    if (req.nextUrl.searchParams.get('__debughost') === '1') {
+        return NextResponse.json({ hostname, pathname, url: req.url, headerHost: req.headers.get('host') })
+    }
+
     // apply.azerbaijantravel.com — the public e-Visa wizard lives at /apply
     // internally. Rewritten (not redirected) so the address bar keeps
     // showing the subdomain.
