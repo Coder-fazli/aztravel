@@ -172,23 +172,3 @@
   border: 1.5px solid var(--base-1);
   animation: dotPulse 2s ease-in-out infinite;
 }
-
-/* help card */
-.help {
-  border-radius: 16px;
-  padding: 18px;
-  background: linear-gradient(135deg, var(--secondary-13), #6d6bf7);
-  color: #fff;
-}
-.helpTitle {
-  font-family: var(--font-family);
-  font-weight: 700;
-  font-size: 14px;
-  margin-bottom: 6px;
-}
-.helpText {
-  font-family: var(--font-family);
-  font-size: 12px;
-  line-height: 18px;
-  opacity: 0.9;
-}

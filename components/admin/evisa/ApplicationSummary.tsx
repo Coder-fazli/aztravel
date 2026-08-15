@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { updateApplicationStatus, deleteApplication } from '@/lib/actions/admin/evisaApplications'
+import DeleteButton from '@/components/admin/DeleteButton'
 import styles from './ApplicationSummary.module.css'
 
 const STATUSES = ['draft', 'submitted', 'processing', 'approved', 'rejected']
@@ -51,13 +52,13 @@ export default function ApplicationSummary({
 
       <hr className={styles.hr} />
 
-      <form
+      <DeleteButton
+        fields={{ applicationNumber }}
         action={deleteApplication}
-        onSubmit={e => { if (!confirm('Delete the entire application (all applicants)? This cannot be undone.')) e.preventDefault() }}
-      >
-        <input type="hidden" name="applicationNumber" value={applicationNumber} />
-        <button type="submit" className={styles.dangerBtn}>Delete entire application</button>
-      </form>
+        message="Delete the entire application (all applicants)? This cannot be undone."
+        label="Delete entire application"
+        className={styles.dangerBtn}
+      />
     </div>
   )
 }

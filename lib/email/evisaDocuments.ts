@@ -9,14 +9,26 @@ type DocumentsEmailData = {
   documents:         string[] // "/uploads/xxxx.ext" — public paths, same as passport-image answers
 }
 
+// staff uploads are stored on disk as "<uuid>__<original-name>.<ext>" (see
+// addApplicantDocument) purely so the admin UI can show a real filename --
+// strip that prefix back off so the applicant downloads e.g.
+// "passport-scan.pdf", not a UUID-prefixed one
+function cleanFilename(doc: string) {
+  const base = doc.split('/').pop() || doc
+  const m = base.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}__(.+)$/i)
+  return m ? m[1] : base
+}
+
 export async function sendApplicantDocuments(data: DocumentsEmailData) {
   const attachments = await Promise.all(
     data.documents.map(async (doc) => {
-      const filename = doc.split('/').pop() || doc
+      const filename = cleanFilename(doc)
       const content = await readFile(path.join(process.cwd(), 'public', doc))
       return { filename, content }
     }),
   )
+
+  const statusUrl = `https://apply.azerbaijantravel.com/status/${data.applicationNumber}`
 
   const html = `
 <!DOCTYPE html>
@@ -50,6 +62,12 @@ export async function sendApplicantDocuments(data: DocumentsEmailData) {
             <ul style="margin:6px 0 28px;padding-left:20px;color:#444;font-size:13px;line-height:22px">
               ${attachments.map(a => `<li>${a.filename}</li>`).join('')}
             </ul>
+
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 28px">
+              <tr><td style="border-radius:10px;background:#ef6445">
+                <a href="${statusUrl}" style="display:inline-block;padding:12px 24px;color:#fff;font-size:13px;font-weight:700;text-decoration:none">Check your application status</a>
+              </td></tr>
+            </table>
 
             <p style="margin:0;color:#888;font-size:12px;line-height:20px">
               Questions? Reply to this email or contact us at <a href="mailto:info@azerbaijantravel.com" style="color:#ef6445">info@azerbaijantravel.com</a>

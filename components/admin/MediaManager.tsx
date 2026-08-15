@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import styles from './MediaManager.module.css'
 
 type MediaItem = { _id: string; url: string; filename?: string; size?: number }
@@ -11,6 +12,7 @@ export default function MediaManager() {
   const [uploading, setUploading] = useState(false)
   const [drag, setDrag] = useState(false)
   const [copied, setCopied] = useState('')
+  const [confirmId, setConfirmId] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
@@ -52,7 +54,6 @@ export default function MediaManager() {
   }
 
   const remove = async (id: string) => {
-    if (!confirm('Delete this image? This cannot be undone.')) return
     await fetch(`/api/media?id=${id}`, { method: 'DELETE' })
     setItems((prev) => prev.filter((m) => m._id !== id))
   }
@@ -89,11 +90,21 @@ export default function MediaManager() {
               <button type="button" onClick={() => copy(m.url)} title="Copy URL">
                 {copied === m.url ? '✓ Copied' : 'Copy URL'}
               </button>
-              <button type="button" className={styles.del} onClick={() => remove(m._id)} title="Delete">Delete</button>
+              <button type="button" className={styles.del} onClick={() => setConfirmId(m._id)} title="Delete">Delete</button>
             </div>
           </div>
         ))}
       </div>
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(o) => !o && setConfirmId(null)}
+        title="Delete this image?"
+        description="This cannot be undone."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={() => { if (confirmId) remove(confirmId) }}
+      />
     </>
   )
 }

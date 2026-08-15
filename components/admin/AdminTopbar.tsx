@@ -1,4 +1,6 @@
 import { UserButton } from '@clerk/nextjs'
+import NotificationBell from '@/components/admin/NotificationBell'
+import { getRecentAdminEvents } from '@/lib/actions/admin/notifications'
 import styles from './AdminTopbar.module.css'
 
 type Props = {
@@ -6,7 +8,12 @@ type Props = {
   breadcrumb?: string
 }
 
-export default function AdminTopbar({ title, breadcrumb }: Props) {
+export default async function AdminTopbar({ title, breadcrumb }: Props) {
+  let events: Awaited<ReturnType<typeof getRecentAdminEvents>> = []
+  try {
+    events = await getRecentAdminEvents()
+  } catch {}
+
   return (
     <header className={styles.topbar}>
       <div className={styles.titles}>
@@ -16,6 +23,7 @@ export default function AdminTopbar({ title, breadcrumb }: Props) {
 
       <div className={styles.actions}>
         <input className={styles.search} type="text" placeholder="Search…" />
+        <NotificationBell events={events} />
         {/* Clerk user menu — avatar + dropdown with Sign out */}
         <UserButton />
       </div>

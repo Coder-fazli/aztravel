@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import styles from './MediaLibrary.module.css'
 
 type MediaItem = { _id: string; url: string; filename?: string; mime?: string; size?: number }
@@ -22,6 +23,7 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
   const [uploading, setUploading] = useState(false)
   const [drag, setDrag] = useState(false)
   const [error, setError] = useState('')
+  const [confirmTarget, setConfirmTarget] = useState<{ id: string; url: string } | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {
@@ -81,9 +83,12 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
     if (file) upload(file)
   }
 
-  const remove = async (e: React.MouseEvent, id: string, url: string) => {
+  const requestRemove = (e: React.MouseEvent, id: string, url: string) => {
     e.stopPropagation()
-    if (!confirm('Delete this image from the library?')) return
+    setConfirmTarget({ id, url })
+  }
+
+  const remove = async ({ id, url }: { id: string; url: string }) => {
     await fetch(`/api/media?id=${id}`, { method: 'DELETE' })
     setItems((prev) => prev.filter((m) => m._id !== id))
     if (selected === url) setSelected('')
@@ -110,6 +115,7 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
   if (!open) return null
 
   return (
+    <>
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.head}>
@@ -150,7 +156,7 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
               )}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={m.url} alt={m.filename ?? ''} />
-              <span className={styles.del} onClick={(e) => remove(e, m._id, m.url)} title="Delete">×</span>
+              <span className={styles.del} onClick={(e) => requestRemove(e, m._id, m.url)} title="Delete">×</span>
             </button>
           ))}
         </div>
@@ -172,5 +178,16 @@ export default function MediaLibrary({ open, onClose, onSelect, onSelectMultiple
         </div>
       </div>
     </div>
+
+    <ConfirmDialog
+      open={confirmTarget !== null}
+      onOpenChange={(o) => !o && setConfirmTarget(null)}
+      title="Delete this image?"
+      description="This removes it from the media library."
+      confirmLabel="Delete"
+      destructive
+      onConfirm={() => { if (confirmTarget) remove(confirmTarget) }}
+    />
+    </>
   )
 }

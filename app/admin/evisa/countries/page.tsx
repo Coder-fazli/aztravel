@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import AdminTopbar from '@/components/admin/AdminTopbar'
-import DeleteCountryButton from '@/components/admin/evisa/DeleteCountryButton'
-import { getCountriesAdmin } from '@/lib/actions/admin/evisaCountries'
+import DeleteButton from '@/components/admin/DeleteButton'
+import { getCountriesAdmin, deleteCountryFromForm } from '@/lib/actions/admin/evisaCountries'
 import adminStyles from '../../admin.module.css'
 import styles from '../evisa.module.css'
 
@@ -54,7 +54,12 @@ export default async function CountriesPage() {
                   </td>
                   <td className={styles.right}>
                     <Link href={`/admin/evisa/countries/${c._id}`} className={styles.action}>Edit</Link>
-                    <DeleteCountryButton id={c._id} className={`${styles.action} ${styles.delete}`} />
+                    <DeleteButton
+                      fields={{ id: c._id }}
+                      action={deleteCountryFromForm}
+                      message="Delete this country? This cannot be undone."
+                      className={`${styles.action} ${styles.delete}`}
+                    />
                   </td>
                 </tr>
               ))}

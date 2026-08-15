@@ -5,13 +5,16 @@ import { usePathname } from 'next/navigation'
 import styles from './AdminSidebar.module.css'
 import SidebarIcon from './SidebarIcons'
 
-const navTop = [
+// split around Events so the E-Visa group can render immediately after it
+const navBeforeEvisa = [
   { label: 'Dashboard', href: '/admin', icon: 'dashboard' },
   { label: 'Home page', href: '/admin/home', icon: 'home' },
   { label: 'Tours', href: '/admin/tours', icon: 'tours' },
   { label: 'Hotels', href: '/admin/hotels', icon: 'hotels' },
   { label: 'Restaurants', href: '/admin/restaurants', icon: 'restaurants' },
   { label: 'Events', href: '/admin/events', icon: 'events' },
+]
+const navAfterEvisa = [
   { label: 'Blog', href: '/admin/blog', icon: 'blog' },
   { label: 'Media', href: '/admin/media', icon: 'media' },
   { label: 'Banners', href: '/admin/banners', icon: 'banners' },
@@ -79,7 +82,7 @@ export default function AdminSidebar({
       </Link>
 
       <nav className={styles.nav}>
-        {navTop.map(renderItem)}
+        {navBeforeEvisa.map(renderItem)}
 
         <div className={styles.navGroup}>
           <span className={styles.navGroupLabel}>E-Visa</span>
@@ -109,13 +112,9 @@ export default function AdminSidebar({
           })}
         </div>
 
+        {navAfterEvisa.map(renderItem)}
         {navBottom.map(renderItem)}
       </nav>
-
-      <div className={styles.help}>
-        <p className={styles.helpTitle}>Need help?</p>
-        <p className={styles.helpText}>Check the project docs or ping the team.</p>
-      </div>
     </aside>
   )
 }

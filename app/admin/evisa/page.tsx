@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import AdminTopbar from '@/components/admin/AdminTopbar'
-import DeleteFormElementButton from '@/components/admin/evisa/DeleteFormElementButton'
-import { getFormElementsAdmin } from '@/lib/actions/admin/evisaFormElements'
+import DeleteButton from '@/components/admin/DeleteButton'
+import { getFormElementsAdmin, deleteFormElementFromForm } from '@/lib/actions/admin/evisaFormElements'
 import adminStyles from '../admin.module.css'
 import styles from './evisa.module.css'
 
@@ -49,7 +49,12 @@ export default async function FormElementsPage() {
                   <td>{el.isNewPerson ? 'Every applicant' : 'Primary applicant'}</td>
                   <td className={styles.right}>
                     <Link href={`/admin/evisa/${el._id}`} className={styles.action}>Edit</Link>
-                    <DeleteFormElementButton id={el._id} className={`${styles.action} ${styles.delete}`} />
+                    <DeleteButton
+                      fields={{ id: el._id }}
+                      action={deleteFormElementFromForm}
+                      message="Delete this question? This cannot be undone."
+                      className={`${styles.action} ${styles.delete}`}
+                    />
                   </td>
                 </tr>
               ))}

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import AdminTopbar from '@/components/admin/AdminTopbar'
-import DeleteCategoryButton from '@/components/admin/DeleteCategoryButton'
-import { getCategoriesAdmin } from '@/lib/actions/admin/categories'
+import DeleteButton from '@/components/admin/DeleteButton'
+import { getCategoriesAdmin, deleteCategoryFromForm } from '@/lib/actions/admin/categories'
 import styles from '../../admin.module.css'
 import table from '../blog.module.css'
 
@@ -39,7 +39,12 @@ export default async function AdminCategoriesList() {
                 <td>{c.orderNum}</td>
                 <td className={table.right}>
                   <Link href={`/admin/blog/categories/${c._id}`} className={table.action}>Edit</Link>
-                  <DeleteCategoryButton id={c._id} className={`${table.action} ${table.delete}`} />
+                  <DeleteButton
+                    fields={{ id: c._id }}
+                    action={deleteCategoryFromForm}
+                    message="Delete this category? Posts using it will keep their reference but show no category."
+                    className={`${table.action} ${table.delete}`}
+                  />
                 </td>
               </tr>
             ))}

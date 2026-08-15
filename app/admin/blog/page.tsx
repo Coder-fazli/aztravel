@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { routing } from '@/i18n/routing'
 import AdminTopbar from '@/components/admin/AdminTopbar'
-import DeleteBlogButton from '@/components/admin/DeleteBlogButton'
+import DeleteButton from '@/components/admin/DeleteButton'
 import styles from '../admin.module.css'
 import table from './blog.module.css'
 import { getAllBlogs, getBlogGroupsMap } from '@/lib/actions/content'
+import { deleteBlogFromForm } from '@/lib/actions/admin/blog'
 import { postUrl } from '@/lib/postUrl'
 
 // Flag emoji + language name per locale. (Note: language ≠ country, but flags
@@ -151,7 +152,12 @@ export default async function AdminBlogList({ searchParams }: {
                       >View</a>
                       <Link href={`/admin/blog/${p._id}`}
   className={table.action}>Edit</Link>
-                      <DeleteBlogButton id={p._id} className={`${table.action} ${table.delete}`} />
+                      <DeleteButton
+                        fields={{ id: p._id }}
+                        action={deleteBlogFromForm}
+                        message="Delete this post? This cannot be undone."
+                        className={`${table.action} ${table.delete}`}
+                      />
                     </td>
                   </tr>
                 )

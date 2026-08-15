@@ -1,7 +1,7 @@
 import Link             from 'next/link'
 import AdminTopbar      from '@/components/admin/AdminTopbar'
-import DeleteTourButton from '@/components/admin/tours/DeleteTourButton'
-import { getToursAdmin } from '@/lib/actions/admin/tours'
+import DeleteButton from '@/components/admin/DeleteButton'
+import { getToursAdmin, deleteTourFromForm } from '@/lib/actions/admin/tours'
 import styles from '../admin.module.css'
 import table  from './tours.module.css'
 
@@ -101,7 +101,12 @@ export default async function AdminToursList({
                     View
                   </a>
                   <Link href={`/admin/tours/${t._id}`} className={table.action}>Edit</Link>
-                  <DeleteTourButton id={t._id} className={`${table.action} ${table.delete}`} />
+                  <DeleteButton
+                    fields={{ id: t._id }}
+                    action={deleteTourFromForm}
+                    message="Delete this tour? This cannot be undone."
+                    className={`${table.action} ${table.delete}`}
+                  />
                 </td>
               </tr>
             ))}

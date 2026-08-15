@@ -119,7 +119,10 @@ export async function addApplicantDocument(formData: FormData) {
   const detected = detectDocType(buffer)
   if (!detected) return { ok: false, error: 'Please upload a PDF, JPG, PNG, or WebP file' }
 
-  const filename = `${randomUUID()}.${detected.ext}`
+  // keep the original filename visible in the admin UI (not just a UUID) by
+  // carrying it after the disk-unique prefix, e.g. "<uuid>__passport-scan.pdf"
+  const originalBase = file.name.replace(/\.[^.]+$/, '').replace(/[^\w-]+/g, '_').slice(0, 60) || 'document'
+  const filename = `${randomUUID()}__${originalBase}.${detected.ext}`
   const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'evisa-documents')
   await mkdir(uploadDir, { recursive: true })
   await writeFile(path.join(uploadDir, filename), buffer)

@@ -1,18 +1,32 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { toast } from 'sonner'
 import {
   deleteApplicant,
   addApplicantDocument,
   removeApplicantDocument,
   emailApplicantDocuments,
 } from '@/lib/actions/admin/evisaApplications'
+import DeleteButton from '@/components/admin/DeleteButton'
+import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import styles from './ApplicantCard.module.css'
 
 type FieldDef = { label: { en?: string }; type: string }
 
 function formatSentAt(d: string) {
   return new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+}
+
+// staff uploads are stored as "<uuid>__<original-name>.<ext>" precisely so the
+// admin UI can show something meaningful instead of a bare UUID
+function docDisplayName(doc: string) {
+  const base = doc.split('/').pop() || doc
+  const m = base.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}__(.+)$/i)
+  return m ? m[1] : base
+}
+function isImageDoc(doc: string) {
+  return /\.(jpe?g|png|webp)$/i.test(doc)
 }
 
 export default function ApplicantCard({
@@ -30,7 +44,9 @@ export default function ApplicantCard({
   const [uploading, setUploading] = useState(false)
   const [sending, setSending] = useState(false)
   const [removingDoc, setRemovingDoc] = useState<string | null>(null)
-  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null)
+  const [removeTarget, setRemoveTarget] = useState<string | null>(null)
+  const [emailConfirmOpen, setEmailConfirmOpen] = useState(false)
+  const [copiedEmail, setCopiedEmail] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const nameAnswer = (member.answers ?? []).find((a: any) => /name/i.test(a.fieldKey))
@@ -44,7 +60,6 @@ export default function ApplicantCard({
     e.target.value = '' // so picking the same file again still fires onChange
     if (!file) return
 
-    setNotice(null)
     setUploading(true)
     try {
       const form = new FormData()
@@ -52,15 +67,14 @@ export default function ApplicantCard({
       form.append('applicationNumber', applicationNumber)
       form.append('file', file)
       const result = await addApplicantDocument(form)
-      setNotice(result.ok ? { ok: true, text: 'File attached' } : { ok: false, text: result.error ?? 'Upload failed' })
+      if (result.ok) toast.success('File attached')
+      else toast.error(result.error ?? 'Upload failed')
     } finally {
       setUploading(false)
     }
   }
 
-  async function handleRemove(doc: string) {
-    if (!confirm('Remove this document?')) return
-    setNotice(null)
+  async function doRemove(doc: string) {
     setRemovingDoc(doc)
     try {
       const form = new FormData()
@@ -68,25 +82,31 @@ export default function ApplicantCard({
       form.append('applicationNumber', applicationNumber)
       form.append('url', doc)
       const result = await removeApplicantDocument(form)
-      if (!result.ok) setNotice({ ok: false, text: result.error ?? 'Could not remove file' })
+      if (!result.ok) toast.error(result.error ?? 'Could not remove file')
     } finally {
       setRemovingDoc(null)
     }
   }
 
-  async function handleEmail() {
-    if (!confirm(`Send ${member.documents.length} document(s) to ${emailAnswer?.value}?`)) return
-    setNotice(null)
+  async function doSendEmail() {
     setSending(true)
     try {
       const form = new FormData()
       form.append('id', member._id)
       form.append('applicationNumber', applicationNumber)
       const result = await emailApplicantDocuments(form)
-      setNotice(result.ok ? { ok: true, text: `Sent to ${result.to}` } : { ok: false, text: result.error ?? 'Could not send email' })
+      if (result.ok) toast.success(`Sent to ${result.to}`)
+      else toast.error(result.error ?? 'Could not send email')
     } finally {
       setSending(false)
     }
+  }
+
+  function copyEmail() {
+    if (!emailAnswer?.value) return
+    navigator.clipboard?.writeText(emailAnswer.value)
+    setCopiedEmail(true)
+    setTimeout(() => setCopiedEmail(false), 1200)
   }
 
   return (
@@ -120,6 +140,19 @@ export default function ApplicantCard({
                 </div>
               )
             }
+            if (def?.type === 'email') {
+              return (
+                <div key={a.fieldKey} className={styles.field}>
+                  <div className={styles.fieldLabel}>{label}</div>
+                  <div className={styles.fieldValue}>
+                    {a.value}
+                    <button type="button" className={styles.copyBtn} onClick={copyEmail} title="Copy email">
+                      {copiedEmail ? '✓' : '⧉'}
+                    </button>
+                  </div>
+                </div>
+              )
+            }
             return (
               <div key={a.fieldKey} className={styles.field}>
                 <div className={styles.fieldLabel}>{label}</div>
@@ -134,11 +167,16 @@ export default function ApplicantCard({
             <div className={styles.fieldLabel} style={{ marginBottom: 10 }}>Attached documents</div>
             {member.documents.map((doc: string) => (
               <div key={doc} className={styles.docRow}>
-                <a className={styles.docName} href={doc} target="_blank" rel="noreferrer">📄 {doc.split('/').pop()}</a>
+                <a className={styles.docName} href={doc} target="_blank" rel="noreferrer">
+                  {isImageDoc(doc)
+                    ? <img className={styles.docThumb} src={doc} alt="" />
+                    : <span className={styles.docBadge}>PDF</span>}
+                  {docDisplayName(doc)}
+                </a>
                 <button
                   type="button"
                   className={styles.docRemove}
-                  onClick={() => handleRemove(doc)}
+                  onClick={() => setRemoveTarget(doc)}
                   disabled={removingDoc === doc}
                 >
                   {removingDoc === doc ? 'Removing…' : 'Remove'}
@@ -152,30 +190,44 @@ export default function ApplicantCard({
           <div className={styles.sentNote}>✓ Sent {formatSentAt(member.emailSentAt)} to {member.emailSentTo}</div>
         )}
 
-        {notice && (
-          <div className={notice.ok ? styles.noticeOk : styles.noticeErr}>{notice.text}</div>
-        )}
-
         <div className={styles.actions}>
           <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" onChange={handleAddFile} style={{ display: 'none' }} />
           <button type="button" className={styles.ghostBtn} onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+            {uploading ? <span className={styles.spinner} /> : null}
             {uploading ? 'Uploading…' : '+ Add file'}
           </button>
           {canEmailFiles && (
-            <button type="button" className={`${styles.ghostBtn} ${styles.mail}`} onClick={handleEmail} disabled={sending}>
+            <button type="button" className={`${styles.ghostBtn} ${styles.mail}`} onClick={() => setEmailConfirmOpen(true)} disabled={sending}>
               {sending ? 'Sending…' : member.emailSentAt ? '✉ Resend files to applicant' : '✉ Email files to applicant'}
             </button>
           )}
-          <form
+          <DeleteButton
+            fields={{ id: member._id, applicationNumber }}
             action={deleteApplicant}
-            onSubmit={e => { if (!confirm(`Delete ${name}'s application?`)) e.preventDefault() }}
-          >
-            <input type="hidden" name="id" value={member._id} />
-            <input type="hidden" name="applicationNumber" value={applicationNumber} />
-            <button type="submit" className={`${styles.ghostBtn} ${styles.del}`}>🗑 Delete this applicant</button>
-          </form>
+            message={`Delete ${name}'s application? This cannot be undone.`}
+            label="🗑 Delete this applicant"
+            className={`${styles.ghostBtn} ${styles.del}`}
+          />
         </div>
       </div>
+
+      <ConfirmDialog
+        open={removeTarget !== null}
+        onOpenChange={(o) => !o && setRemoveTarget(null)}
+        title="Remove this document?"
+        confirmLabel="Remove"
+        destructive
+        onConfirm={() => { if (removeTarget) doRemove(removeTarget) }}
+      />
+
+      <ConfirmDialog
+        open={emailConfirmOpen}
+        onOpenChange={setEmailConfirmOpen}
+        title="Send documents to applicant?"
+        description={`${member.documents?.length ?? 0} document(s) will be emailed to ${emailAnswer?.value}.`}
+        confirmLabel="Send"
+        onConfirm={doSendEmail}
+      />
     </div>
   )
 }

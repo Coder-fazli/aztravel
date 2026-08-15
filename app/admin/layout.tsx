@@ -1,5 +1,6 @@
 import { ClerkProvider }   from '@clerk/nextjs'
 import AdminSidebar         from '@/components/admin/AdminSidebar'
+import { Toaster }          from '@/components/ui/sonner'
 import { getPendingCount, getNewBookingsCount } from '@/lib/actions/bookings'
 import { getEvisaPendingCount, getNewEvisaApplicationsCount } from '@/lib/actions/admin/evisaApplications'
 import { cookies }          from 'next/headers'
@@ -33,6 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         />
         <main className={styles.main}>{children}</main>
       </div>
+      <Toaster position="bottom-right" />
     </ClerkProvider>
   )
 }
