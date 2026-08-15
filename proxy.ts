@@ -31,11 +31,10 @@ function detectApplyLocale(req: NextRequest): string {
 
 export default clerkMiddleware(async (auth, req) => {
     const { pathname } =  req.nextUrl
-    const hostname = req.nextUrl.hostname
-
-    if (req.nextUrl.searchParams.get('__debughost') === '1') {
-        return NextResponse.json({ hostname, pathname, url: req.url, headerHost: req.headers.get('host') })
-    }
+    // req.nextUrl.hostname reflects this self-hosted server's own bind
+    // address ("localhost"), not the domain the visitor actually used —
+    // nginx forwards the real Host header, so read it from there instead.
+    const hostname = req.headers.get('host') ?? req.nextUrl.hostname
 
     // apply.azerbaijantravel.com — the public e-Visa wizard lives at /apply
     // internally. Rewritten (not redirected) so the address bar keeps
