@@ -1,4 +1,4 @@
-import { Resend } from 'resend'
+import { sendEmail } from './brevo'
 
 type BookingEmailData = {
   to:          string
@@ -101,10 +101,10 @@ export async function sendBookingConfirmation(data: BookingEmailData) {
 </body>
 </html>`
 
-  const resend = new Resend(process.env.RESEND_API_KEY)
-  return resend.emails.send({
-    from:    'Azerbaijan Travel <bookings@azerbaijantravel.com>',
+  return sendEmail({
+    from:    'Azerbaijan Travel <info@azerbaijantravel.com>',
     to:      data.to,
+    toName:  data.guestName,
     subject: `Booking Confirmed — ${data.bookingRef} · ${data.tourTitle}`,
     html,
   })

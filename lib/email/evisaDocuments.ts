@@ -1,4 +1,4 @@
-import { Resend } from 'resend'
+import { sendEmail } from './brevo'
 import { readFile } from 'fs/promises'
 import path from 'path'
 
@@ -69,15 +69,12 @@ export async function sendApplicantDocuments(data: DocumentsEmailData) {
 </body>
 </html>`
 
-  const resend = new Resend(process.env.RESEND_API_KEY)
-  const result = await resend.emails.send({
-    from:    'Azerbaijan Travel <bookings@azerbaijantravel.com>',
+  return sendEmail({
+    from:    'Azerbaijan Travel <info@azerbaijantravel.com>',
     to:      data.to,
+    toName:  data.name,
     subject: `Your e-Visa documents — ${data.applicationNumber}`,
     html,
     attachments,
   })
-
-  if (result.error) throw new Error(result.error.message)
-  return result
 }

@@ -1,6 +1,6 @@
 'use server'
 
-import { Resend } from 'resend'
+import { sendEmail } from '@/lib/email/brevo'
 
 export async function sendEnquiry(formData: FormData) {
   const name      = (formData.get('name')      as string).trim()
@@ -11,10 +11,8 @@ export async function sendEnquiry(formData: FormData) {
 
   if (!name || !email || !message) throw new Error('Missing required fields')
 
-  const resend = new Resend(process.env.RESEND_API_KEY)
-
-  await resend.emails.send({
-    from:    'Azerbaijan Travel <enquiries@azerbaijantravel.com>',
+  await sendEmail({
+    from:    'Azerbaijan Travel <info@azerbaijantravel.com>',
     to:      'info@azerbaijantravel.com',
     replyTo: email,
     subject: `New enquiry${tourTitle ? `: ${tourTitle}` : ''}`,
