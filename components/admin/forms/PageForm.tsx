@@ -58,6 +58,9 @@ export default function PageForm({
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="translationGroupId" value={translationGroupId} />
       <input type="hidden" name="id" value={page?._id ?? ''} />
+      {/* SeoPanel's permalink field only updates local state via onSlugChange —
+          this is what actually submits it with the form. */}
+      <input type="hidden" name="slug" value={slug} />
 
       <div className={styles.layout}>
         {/* ════ MAIN COLUMN ════ */}
