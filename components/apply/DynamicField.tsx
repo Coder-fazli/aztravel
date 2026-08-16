@@ -15,6 +15,19 @@ function fromISODate(s: string) {
   return new Date(y, m - 1, d)
 }
 
+// Accepts a typed YYYY-MM-DD, validates it's a real calendar date (not just
+// a regex match -- rejects e.g. 2028-02-31), and optionally clamps to the
+// field's min/max bounds. Returns null if it can't be parsed as a valid date
+// at all, so the caller can tell "invalid" apart from "out of range".
+function parseTypedDate(s: string): Date | null {
+  const m = s.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (!m) return null
+  const [, y, mo, d] = m
+  const date = new Date(Number(y), Number(mo) - 1, Number(d))
+  const roundTrips = date.getFullYear() === Number(y) && date.getMonth() === Number(mo) - 1 && date.getDate() === Number(d)
+  return roundTrips ? date : null
+}
+
 type Locale = 'en' | 'es' | 'ar'
 
 export default function DynamicField({
@@ -38,6 +51,7 @@ export default function DynamicField({
   const [uploading, setUploading] = useState(false)
   const [calOpen, setCalOpen] = useState(false)
   const [confirmEmail, setConfirmEmail] = useState('')
+  const [dateText, setDateText] = useState('')
 
   const label = element.label?.[locale] || element.label?.en || element.fieldKey
   const placeholder = element.placeholder?.[locale] || element.placeholder?.en || ''
@@ -138,6 +152,28 @@ export default function DynamicField({
 
   if (element.type === 'date' || element.type === 'visa_date') {
     const currentValue = value ?? dateInfo?.defaultDate ?? ''
+    const minDate = dateInfo?.minDate ? fromISODate(dateInfo.minDate) : undefined
+    const maxDate = dateInfo?.maxDate ? fromISODate(dateInfo.maxDate) : undefined
+    const inRange = (d: Date) => !(minDate && d < minDate) && !(maxDate && d > maxDate)
+
+    // Typing is the primary path now (picking a passport-expiry date years
+    // out by clicking through a calendar month by month was the actual
+    // complaint) -- the calendar is still there as an alternative, opened by
+    // focusing/clicking the same field. dateText is a separate draft buffer
+    // so a half-typed value like "2028-08-1" doesn't get clobbered by
+    // `value` on every keystroke; it only ever gets committed via onChange
+    // once it parses as a real, in-range date.
+    const displayText = dateText || currentValue
+
+    function commitTyped(raw: string) {
+      const parsed = parseTypedDate(raw)
+      if (parsed && inRange(parsed)) {
+        onChange(toISODate(parsed))
+        setDateText('')
+      }
+      // invalid or out-of-range: leave dateText as-is so the user can see
+      // and fix what they typed, rather than silently reverting it
+    }
 
     return (
       <div className={styles.inputArea}>
@@ -145,9 +181,24 @@ export default function DynamicField({
         {description && <span className={styles.fHint} dangerouslySetInnerHTML={{ __html: description }} />}
 
         <Popover open={calOpen} onOpenChange={setCalOpen}>
-          <PopoverTrigger className={inputClass} style={{ textAlign: 'start', cursor: 'pointer' }}>
-            {currentValue || t('selectDate')}
-          </PopoverTrigger>
+          <PopoverTrigger
+            nativeButton={false}
+            render={
+              <input
+                className={inputClass}
+                type="text"
+                inputMode="numeric"
+                placeholder="YYYY-MM-DD"
+                value={displayText}
+                onChange={(e) => setDateText(e.target.value)}
+                onBlur={(e) => commitTyped(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') { e.preventDefault(); commitTyped((e.target as HTMLInputElement).value); setCalOpen(false) }
+                  if (e.key === 'Escape') setCalOpen(false)
+                }}
+              />
+            }
+          />
           <PopoverContent align="start" sideOffset={8}>
             <Calendar
               mode="single"
@@ -160,7 +211,7 @@ export default function DynamicField({
               endMonth={dateInfo?.maxDate ? fromISODate(dateInfo.maxDate) : new Date(new Date().getFullYear() + 15, 11)}
               defaultMonth={currentValue ? fromISODate(currentValue) : dateInfo?.minDate ? fromISODate(dateInfo.minDate) : undefined}
               selected={currentValue ? fromISODate(currentValue) : undefined}
-              onSelect={(d) => { if (d) { onChange(toISODate(d)); setCalOpen(false) } }}
+              onSelect={(d) => { if (d) { onChange(toISODate(d)); setDateText(''); setCalOpen(false) } }}
               disabled={(d) => (
                 (dateInfo?.minDate ? d < fromISODate(dateInfo.minDate) : false) ||
                 (dateInfo?.maxDate ? d > fromISODate(dateInfo.maxDate) : false)

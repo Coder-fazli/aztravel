@@ -25,7 +25,7 @@ const DEFAULT_NAV: NavItem[] = [
   { label: 'Shop',       href: '/shops',      visible: true },
 ]
 
-export default function Navbar({ logo, navItems }: { logo?: string; navItems?: NavItem[] }) {
+export default function Navbar({ logo, navItems, isApplySubdomain = false }: { logo?: string; navItems?: NavItem[]; isApplySubdomain?: boolean }) {
   const navLinks = (navItems?.length ? navItems : DEFAULT_NAV).filter(x => x.visible)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -61,7 +61,7 @@ export default function Navbar({ logo, navItems }: { logo?: string; navItems?: N
     return () => document.removeEventListener('mousedown', onClick)
   }, [])
 
-  const isHome      = pathname === '/' || pathname === `/${locale}`
+  const isHome      = (pathname === '/' || pathname === `/${locale}`) && !isApplySubdomain
   const transparent = isHome && !scrolled
 
   return (

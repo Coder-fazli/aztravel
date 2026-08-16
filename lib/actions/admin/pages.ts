@@ -53,9 +53,17 @@ export async function savePageFromForm(formData: FormData) {
 
   if (id) {
     await updatePage(id, data)
+    // updatePage/createDoc only revalidate the public '/' path (so the
+    // homepage doesn't serve stale content) -- the admin edit page itself
+    // was never told to drop its cached render, so re-landing on the same
+    // /admin/pages/[id] URL after a save could still show the pre-save
+    // status/content until the router cache happened to expire on its own.
+    revalidatePath(`/admin/pages/${id}`)
+    revalidatePath('/admin/pages')
     redirect(`/admin/pages/${id}`)
   } else {
     const created = await createPage(data)
+    revalidatePath('/admin/pages')
     redirect(`/admin/pages/${created._id}`)
   }
 }
