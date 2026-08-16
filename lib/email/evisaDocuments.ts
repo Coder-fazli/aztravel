@@ -49,9 +49,15 @@ export async function sendApplicantDocuments(data: DocumentsEmailData) {
         <tr>
           <td style="padding:36px 40px">
             <p style="margin:0 0 8px;color:#222;font-size:15px">Hi <strong>${data.name}</strong>,</p>
-            <p style="margin:0 0 28px;color:#555;font-size:14px;line-height:22px">
+            <p style="margin:0 0 20px;color:#555;font-size:15px;line-height:23px">
               Documents for your e-Visa application are attached to this email. Please keep a copy for your travel.
             </p>
+
+            <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:20px">
+              <tr><td style="background:#149c5c;border-radius:10px;padding:16px 20px;text-align:center">
+                <span style="color:#fff;font-size:18px;font-weight:700;letter-spacing:0.3px">&#10003; Status: Approved</span>
+              </td></tr>
+            </table>
 
             <div style="background:#fef3f0;border:1.5px solid #ef6445;border-radius:10px;padding:14px 20px;margin-bottom:28px;text-align:center">
               <p style="margin:0;font-size:11px;color:#ef6445;font-weight:700;letter-spacing:1px;text-transform:uppercase">Application Number</p>

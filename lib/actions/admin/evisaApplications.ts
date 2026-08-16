@@ -178,8 +178,13 @@ export async function emailApplicantDocuments(formData: FormData) {
     return { ok: false, error: e?.message || 'Failed to send email' }
   }
 
-  await Evisa.findByIdAndUpdate(id, { emailSentAt: new Date(), emailSentTo: to })
+  // Sending the visa documents to the applicant IS the finish line for this
+  // application from the admin's side -- there was no code path that ever
+  // moved status off 'processing' after this, so completed applications sat
+  // in the same "still processing" bucket as ones nobody had touched yet.
+  await Evisa.findByIdAndUpdate(id, { emailSentAt: new Date(), emailSentTo: to, status: 'approved' })
   revalidatePath(`/admin/evisa/applications/${applicationNumber}`)
+  revalidatePath('/admin/evisa/applications')
   return { ok: true, to }
 }
 
