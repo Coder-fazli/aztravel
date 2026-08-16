@@ -16,6 +16,7 @@ const navBeforeEvisa = [
 ]
 const navAfterEvisa = [
   { label: 'Blog', href: '/admin/blog', icon: 'blog' },
+  { label: 'Pages', href: '/admin/pages', icon: 'pages' },
   { label: 'Media', href: '/admin/media', icon: 'media' },
   { label: 'Banners', href: '/admin/banners', icon: 'banners' },
   { label: 'Locations', href: '/admin/locations', icon: 'locations' },

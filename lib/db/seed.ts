@@ -157,7 +157,7 @@ const STARTER_FORM_ELEMENTS = [
     fieldKey: 'terms', type: 'checkbox', orderNum: 13,
     label: { en: 'Terms and Conditions', es: 'Términos y condiciones', ar: 'الشروط والأحكام' },
     description: {
-      en: 'Do you confirm that you meet each and every one of the eVisa requirements, read and understood the Terms and Conditions, Privacy Policy and Refund Policy?',
+      en: 'Do you confirm that you meet each and every one of the eVisa requirements, read and understood the <a href="/en/terms" target="_blank">Terms and Conditions</a>, <a href="/en/privacy" target="_blank">Privacy Policy</a> and <a href="/en/terms" target="_blank">Refund Policy</a>?',
       es: '', ar: '',
     },
     required: true, isNewPerson: true,

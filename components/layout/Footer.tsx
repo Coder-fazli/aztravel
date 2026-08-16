@@ -102,6 +102,10 @@ export default function Footer() {
           <p className={styles.copyright}>
             All rights Reserved @2025. Azerbaijan Travel
           </p>
+          <div className={styles.legalLinks}>
+            <a href="/en/terms">Terms &amp; Conditions</a>
+            <a href="/en/privacy">Privacy Policy</a>
+          </div>
           {/* Figma: gap-8px, icons 16x16px, opacity 0.7 */}
           <div className={styles.socials}>
             <a href="#" aria-label="Facebook" className={styles.socialIcon}>

@@ -243,7 +243,12 @@ export default function DynamicField({
     return (
       <div className={styles.inputArea}>
         {header}
-        {description && <span className={styles.fHint}>{description}</span>}
+        {/* HTML (not plain text) so the description can link out to e.g.
+            /terms and /privacy. Kept out of the <label> below on purpose —
+            a click on a nested <a> inside a <label> also toggles the
+            checkbox in most browsers, which isn't what a Terms link click
+            should do. */}
+        {description && <span className={styles.fHint} dangerouslySetInnerHTML={{ __html: description }} />}
         {options.map((o: any) => (
           <label key={o.value} className={styles.checkRow}>
             <input
