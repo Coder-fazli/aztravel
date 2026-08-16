@@ -307,7 +307,14 @@ export default function DynamicField({
               checked={selected.includes(o.value)}
               onChange={e => onChange(e.target.checked ? [...selected, o.value] : selected.filter(v => v !== o.value))}
             />
-            {o.label?.[locale] || o.label?.en || o.value}
+            {/* Same reasoning as the description above: needs real <a> tags
+                (e.g. "Terms and Conditions, Privacy Policy, and Refund
+                Policy" links out to /terms and /privacy). Unlike the
+                description, this text lives inside the <label> itself, so
+                the stored HTML also carries onclick="event.stopPropagation()"
+                on each link -- otherwise clicking the link also toggles the
+                checkbox via the label's native click-forwarding. */}
+            <span dangerouslySetInnerHTML={{ __html: o.label?.[locale] || o.label?.en || o.value }} />
           </label>
         ))}
         {error && <div className={styles.errMsg}>{error}</div>}

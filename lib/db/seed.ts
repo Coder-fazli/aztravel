@@ -161,7 +161,7 @@ const STARTER_FORM_ELEMENTS = [
       es: '', ar: '',
     },
     required: true, isNewPerson: true,
-    options: { options: [opt('agree', 'Terms and Conditions, Privacy Policy, and Refund Policy')] },
+    options: { options: [opt('agree', '<a href="/en/terms" target="_blank" onclick="event.stopPropagation()">Terms and Conditions</a>, <a href="/en/privacy" target="_blank" onclick="event.stopPropagation()">Privacy Policy</a>, and <a href="/en/terms" target="_blank" onclick="event.stopPropagation()">Refund Policy</a>')] },
   },
 ] as const
 
