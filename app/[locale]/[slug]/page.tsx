@@ -50,11 +50,20 @@ export default async function StaticPage({
   if (!page) notFound()
 
   const dir = loc === 'ar' ? 'rtl' : 'ltr'
+  const updated = page.updatedAt
+    ? new Date(page.updatedAt).toLocaleDateString(loc, { year: 'numeric', month: 'long', day: 'numeric' })
+    : null
 
   return (
     <div className={styles.page} dir={dir}>
-      <h1 className={styles.title}>{page.title}</h1>
-      <RichContent doc={page.content} className={styles.body} />
+      <div className={styles.article}>
+        <div className={styles.header}>
+          <span className={styles.eyebrow}>Legal</span>
+          <h1 className={styles.title}>{page.title}</h1>
+          {updated && <span className={styles.updated}>Last updated {updated}</span>}
+        </div>
+        <RichContent doc={page.content} className={styles.body} />
+      </div>
     </div>
   )
 }

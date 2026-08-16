@@ -1,69 +1,93 @@
+/* Terms / Privacy — same conventions as the blog post template
+   (752px column, 180px top clearance for the fixed navbar) so these
+   read as part of the site, not a bolted-on plain-text page. */
 .page {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 64px 24px 96px;
+  background: var(--base-1);
 }
 
-.updated {
+.article {
+  max-width: 752px;
+  margin: 0 auto;
+  padding: 180px 24px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ── header ── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--secondary-4);
+  color: var(--secondary-13);
   font-family: var(--font-family);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
-  color: var(--primary-13, #ef6445);
-  margin: 0 0 12px;
 }
 
 .title {
   font-family: var(--font-family);
-  font-size: 34px;
+  font-size: 40px;
   font-weight: 700;
-  color: #16181d;
-  margin: 0 0 32px;
-  line-height: 1.2;
+  line-height: 44px;
+  color: var(--base-13);
 }
 
+.updated {
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--base-8);
+}
+
+/* ── rich-text body (rendered from TipTap JSON) — mirrors the blog
+   template's .body treatment 1:1 so headings/lists/links look native
+   to the site instead of like a generic legal-text dump. ── */
 .body {
   font-family: var(--font-family);
-  color: #444a54;
-  font-size: 15px;
-  line-height: 1.75;
+  color: var(--base-9);
+  padding: 40px 48px;
+  background: var(--base-3);
+  border-radius: var(--radius-card);
 }
-
-.body h2 {
-  font-size: 19px;
-  font-weight: 700;
-  color: #16181d;
-  margin: 36px 0 12px;
+.body h1 { font-size: 30px; line-height: 36px; font-weight: 700; color: var(--base-13); margin: 0.8em 0 0.4em; }
+.body h2 { font-size: 22px; line-height: 28px; font-weight: 700; color: var(--base-13); margin: 1.1em 0 0.5em; padding-top: 0.3em; border-top: 1px solid var(--base-5); }
+.body h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.body h3 { font-size: 18px; line-height: 26px; font-weight: 600; color: var(--base-13); margin: 0.8em 0 0.4em; }
+.body p { font-size: 16px; line-height: 26px; letter-spacing: 0.2px; margin: 0.7em 0; }
+.body ul { list-style: none; padding-left: 0; margin: 0.9em 0; display: flex; flex-direction: column; gap: 10px; }
+.body ol { list-style: decimal; padding-left: 1.4em; margin: 0.7em 0; }
+.body li { margin: 0; padding-left: 26px; position: relative; }
+.body ul > li::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary-13);
 }
+.body a { color: var(--primary-13); text-decoration: none; font-weight: 600; }
+.body a:hover { text-decoration: underline; }
+.body strong { color: var(--base-13); font-weight: 700; }
+.body hr { border: none; border-top: 1px solid var(--base-5); margin: 1.4em 0; }
 
-.body h2:first-child {
-  margin-top: 0;
-}
-
-.body p {
-  margin: 0 0 14px;
-}
-
-.body ul {
-  margin: 0 0 14px;
-  padding-left: 22px;
-}
-
-.body li {
-  margin: 0 0 8px;
-}
-
-.body a {
-  color: var(--primary-13, #ef6445);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.body a:hover {
-  text-decoration: underline;
-}
-
-.body strong {
-  color: #16181d;
+/* ── mobile ── */
+@media (max-width: 480px) {
+  .article { padding: 150px 20px 64px; gap: 28px; }
+  .title { font-size: 28px; line-height: 34px; }
+  .body { padding: 28px 24px; }
 }
