@@ -11,13 +11,27 @@ function parseJson(s: string) {
   try { return JSON.parse(s) } catch { return null }
 }
 
+function slugify(s: string) {
+  return s.toLowerCase()
+    .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '').trim()
+    .replace(/\s+/g, '-').replace(/-+/g, '-')
+}
+
 function formToPage(formData: FormData) {
   const get = (key: string) => (formData.get(key) as string) || ''
 
+  // The client already auto-fills slug from title, but this is the actual
+  // save boundary — if slug ever arrives empty (JS disabled, a future bug
+  // like the one that just shipped, whatever), fall back to deriving it
+  // from the title here rather than saving a blank one.
+  const title = get('title')
+  const slug = get('slug') || slugify(title)
+
   return {
     locale: get('locale'),
-    title: get('title'),
-    slug:  get('slug'),
+    title,
+    slug,
     content: parseJson(get('content')),
 
     metaTitle:       get('metaTitle'),
