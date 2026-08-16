@@ -58,9 +58,14 @@ export default async function StaticPage({
     <div className={styles.page} dir={dir}>
       <div className={styles.article}>
         <div className={styles.header}>
-          <span className={styles.eyebrow}>Legal</span>
           <h1 className={styles.title}>{page.title}</h1>
-          {updated && <span className={styles.updated}>Last updated {updated}</span>}
+          {updated && (
+            <div className={styles.meta}>
+              <span className={styles.metaItem}>
+                <img src="/images/blog/calendar-icon.svg" alt="" className={styles.metaIcon} /> Last updated {updated}
+              </span>
+            </div>
+          )}
         </div>
         <RichContent doc={page.content} className={styles.body} />
       </div>

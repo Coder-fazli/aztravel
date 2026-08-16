@@ -1,6 +1,7 @@
 /* Terms / Privacy — same conventions as the blog post template
-   (752px column, 180px top clearance for the fixed navbar) so these
-   read as part of the site, not a bolted-on plain-text page. */
+   (752px column, 180px top clearance for the fixed navbar, prose
+   flowing directly on white — no boxed card, that's not a pattern
+   used anywhere else on the site). */
 .page {
   background: var(--base-1);
 }
@@ -14,27 +15,11 @@
   gap: 40px;
 }
 
-/* ── header ── */
+/* ── header — mirrors the blog post header exactly ── */
 .header {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: var(--secondary-4);
-  color: var(--secondary-13);
-  font-family: var(--font-family);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
 }
 
 .title {
@@ -45,49 +30,43 @@
   color: var(--base-13);
 }
 
-.updated {
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--base-8);
+.meta {
+  display: flex;
+  gap: 24px;
 }
 
-/* ── rich-text body (rendered from TipTap JSON) — mirrors the blog
-   template's .body treatment 1:1 so headings/lists/links look native
-   to the site instead of like a generic legal-text dump. ── */
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--base-8);
+}
+.metaIcon { width: 24px; height: 24px; }
+
+/* ── rich-text body (rendered from TipTap JSON) — copied 1:1 from
+   the blog template's .body so headings/lists/links look native to
+   the site instead of like a bolted-on legal-text dump. ── */
 .body {
   font-family: var(--font-family);
   color: var(--base-9);
-  padding: 40px 48px;
-  background: var(--base-3);
-  border-radius: var(--radius-card);
 }
 .body h1 { font-size: 30px; line-height: 36px; font-weight: 700; color: var(--base-13); margin: 0.8em 0 0.4em; }
-.body h2 { font-size: 22px; line-height: 28px; font-weight: 700; color: var(--base-13); margin: 1.1em 0 0.5em; padding-top: 0.3em; border-top: 1px solid var(--base-5); }
-.body h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
-.body h3 { font-size: 18px; line-height: 26px; font-weight: 600; color: var(--base-13); margin: 0.8em 0 0.4em; }
-.body p { font-size: 16px; line-height: 26px; letter-spacing: 0.2px; margin: 0.7em 0; }
-.body ul { list-style: none; padding-left: 0; margin: 0.9em 0; display: flex; flex-direction: column; gap: 10px; }
+.body h2 { font-size: 24px; line-height: 28px; font-weight: 700; color: var(--base-13); margin: 0.8em 0 0.4em; }
+.body h3 { font-size: 20px; line-height: 26px; font-weight: 600; color: var(--base-13); margin: 0.8em 0 0.4em; }
+.body p { font-size: 16px; line-height: 24px; letter-spacing: 0.2px; margin: 0.7em 0; }
+.body ul { list-style: disc; padding-left: 1.4em; margin: 0.7em 0; }
 .body ol { list-style: decimal; padding-left: 1.4em; margin: 0.7em 0; }
-.body li { margin: 0; padding-left: 26px; position: relative; }
-.body ul > li::before {
-  content: '';
-  position: absolute;
-  left: 6px;
-  top: 10px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--primary-13);
-}
-.body a { color: var(--primary-13); text-decoration: none; font-weight: 600; }
-.body a:hover { text-decoration: underline; }
-.body strong { color: var(--base-13); font-weight: 700; }
+.body li { margin: 0.3em 0; }
+.body a { color: var(--secondary-13); text-decoration: underline; }
+.body strong { color: var(--base-13); }
 .body hr { border: none; border-top: 1px solid var(--base-5); margin: 1.4em 0; }
 
 /* ── mobile ── */
 @media (max-width: 480px) {
-  .article { padding: 150px 20px 64px; gap: 28px; }
+  .article { padding: 150px 24px 0 24px; gap: 32px; }
   .title { font-size: 28px; line-height: 34px; }
-  .body { padding: 28px 24px; }
 }
