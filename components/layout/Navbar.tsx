@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Link, usePathname as useLocalePathname, useRouter as useLocaleRouter } from '@/i18n/navigation'
 import { useLocale } from 'next-intl'
 import GlobeIcon from '@/components/ui/GlobeIcon'
+import { SITE_URL } from '@/lib/site'
 import styles from './Navbar.module.css'
 
 type NavItem = { label: string; href: string; visible: boolean }
@@ -71,8 +72,12 @@ export default function Navbar({ logo, navItems, isApplySubdomain = false }: { l
       <div className={styles.topBar}>
         <div className={styles.topLinks}>
           <a href="#" className={styles.topLink}>For companies</a>
-          <a href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className={styles.topLink}>Terms &amp; Conditions</a>
-          <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className={styles.topLink}>Privacy policy</a>
+          {/* Absolute URL to the main domain, no locale prefix -- see the
+              same note in Footer.tsx. This navbar also renders on
+              apply.azerbaijantravel.com, where a relative "/en/terms" 404s
+              (that subdomain's own rewrite prepends /apply to it). */}
+          <a href={`${SITE_URL}/terms`} target="_blank" rel="noopener noreferrer" className={styles.topLink}>Terms &amp; Conditions</a>
+          <a href={`${SITE_URL}/privacy`} target="_blank" rel="noopener noreferrer" className={styles.topLink}>Privacy policy</a>
         </div>
         <div className={styles.topRight}>
           <div className={styles.topRightItem}>

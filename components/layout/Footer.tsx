@@ -1,4 +1,5 @@
 import styles from './Footer.module.css'
+import { SITE_URL } from '@/lib/site'
 
 const footerLinks = [
   {
@@ -103,8 +104,15 @@ export default function Footer() {
             All rights Reserved @2025. Azerbaijan Travel
           </p>
           <div className={styles.legalLinks}>
-            <a href="/en/terms">Terms &amp; Conditions</a>
-            <a href="/en/privacy">Privacy Policy</a>
+            {/* Absolute URL to the main domain, no locale prefix (en is
+                default -- the site strips it, e.g. /en/apply -> /apply).
+                Terms/Privacy only exist on the main domain, and this
+                component also renders on apply.azerbaijantravel.com, where
+                a relative "/en/terms" gets swallowed by that subdomain's
+                own rewrite (which prepends /apply to any non-root path) and
+                404s. */}
+            <a href={`${SITE_URL}/terms`} target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a>
+            <a href={`${SITE_URL}/privacy`} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
           </div>
           {/* Figma: gap-8px, icons 16x16px, opacity 0.7 */}
           <div className={styles.socials}>

@@ -157,11 +157,15 @@ const STARTER_FORM_ELEMENTS = [
     fieldKey: 'terms', type: 'checkbox', orderNum: 13,
     label: { en: 'Terms and Conditions', es: 'Términos y condiciones', ar: 'الشروط والأحكام' },
     description: {
-      en: 'Do you confirm that you meet each and every one of the eVisa requirements, read and understood the <a href="/en/terms" target="_blank">Terms and Conditions</a>, <a href="/en/privacy" target="_blank">Privacy Policy</a> and <a href="/en/terms" target="_blank">Refund Policy</a>?',
+      // Absolute URL to the main domain, no locale prefix -- this field
+      // renders on apply.azerbaijantravel.com, where a relative "/en/terms"
+      // 404s (that subdomain's own rewrite prepends /apply to any non-root
+      // path; see proxy.ts).
+      en: 'Do you confirm that you meet each and every one of the eVisa requirements, read and understood the <a href="https://azerbaijantravel.com/terms" target="_blank">Terms and Conditions</a>, <a href="https://azerbaijantravel.com/privacy" target="_blank">Privacy Policy</a> and <a href="https://azerbaijantravel.com/terms" target="_blank">Refund Policy</a>?',
       es: '', ar: '',
     },
     required: true, isNewPerson: true,
-    options: { options: [opt('agree', '<a href="/en/terms" target="_blank" onclick="event.stopPropagation()">Terms and Conditions</a>, <a href="/en/privacy" target="_blank" onclick="event.stopPropagation()">Privacy Policy</a>, and <a href="/en/terms" target="_blank" onclick="event.stopPropagation()">Refund Policy</a>')] },
+    options: { options: [opt('agree', '<a href="https://azerbaijantravel.com/terms" target="_blank" onclick="event.stopPropagation()">Terms and Conditions</a>, <a href="https://azerbaijantravel.com/privacy" target="_blank" onclick="event.stopPropagation()">Privacy Policy</a>, and <a href="https://azerbaijantravel.com/terms" target="_blank" onclick="event.stopPropagation()">Refund Policy</a>')] },
   },
 ] as const
 
