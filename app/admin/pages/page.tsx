@@ -7,6 +7,11 @@ import table from '../blog/blog.module.css'
 import { getAllPages, getPageGroupsMap } from '@/lib/actions/pages'
 import { deletePageFromForm } from '@/lib/actions/admin/pages'
 
+// Same reasoning as the edit page: this list is landed on right after every
+// create/update/delete, so it must never serve a cached pre-mutation render.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const LABELS: Record<string, string> = {
   en: '🇬🇧 English',
   es: '🇪🇸 Español',

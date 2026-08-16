@@ -71,8 +71,8 @@ export default function Navbar({ logo, navItems, isApplySubdomain = false }: { l
       <div className={styles.topBar}>
         <div className={styles.topLinks}>
           <a href="#" className={styles.topLink}>For companies</a>
-          <a href="#" className={styles.topLink}>Terms &amp; Conditions</a>
-          <a href="#" className={styles.topLink}>Privacy policy</a>
+          <a href={`/${locale}/terms`} target="_blank" rel="noopener noreferrer" className={styles.topLink}>Terms &amp; Conditions</a>
+          <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className={styles.topLink}>Privacy policy</a>
         </div>
         <div className={styles.topRight}>
           <div className={styles.topRightItem}>
