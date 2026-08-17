@@ -5,7 +5,7 @@ import { getApplicationsAdmin } from '@/lib/actions/admin/evisaApplications'
 import adminStyles from '../../admin.module.css'
 import styles from '../evisa.module.css'
 
-const STATUSES = ['draft', 'submitted', 'processing', 'approved', 'rejected'] as const
+const STATUSES = ['pending', 'confirmed', 'rejected'] as const
 
 function displayName(member: any) {
   const nameAnswer = (member.answers ?? []).find((a: any) => /name/i.test(a.fieldKey))
@@ -84,7 +84,7 @@ export default async function ApplicationsPage({
                       </span>
                     </td>
                     <td>
-                      <span className={`${styles.pill} ${styles[a.status] ?? styles.draft}`}>
+                      <span className={`${styles.pill} ${styles[a.status] ?? styles.pending}`}>
                         <span className={styles.pillDot} />{a.status}
                       </span>
                     </td>

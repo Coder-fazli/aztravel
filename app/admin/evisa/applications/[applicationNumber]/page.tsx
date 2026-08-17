@@ -39,14 +39,17 @@ export default async function ApplicationDetailPage({
           <span className={`${styles.pill} ${styles[first.payment?.status ?? 'pending']}`}>
             <span className={styles.pillDot} />{first.payment?.status ?? 'pending'}
           </span>
-          <span className={`${styles.pill} ${styles[first.status] ?? styles.draft}`} style={{ textTransform: 'capitalize' }}>
+          <span className={`${styles.pill} ${styles[first.status] ?? styles.pending}`} style={{ textTransform: 'capitalize' }}>
             <span className={styles.pillDot} />{first.status}
           </span>
         </div>
       </div>
 
       <div className={styles.detailGrid}>
-        <ApplicationSummary applicationNumber={applicationNumber} members={members} />
+        {/* key forces a full remount whenever the real status changes (see
+            the comment in ApplicationSummary) so its status dropdown can
+            never drift from what's actually in the database. */}
+        <ApplicationSummary key={first.status} applicationNumber={applicationNumber} members={members} />
 
         <div>
           {members.map((m: any) => (

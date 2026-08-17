@@ -33,7 +33,7 @@ export async function POST(request: Request) {
             'payment.status': 'paid',
             'payment.transactionId': session.payment_intent as string,
             'payment.paidAt': new Date(),
-            status: 'processing',
+            status: 'pending',
           },
         },
       )

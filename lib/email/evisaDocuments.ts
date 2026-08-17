@@ -55,7 +55,7 @@ export async function sendApplicantDocuments(data: DocumentsEmailData) {
 
             <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:20px">
               <tr><td style="background:#149c5c;border-radius:10px;padding:16px 20px;text-align:center">
-                <span style="color:#fff;font-size:18px;font-weight:700;letter-spacing:0.3px">&#10003; Status: Approved</span>
+                <span style="color:#fff;font-size:18px;font-weight:700;letter-spacing:0.3px">&#10003; Status: Confirmed</span>
               </td></tr>
             </table>
 

@@ -74,7 +74,7 @@ export async function submitApplication(applicants: ApplicantDraft[]) {
       visaType: applicant.visaType,
       answers,
       price,
-      status: 'submitted',
+      status: 'pending',
     }
   })
 

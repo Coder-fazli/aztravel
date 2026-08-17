@@ -1,11 +1,11 @@
-'use client'
-
-import { useState } from 'react'
+// No 'use client' -- there's no local state or event handler left in this
+// component (see the note on the select below), so it can render fully on
+// the server. One less place for client/server data to ever drift apart.
 import { updateApplicationStatus, deleteApplication } from '@/lib/actions/admin/evisaApplications'
 import DeleteButton from '@/components/admin/DeleteButton'
 import styles from './ApplicationSummary.module.css'
 
-const STATUSES = ['draft', 'submitted', 'processing', 'approved', 'rejected']
+const STATUSES = ['pending', 'confirmed', 'rejected']
 
 function displayName(member: any) {
   const nameAnswer = (member.answers ?? []).find((a: any) => /name/i.test(a.fieldKey))
@@ -17,7 +17,17 @@ export default function ApplicationSummary({
   members,
 }: { applicationNumber: string; members: any[] }) {
   const totalPrice = members.reduce((sum, m) => sum + (m.price ?? 0), 0)
-  const [status, setStatus] = useState(members[0]?.status ?? 'draft')
+  // Deliberately uncontrolled (defaultValue, no useState/value/onChange) --
+  // same pattern as the Pages status <select>, which never had this problem.
+  // The controlled version here (useState mirroring members[0].status, plus
+  // value=/onChange=) was the actual bug: whatever briefly desynced React's
+  // state from the DOM's real selection meant the value actually submitted
+  // wasn't reliably "what the admin clicked." An uncontrolled select has no
+  // such indirection -- the DOM's own selection *is* what gets submitted,
+  // full stop. The parent page's key={first.status} still forces a remount
+  // when the real status changes, so defaultValue re-derives from fresh data
+  // instead of freezing at whatever it was on first mount.
+  const currentStatus = members[0]?.status ?? 'pending'
 
   return (
     <div className={styles.card}>
@@ -43,7 +53,7 @@ export default function ApplicationSummary({
         <input type="hidden" name="applicationNumber" value={applicationNumber} />
         <div className={styles.field}>
           <span>Application status</span>
-          <select name="status" value={status} onChange={e => setStatus(e.target.value)} className={styles.select}>
+          <select name="status" defaultValue={currentStatus} className={styles.select}>
             {STATUSES.map(s => <option key={s} value={s} style={{ textTransform: 'capitalize' }}>{s}</option>)}
           </select>
         </div>

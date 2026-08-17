@@ -36,10 +36,7 @@
 .type { background: var(--secondary-4); color: var(--secondary-13); text-transform: none; font-weight: 600; }
 .req { background: #fdecec; color: var(--error-13); }
 .opt { background: #f1f1f4; color: #7a7a85; }
-.draft { background: #f1f1f4; color: #7a7a85; }
-.submitted { background: #eef0fe; color: var(--secondary-13); }
-.processing { background: #fff2e2; color: #c07d28; }
-.approved { background: #e3f8ee; color: #1a9b63; }
+.confirmed { background: #e3f8ee; color: #1a9b63; }
 .rejected { background: #fdecec; color: var(--error-13); }
 .paid { background: #e3f8ee; color: #1a9b63; }
 .pending { background: #f1f1f4; color: #7a7a85; }

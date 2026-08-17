@@ -182,7 +182,7 @@ export async function emailApplicantDocuments(formData: FormData) {
   // application from the admin's side -- there was no code path that ever
   // moved status off 'processing' after this, so completed applications sat
   // in the same "still processing" bucket as ones nobody had touched yet.
-  await Evisa.findByIdAndUpdate(id, { emailSentAt: new Date(), emailSentTo: to, status: 'approved' })
+  await Evisa.findByIdAndUpdate(id, { emailSentAt: new Date(), emailSentTo: to, status: 'confirmed' })
   revalidatePath(`/admin/evisa/applications/${applicationNumber}`)
   revalidatePath('/admin/evisa/applications')
   return { ok: true, to }

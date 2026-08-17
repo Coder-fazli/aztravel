@@ -28,8 +28,8 @@ export const EvisaSchema = new Schema({
 
   status: {
     type:    String,
-    enum:    ['draft', 'submitted', 'processing', 'approved', 'rejected'],
-    default: 'draft',
+    enum:    ['pending', 'confirmed', 'rejected'],
+    default: 'pending',
   },
 
   payment: {
