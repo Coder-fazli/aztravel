@@ -6,6 +6,17 @@ import { getEvisaPendingCount, getNewEvisaApplicationsCount } from '@/lib/action
 import { cookies }          from 'next/headers'
 import styles               from './admin.module.css'
 
+// The whole admin section is mutation-heavy (create/update/delete forms that
+// redirect or revalidate back to the page you were just on), and that's
+// exactly the case where Next's client router cache has been seen to keep
+// serving a pre-mutation render instead of picking up revalidatePath() --
+// confirmed this directly for the Pages and eVisa-application status bugs:
+// the database write was always correct, only the admin's own view was
+// stale. Applying force-dynamic at the layout covers every admin route at
+// once instead of chasing this file by file.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   let pendingBookings = 0
   let hasNewBookings  = false
