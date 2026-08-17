@@ -94,16 +94,36 @@ export default function Navbar({ logo, navItems, isApplySubdomain = false }: { l
       {/* MAIN NAV */}
       <div className={styles.mainNav}>
 
-        {/* LOGO — icon (44x44) + text wordmark (87x30, hidden on mobile) */}
-        <Link href="/" className={styles.logo}>
-          <img src={logo || '/images/nav-logo-icon.svg'} alt="Azerbaijan Travel" className={styles.logoIcon} />
-          <img src={transparent ? '/images/nav-logo-text.svg' : '/images/nav-logo-text-dark.svg'} alt="" className={styles.logoText} />
-        </Link>
+        {/* LOGO — icon (44x44) + text wordmark (87x30, hidden on mobile).
+            On the apply subdomain, "/" is the e-Visa wizard root, not the
+            real homepage -- a relative Link there just reloads the wizard.
+            Send it to the actual homepage on the main domain instead. */}
+        {isApplySubdomain ? (
+          <a href={SITE_URL} className={styles.logo}>
+            <img src={logo || '/images/nav-logo-icon.svg'} alt="Azerbaijan Travel" className={styles.logoIcon} />
+            <img src={transparent ? '/images/nav-logo-text.svg' : '/images/nav-logo-text-dark.svg'} alt="" className={styles.logoText} />
+          </a>
+        ) : (
+          <Link href="/" className={styles.logo}>
+            <img src={logo || '/images/nav-logo-icon.svg'} alt="Azerbaijan Travel" className={styles.logoIcon} />
+            <img src={transparent ? '/images/nav-logo-text.svg' : '/images/nav-logo-text-dark.svg'} alt="" className={styles.logoText} />
+          </Link>
+        )}
 
         {/* MENU — desktop */}
         <div className={styles.menuList}>
           {navLinks.map(link => {
             const isActive = pathname === link.href || pathname === `/${locale}${link.href}`
+            // Same fix as the logo above: on the apply subdomain, "/" isn't
+            // the homepage, it's the wizard root -- send "Home" to the real
+            // homepage on the main domain instead of reloading the wizard.
+            if (isApplySubdomain && link.href === '/') {
+              return (
+                <a key={link.href} href={SITE_URL} className={styles.menuItem}>
+                  <p>{link.label}</p>
+                </a>
+              )
+            }
             return (
               <Link
                 key={link.href}
