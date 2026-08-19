@@ -54,7 +54,7 @@ export default async function HomePage({
 
       {/* SCROLLING CONTENT PANEL — slides up over the hero on mobile */}
       <div className={styles.scrollContent}>
-        <WelcomeSection />
+        <WelcomeSection locale={locale} />
         <DestinationsSection />
         <LalaSection />
         <ShortcutsSection />

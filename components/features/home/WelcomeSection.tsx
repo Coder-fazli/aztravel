@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import SeasonCard from './SeasonCard'
 import ArrowIcon from '@/components/ui/ArrowIcon'
+import { postUrl } from '@/lib/postUrl'
 import styles from './WelcomeSection.module.css'
 
 const seasonDescs: Record<string, string> = {
@@ -10,7 +11,15 @@ const seasonDescs: Record<string, string> = {
   Autumn: 'Golden forests in Lahij and Sheki, harvest festivals, and the most comfortable temperatures of the year.',
 }
 
-export default function WelcomeSection() {
+type Props = { locale: string }
+
+export default function WelcomeSection({ locale }: Props) {
+  // Winter has its own dedicated post; the other three point to the
+  // season-by-season guide, which covers each of them individually.
+  const guideHref  = postUrl(locale, 'best-month-to-visit-azerbaijan')
+  const winterHref = postUrl(locale, 'baku-weather-in-december')
+  const seasonsCategoryHref = locale === 'en' ? '/blog/category/seasons' : `/${locale}/blog/category/seasons`
+
   return (
     <section className={styles.section}>
 
@@ -22,7 +31,7 @@ export default function WelcomeSection() {
             From Baku&rsquo;s skyline in winter to Gabala&rsquo;s forests in autumn — Azerbaijan offers a completely different experience every time you visit. Pick your season, we&rsquo;ll handle the rest.
           </p>
         </div>
-        <Link href="/catalog" className={styles.seeMore}>
+        <Link href={seasonsCategoryHref} className={styles.seeMore}>
           SEE MORE
           <ArrowIcon size={24} />
         </Link>
@@ -38,6 +47,7 @@ export default function WelcomeSection() {
           image="/images/season-summer.jpg"
           width={368}
           height={616}
+          href={guideHref}
           largeDesc
         />
 
@@ -51,6 +61,7 @@ export default function WelcomeSection() {
               image="/images/season-winter.jpg"
               width={368}
               height={300}
+              href={winterHref}
             />
             <SeasonCard
               name="Spring"
@@ -58,6 +69,7 @@ export default function WelcomeSection() {
               image="/images/season-spring.jpg"
               width={368}
               height={300}
+              href={guideHref}
             />
           </div>
           {/* bottom — wide Autumn card (752 x 300) */}
@@ -67,6 +79,7 @@ export default function WelcomeSection() {
             image="/images/season-autumn.jpg"
             width={752}
             height={300}
+            href={guideHref}
           />
         </div>
 

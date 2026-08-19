@@ -7,17 +7,18 @@ type Props = {
   image:    string
   width:    number
   height:   number
+  href:     string
   largeDesc?: boolean
 }
 
-export default function SeasonCard({ name, desc, image, width, height, largeDesc }: Props) {
+export default function SeasonCard({ name, desc, image, width, height, href, largeDesc }: Props) {
   return (
     <div className={styles.card} style={{ width, height }}>
       <img src={image} alt={name} className={styles.cardBg} />
       <div className={styles.overlay} />
 
       {/* icon button top-right — thin right arrow, rotates to up-right on hover */}
-      <Link href="/catalog" className={styles.iconBtn} aria-label={`Explore ${name}`}>
+      <Link href={href} className={styles.iconBtn} aria-label={`Explore ${name}`}>
         <svg className={styles.arrowSvg} width="20" height="20" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="5" y1="12" x2="19" y2="12" />
@@ -32,7 +33,7 @@ export default function SeasonCard({ name, desc, image, width, height, largeDesc
       </div>
 
       {/* explore button — slides up on hover */}
-      <Link href="/catalog" className={styles.exploreBtn}>
+      <Link href={href} className={styles.exploreBtn}>
         Explore
       </Link>
     </div>
