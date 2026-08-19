@@ -2,6 +2,7 @@ import Link from 'next/link'
 import SeasonCard from './SeasonCard'
 import ArrowIcon from '@/components/ui/ArrowIcon'
 import { postUrl } from '@/lib/postUrl'
+import { getBlogBySlug } from '@/lib/actions/content'
 import styles from './WelcomeSection.module.css'
 
 const seasonDescs: Record<string, string> = {
@@ -13,12 +14,20 @@ const seasonDescs: Record<string, string> = {
 
 type Props = { locale: string }
 
-export default function WelcomeSection({ locale }: Props) {
+export default async function WelcomeSection({ locale }: Props) {
   // Winter has its own dedicated post; the other three point to the
   // season-by-season guide, which covers each of them individually.
+  const [guidePost, winterPost] = await Promise.all([
+    getBlogBySlug('best-month-to-visit-azerbaijan', locale as any),
+    getBlogBySlug('baku-weather-in-december', locale as any),
+  ])
+
   const guideHref  = postUrl(locale, 'best-month-to-visit-azerbaijan')
   const winterHref = postUrl(locale, 'baku-weather-in-december')
   const seasonsCategoryHref = locale === 'en' ? '/blog/category/seasons' : `/${locale}/blog/category/seasons`
+
+  const guideImage  = (guidePost as any)?.coverImage  || '/images/season-summer.jpg'
+  const winterImage = (winterPost as any)?.coverImage || '/images/season-winter.jpg'
 
   return (
     <section className={styles.section}>
@@ -44,7 +53,7 @@ export default function WelcomeSection({ locale }: Props) {
         <SeasonCard
           name="Summer"
           desc={seasonDescs.Summer}
-          image="/images/season-summer.jpg"
+          image={guideImage}
           width={368}
           height={616}
           href={guideHref}
@@ -58,7 +67,7 @@ export default function WelcomeSection({ locale }: Props) {
             <SeasonCard
               name="Winter"
               desc={seasonDescs.Winter}
-              image="/images/season-winter.jpg"
+              image={winterImage}
               width={368}
               height={300}
               href={winterHref}
@@ -66,7 +75,7 @@ export default function WelcomeSection({ locale }: Props) {
             <SeasonCard
               name="Spring"
               desc={seasonDescs.Spring}
-              image="/images/season-spring.jpg"
+              image={guideImage}
               width={368}
               height={300}
               href={guideHref}
@@ -76,7 +85,7 @@ export default function WelcomeSection({ locale }: Props) {
           <SeasonCard
             name="Autumn"
             desc={seasonDescs.Autumn}
-            image="/images/season-autumn.jpg"
+            image={guideImage}
             width={752}
             height={300}
             href={guideHref}
