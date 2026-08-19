@@ -66,8 +66,3 @@ export default async function CountryVisaPage({
     </main>
   );
 }
-
-export async function generateStaticParams() {
-  const countries = await getPublicCountries();
-  return countries.map((c: any) => ({ code: c.code.toLowerCase() }));
-}

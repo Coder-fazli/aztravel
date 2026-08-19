@@ -58,9 +58,7 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
             {visible.map((c) => (
               <a
                 key={c.code}
-                href="https://apply.azerbaijantravel.com/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`/${locale}/visa/${c.code.toLowerCase()}`}
                 className="group flex items-center gap-4 bg-white rounded-2xl px-5 py-4
                   border border-gray-100
                   shadow-[0_2px_12px_rgba(0,0,0,0.05)]
