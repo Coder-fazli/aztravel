@@ -22,6 +22,12 @@ export async function getPublicCountries() {
   return plain(all)
 }
 
+export async function getPublicCountryByCode(code: string) {
+  await connectDb()
+  const country = await Country.findOne({ code: code.toUpperCase(), eligible: true }).lean()
+  return plain(country)
+}
+
 // Visa types (Standard/Urgent/...) are global — a flat surcharge on top of
 // whichever country's baseFee, same surcharge for every country. Configured
 // once in Settings, not per-country.
