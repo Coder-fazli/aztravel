@@ -20,7 +20,7 @@ const DEFAULT_NAV_ITEMS: NavItem[] = [
   { label: 'Tours',      href: '/tours',      visible: true },
   { label: 'Catalog',    href: '/catalog',    visible: true },
   { label: 'Rent a car', href: '/rent-a-car', visible: true },
-  { label: 'E-visa',     href: '/e-visa',     visible: true },
+  { label: 'E-visa',     href: '/evisa',      visible: true },
   { label: 'Blog',       href: '/blog',       visible: true },
   { label: 'Shop',       href: '/shops',      visible: true },
 ]

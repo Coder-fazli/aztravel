@@ -2,7 +2,7 @@ import Link from 'next/link'
 import styles from './ShortcutsSection.module.css'
 
 const shortcuts = [
-  { label: 'Get visa',     icon: '/images/sc-airplane.svg', href: '/e-visa' },
+  { label: 'Get visa',     icon: '/images/sc-airplane.svg', href: '/evisa' },
   { label: 'Where to stay', icon: '/images/sc-hotel.svg',    href: '/hotels' },
   { label: 'Top Places',    icon: '/images/sc-board.svg',    href: '/destinations' },
   { label: 'Train tickets', icon: '/images/sc-train.svg',    href: '/tours' },
