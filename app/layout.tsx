@@ -34,7 +34,14 @@ export async function generateMetadata(): Promise<Metadata> {
     robots: SITE_INDEXABLE
       ? undefined
       : { index: false, follow: false, nocache: true },
-    icons: settings?.favicon ? { icon: settings.favicon } : undefined,
+    icons: {
+      icon: [
+        ...(settings?.favicon ? [{ url: settings.favicon, type: 'image/svg+xml' }] : []),
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      ],
+      apple: '/apple-icon.png',
+    },
   };
 }
 
