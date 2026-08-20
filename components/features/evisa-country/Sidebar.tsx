@@ -3,9 +3,10 @@ import styles from "./Sidebar.module.css";
 interface SidebarCountry {
   name: string;
   code: string;
+  slug: string;
 }
 
-export function Sidebar({ applyLink, countries = [] }: { applyLink: string; countries?: SidebarCountry[] }) {
+export function Sidebar({ applyLink, countries = [], locale }: { applyLink: string; countries?: SidebarCountry[]; locale: string }) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.applyCard}>
@@ -20,8 +21,8 @@ export function Sidebar({ applyLink, countries = [] }: { applyLink: string; coun
           <div className={styles.natHeader}>🌍 Other Countries</div>
           <ul className={styles.natList}>
             {countries.map((c) => (
-              <li key={c.code}>
-                <a href={`/visa/${c.code.toLowerCase()}`} className={styles.natItem}>
+              <li key={c.slug}>
+                <a href={`/${locale}/visa/${c.slug}`} className={styles.natItem}>
                   <img
                     src={`https://flagcdn.com/w40/${c.code.toLowerCase()}.png`}
                     alt={c.name}

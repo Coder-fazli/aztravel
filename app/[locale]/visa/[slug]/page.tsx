@@ -2,16 +2,16 @@ import { notFound } from "next/navigation";
 import { CountryHero } from "@/components/features/evisa-country/CountryHero";
 import { InfoCards } from "@/components/features/evisa-country/InfoCards";
 import { CountryContent } from "@/components/features/evisa-country/CountryContent";
-import { getPublicCountries, getPublicCountryByCode } from "@/lib/actions/evisa";
+import { getPublicCountries, getPublicCountryBySlug } from "@/lib/actions/evisa";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string; code: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { locale, code } = await params;
-  const country = await getPublicCountryByCode(code);
-  const name = country?.name?.[locale] || country?.name?.en || code.toUpperCase();
+  const { locale, slug } = await params;
+  const country = await getPublicCountryBySlug(slug);
+  const name = country?.name?.[locale] || country?.name?.en || slug;
 
   return {
     title: `${name} e-Visa for Azerbaijan — Apply Online | AzTravel`,
@@ -22,19 +22,19 @@ export async function generateMetadata({
 export default async function CountryVisaPage({
   params,
 }: {
-  params: Promise<{ locale: string; code: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { locale, code } = await params;
+  const { locale, slug } = await params;
   const [country, allCountries] = await Promise.all([
-    getPublicCountryByCode(code),
+    getPublicCountryBySlug(slug),
     getPublicCountries(),
   ]);
 
   if (!country) notFound();
 
-  const name = country.name?.[locale] || country.name?.en || code.toUpperCase();
+  const name = country.name?.[locale] || country.name?.en || slug;
   const fee = country.baseFee || 69;
-  const applyLink = `https://apply.azerbaijantravel.com/?country=${country.code}`;
+  const applyLink = "https://apply.azerbaijantravel.com/";
 
   const infoCards = [
     { label: "Processing Time", value: "3 Business Days" },
@@ -44,9 +44,9 @@ export default async function CountryVisaPage({
   ];
 
   const sidebarCountries = allCountries
-    .filter((c: any) => c.code !== country.code)
+    .filter((c: any) => c.slug !== country.slug)
     .slice(0, 30)
-    .map((c: any) => ({ name: c.name?.[locale] || c.name?.en || c.code, code: c.code }));
+    .map((c: any) => ({ name: c.name?.[locale] || c.name?.en || c.code, code: c.code, slug: c.slug }));
 
   return (
     <main>
@@ -62,6 +62,7 @@ export default async function CountryVisaPage({
         fee={fee}
         applyLink={applyLink}
         sidebarCountries={sidebarCountries}
+        locale={locale}
       />
     </main>
   );

@@ -22,6 +22,7 @@ export default async function EvisaPage({
   const displayCountries = countries.map((c: any) => ({
     name: c.name?.[locale] || c.name?.en || c.code,
     code: c.code,
+    slug: c.slug,
     flag: c.flag,
     baseFee: c.baseFee,
   }))

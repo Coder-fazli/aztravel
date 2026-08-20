@@ -26,10 +26,19 @@ function json(f: FormData, k: string, fallback: any) {
   try { return JSON.parse(raw) } catch { return fallback }
 }
 
+function slugify(s: string) {
+  return s.toLowerCase()
+    .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '').trim()
+    .replace(/\s+/g, '-').replace(/-+/g, '-')
+}
+
 function formToCountry(f: FormData) {
+  const nameEn = get(f, 'name_en')
   return {
     code: get(f, 'code').toUpperCase(),
-    name: { en: get(f, 'name_en'), es: get(f, 'name_es'), ar: get(f, 'name_ar') },
+    slug: get(f, 'slug') || slugify(nameEn),
+    name: { en: nameEn, es: get(f, 'name_es'), ar: get(f, 'name_ar') },
     flag: get(f, 'flag'),
 
     eligible: bool(f, 'eligible'),

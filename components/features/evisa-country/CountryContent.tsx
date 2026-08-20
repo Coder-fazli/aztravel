@@ -4,7 +4,7 @@ import styles from "./CountryContent.module.css";
 
 interface FAQ { q: string; a: string; }
 interface Step { title: string; desc: string; }
-interface SidebarCountry { name: string; code: string; }
+interface SidebarCountry { name: string; code: string; slug: string; }
 
 interface CountryContentProps {
   country: string;
@@ -12,9 +12,10 @@ interface CountryContentProps {
   fee: number;
   applyLink: string;
   sidebarCountries: SidebarCountry[];
+  locale: string;
 }
 
-export function CountryContent({ country, overview, fee, applyLink, sidebarCountries }: CountryContentProps) {
+export function CountryContent({ country, overview, fee, applyLink, sidebarCountries, locale }: CountryContentProps) {
   const faqs: FAQ[] = [
     {
       q: `Do ${country} citizens need a visa for Azerbaijan?`,
@@ -128,7 +129,7 @@ export function CountryContent({ country, overview, fee, applyLink, sidebarCount
       </main>
 
       <div className={styles.sidebarCol}>
-        <Sidebar applyLink={applyLink} countries={sidebarCountries} />
+        <Sidebar applyLink={applyLink} countries={sidebarCountries} locale={locale} />
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ const i18n = {
 export const CountrySchema = new Schema({
   name: i18n,
   code: { type: String, required: true, unique: true }, // ISO 3166-1 alpha-2, e.g. 'US'
+  slug: { type: String, required: true, unique: true }, // clean URL slug, e.g. 'ukraine' — derived from name.en
   flag: { type: String, default: '' },
 
   eligible: { type: Boolean, default: true }, // can citizens of this country apply at all
@@ -25,6 +26,7 @@ export const CountrySchema = new Schema({
 }, { timestamps: true })
 
 CountrySchema.index({ code: 1 }, { unique: true })
+CountrySchema.index({ slug: 1 }, { unique: true })
 CountrySchema.index({ eligible: 1 })
 CountrySchema.index({ orderNum: 1 })
 

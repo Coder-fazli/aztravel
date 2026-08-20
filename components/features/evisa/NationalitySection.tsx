@@ -6,6 +6,7 @@ import { Search, ArrowRight } from "lucide-react";
 type Country = {
   name: string;
   code: string;
+  slug: string;
   flag?: string;
   baseFee?: number;
 };
@@ -58,7 +59,7 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
             {visible.map((c) => (
               <a
                 key={c.code}
-                href={`/${locale}/visa/${c.code.toLowerCase()}`}
+                href={`/${locale}/visa/${c.slug}`}
                 className="group flex items-center gap-4 bg-white rounded-2xl px-5 py-4
                   border border-gray-100
                   shadow-[0_2px_12px_rgba(0,0,0,0.05)]
@@ -68,7 +69,7 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
                 <div className="w-12 h-9 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={c.flag || `https://flagcdn.com/w80/${c.code.toLowerCase()}.png`}
+                    src={c.flag?.startsWith('http') ? c.flag : `https://flagcdn.com/w80/${c.code.toLowerCase()}.png`}
                     alt={c.name}
                     className="w-full h-full object-cover"
                   />
