@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowRight, FileText, Search, Zap, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 import styles from "./Hero.module.css";
 
 type HeroProps = {
@@ -12,6 +13,7 @@ type HeroProps = {
 const SLIDES = ["/images/hero-slide-1.jpg", "/images/hero-slide-2.jpg", "/images/hero-slide-3.jpg"];
 
 export function EvisaHero({ locale }: HeroProps) {
+  const t = useTranslations("evisa.hero");
   const [cur, setCur] = useState(0);
   const leavingRef = useRef<HTMLDivElement | null>(null);
 
@@ -56,21 +58,21 @@ export function EvisaHero({ locale }: HeroProps) {
       <div className={styles.overlay} />
 
       <div className={styles.content}>
-        <p className={styles.label}>Azerbaijan e-Visa</p>
+        <p className={styles.label}>{t("label")}</p>
 
-        <h1 className={styles.title}>Get Your Azerbaijan e-Visa Online</h1>
+        <h1 className={styles.title}>{t("title")}</h1>
 
         <div className={styles.ctaContainer}>
           <div className={styles.buttonsRow}>
             <a href="https://apply.azerbaijantravel.com/" target="_blank" rel="noopener noreferrer" className={styles.primaryButton}>
               <FileText size={18} />
-              Apply Now
+              {t("applyButton")}
               <ArrowRight size={17} strokeWidth={2.5} />
             </a>
 
             <a href={`/${locale}/my-bookings`} className={styles.secondaryButton}>
               <Search size={18} />
-              Track Application
+              {t("trackButton")}
             </a>
           </div>
 
@@ -80,8 +82,8 @@ export function EvisaHero({ locale }: HeroProps) {
                 <Zap size={18} fill="white" />
               </div>
               <div className={styles.speedText}>
-                <p className={styles.speedLabel}>Urgent</p>
-                <p className={styles.speedValue}>3 hours</p>
+                <p className={styles.speedLabel}>{t("urgentLabel")}</p>
+                <p className={styles.speedValue}>{t("urgentTime")}</p>
               </div>
             </div>
 
@@ -92,8 +94,8 @@ export function EvisaHero({ locale }: HeroProps) {
                 <Clock size={18} fill="white" />
               </div>
               <div className={styles.speedText}>
-                <p className={styles.speedLabel}>Standard</p>
-                <p className={styles.speedValue}>3 business days</p>
+                <p className={styles.speedLabel}>{t("standardLabel")}</p>
+                <p className={styles.speedValue}>{t("standardTime")}</p>
               </div>
             </div>
           </div>

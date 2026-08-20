@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { WorldMap } from "@/components/ui/map";
 import { MapModal } from "@/components/ui/MapModal";
 import { Maximize2 } from "lucide-react";
@@ -19,18 +20,19 @@ const dots = [
 ];
 
 export function EvisaWorldMapSection() {
+  const t = useTranslations("evisa.worldMap");
   const [mapModalOpen, setMapModalOpen] = useState(false);
 
   return (
     <>
       <section className="bg-white pt-6 pb-6 md:pb-12">
         <div className="max-w-2xl mx-auto text-center px-5 mb-4 md:mb-2">
-          <p className="text-[10px] font-medium tracking-[2.5px] text-[#E8671A] uppercase mb-2">Worldwide Access</p>
+          <p className="text-[10px] font-medium tracking-[2.5px] text-[#E8671A] uppercase mb-2">{t("label")}</p>
           <h2 className="text-[28px] md:text-[36px] font-extrabold text-[#1a1a2e] leading-snug mb-2">
-            Apply From Anywhere in the World
+            {t("title")}
           </h2>
           <p className="text-gray-400 text-[13px] leading-relaxed font-normal">
-            We process Azerbaijan e-Visa applications from travelers on every continent.
+            {t("description")}
           </p>
         </div>
 

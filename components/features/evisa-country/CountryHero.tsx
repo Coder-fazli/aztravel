@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import styles from "./CountryHero.module.css";
 
 interface CountryHeroProps {
@@ -8,17 +9,18 @@ interface CountryHeroProps {
   locale: string;
 }
 
-export function CountryHero({ country, description, heroImage, locale }: CountryHeroProps) {
+export async function CountryHero({ country, description, heroImage, locale }: CountryHeroProps) {
   const imageUrl = heroImage ?? "/images/hero-slide-1.jpg";
+  const t = await getTranslations({ locale, namespace: "evisa.country" });
 
   return (
     <section className={styles.hero}>
       <img src={imageUrl} alt={`${country} Hero Background`} className={styles.backgroundImage} loading="lazy" />
 
       <nav className={styles.breadcrumb}>
-        <Link href={`/${locale}`}>Home</Link>
+        <Link href={`/${locale}`}>{t("breadcrumbHome")}</Link>
         <span className={styles.sep}>/</span>
-        <Link href={`/${locale}/evisa`}>Visa by Nationality</Link>
+        <Link href={`/${locale}/evisa`}>{t("breadcrumbNationality")}</Link>
         <span className={styles.sep}>/</span>
         <span>{country}</span>
       </nav>

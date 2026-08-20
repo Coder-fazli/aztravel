@@ -1,103 +1,253 @@
- {
-    "nav": {
+{
+  "nav": {
+    "home": "Home",
+    "tours": "Tours",
+    "hotels": "Hotels",
+    "events": "Events",
+    "shops": "Shops",
+    "blog": "Blog",
+    "evisa": "E-Visa",
+    "map": "Explore Map"
+  },
+  "home": {
+    "heroTitle": "Enjoy exploring Azerbaijan and its nature!",
+    "heroCta": "Explore Now",
+    "welcome": "Welcome to Azerbaijan",
+    "welcomeSub": "365 Days With Azerbaijan!"
+  },
+  "common": {
+    "seeMore": "See More",
+    "bookNow": "Book Now",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "apply": {
+    "breadcrumb": {
       "home": "Home",
-      "tours": "Tours",
-      "hotels": "Hotels",
-      "events": "Events",
-      "shops": "Shops",
-      "blog": "Blog",
-      "evisa": "E-Visa",
-      "map": "Explore Map"
+      "current": "e-Visa Application"
     },
-    "home": {
-      "heroTitle": "Enjoy exploring Azerbaijan and its nature!",
-      "heroCta": "Explore Now",
-      "welcome": "Welcome to Azerbaijan",
-      "welcomeSub": "365 Days With Azerbaijan!"
+    "provisionalRef": "Provisional ref",
+    "provisionalRefNote": "(confirmed after submission)",
+    "stepOf": "Step {current} of {total}",
+    "stepLabel": "STEP",
+    "steps": {
+      "visaType": "Visa Type",
+      "trip": "Trip Details",
+      "personal": "Personal Information",
+      "documents": "Documents"
     },
-    "common": {
-      "seeMore": "See More",
-      "bookNow": "Book Now",
-      "loading": "Loading...",
-      "save": "Save",
-      "cancel": "Cancel"
+    "applicantStepTitle": "Applicant {n} — {step}",
+    "fillRequired": "Fill in all required fields to continue",
+    "totalPrice": "Total price",
+    "back": "Back",
+    "continue": "Continue",
+    "visaType": {
+      "processingType": "Processing Type",
+      "noneAvailableTitle": "No visa types available yet",
+      "noneAvailableBody": "An admin needs to add at least one visa type in Admin → E-visa → Visa Types before applicants can apply.",
+      "beforeYouStartTitle": "Before you start",
+      "beforeYouStartBody": "Have your passport, a digital photo, and a valid email address ready."
     },
-    "apply": {
-      "breadcrumb": { "home": "Home", "current": "e-Visa Application" },
-      "provisionalRef": "Provisional ref",
-      "provisionalRefNote": "(confirmed after submission)",
-      "stepOf": "Step {current} of {total}",
-      "stepLabel": "STEP",
-      "steps": {
-        "visaType": "Visa Type",
-        "trip": "Trip Details",
-        "personal": "Personal Information",
-        "documents": "Documents"
-      },
-      "applicantStepTitle": "Applicant {n} — {step}",
-      "fillRequired": "Fill in all required fields to continue",
-      "totalPrice": "Total price",
-      "back": "Back",
-      "continue": "Continue",
-      "visaType": {
-        "processingType": "Processing Type",
-        "noneAvailableTitle": "No visa types available yet",
-        "noneAvailableBody": "An admin needs to add at least one visa type in Admin → E-visa → Visa Types before applicants can apply.",
-        "beforeYouStartTitle": "Before you start",
-        "beforeYouStartBody": "Have your passport, a digital photo, and a valid email address ready."
-      },
-      "trip": {
-        "yourCountry": "Your country",
-        "selectCountryPlaceholder": "Select country of your travel document",
-        "countryRequired": "Please select your country",
-        "partySoFarTitle": "Party so far",
-        "partySoFarTrip": "{count, plural, one {# applicant} other {# applicants}} added. Now filling in the next person.",
-        "partySoFarPersonal": "{count, plural, one {# applicant} other {# applicants}} added.",
-        "partySoFarDocuments": "{count, plural, one {# applicant} other {# applicants}} added. Complete this person to submit the whole application.",
-        "payAttentionTitle": "PAY ATTENTION!",
-        "payAttentionBody": "Visa issuance periods are determined according to the selected visa type. A standard visa is issued within 1-3 business days, while an urgent visa is issued within 4 hours. When obtaining a visa, the passport must be valid for at least 6 months from the start date of the visa. When uploading the passport photo, ensure that the image is clear and all information is legible. Please accurately verify the correctness of the information provided. If you have any question about form filling feel free to ask our professional support team."
-      },
-      "documents": {
-        "addAnotherPerson": "+ Add Another Person",
-        "submitting": "Submitting…",
-        "submitApplication": "Submit Application"
-      },
-      "confirmation": {
-        "title": "Application Submitted",
-        "subtitle": "Save your reference number — you'll need it to check status and pay",
-        "totalPrice": "Total Price"
-      },
-      "fieldRequired": "\"{label}\" is required",
-      "submitError": "Something went wrong submitting your application. Please try again.",
-      "field": {
-        "confirmEmail": "Confirm email address",
-        "confirmEmailHint": "Re-enter your email to avoid typos",
-        "emailMismatch": "Email addresses do not match",
-        "selectDate": "Select date",
-        "selectGeneric": "Select {label}",
-        "selectCountry": "Select country",
-        "startDate": "Start Date",
-        "finishDate": "Finish Date",
-        "validityPeriod": "validity period",
-        "periodOfStay": "period of stay",
-        "days": "{count} days",
-        "uploading": "Uploading…",
-        "changePhoto": "Change photo",
-        "uploadCta": "Click to upload or drag and drop",
-        "fileTooLarge": "File too large. Max {maxKb}KB",
-        "uploadFailed": "Upload failed"
-      },
-      "pay": {
-        "redirecting": "Redirecting to payment…",
-        "proceed": "Proceed to Payment",
-        "error": "Could not start payment. Please try again."
-      },
-      "status": {
-        "confirmedTitle": "Payment Confirmed",
-        "pendingTitle": "Payment Pending",
-        "confirmedBody": "Your application is now being processed.",
-        "pendingBody": "We haven't received confirmation of payment yet. If you just paid, this can take a few seconds to update.",
-        "totalPrice": "Total Price"
-      }
+    "trip": {
+      "yourCountry": "Your country",
+      "selectCountryPlaceholder": "Select country of your travel document",
+      "countryRequired": "Please select your country",
+      "partySoFarTitle": "Party so far",
+      "partySoFarTrip": "{count, plural, one {# applicant} other {# applicants}} added. Now filling in the next person.",
+      "partySoFarPersonal": "{count, plural, one {# applicant} other {# applicants}} added.",
+      "partySoFarDocuments": "{count, plural, one {# applicant} other {# applicants}} added. Complete this person to submit the whole application.",
+      "payAttentionTitle": "PAY ATTENTION!",
+      "payAttentionBody": "Visa issuance periods are determined according to the selected visa type. A standard visa is issued within 1-3 business days, while an urgent visa is issued within 4 hours. When obtaining a visa, the passport must be valid for at least 6 months from the start date of the visa. When uploading the passport photo, ensure that the image is clear and all information is legible. Please accurately verify the correctness of the information provided. If you have any question about form filling feel free to ask our professional support team."
+    },
+    "documents": {
+      "addAnotherPerson": "+ Add Another Person",
+      "submitting": "Submitting…",
+      "submitApplication": "Submit Application"
+    },
+    "confirmation": {
+      "title": "Application Submitted",
+      "subtitle": "Save your reference number — you'll need it to check status and pay",
+      "totalPrice": "Total Price"
+    },
+    "fieldRequired": "\"{label}\" is required",
+    "submitError": "Something went wrong submitting your application. Please try again.",
+    "field": {
+      "confirmEmail": "Confirm email address",
+      "confirmEmailHint": "Re-enter your email to avoid typos",
+      "emailMismatch": "Email addresses do not match",
+      "selectDate": "Select date",
+      "selectGeneric": "Select {label}",
+      "selectCountry": "Select country",
+      "startDate": "Start Date",
+      "finishDate": "Finish Date",
+      "validityPeriod": "validity period",
+      "periodOfStay": "period of stay",
+      "days": "{count} days",
+      "uploading": "Uploading…",
+      "changePhoto": "Change photo",
+      "uploadCta": "Click to upload or drag and drop",
+      "fileTooLarge": "File too large. Max {maxKb}KB",
+      "uploadFailed": "Upload failed"
+    },
+    "pay": {
+      "redirecting": "Redirecting to payment…",
+      "proceed": "Proceed to Payment",
+      "error": "Could not start payment. Please try again."
+    },
+    "status": {
+      "confirmedTitle": "Payment Confirmed",
+      "pendingTitle": "Payment Pending",
+      "confirmedBody": "Your application is now being processed.",
+      "pendingBody": "We haven't received confirmation of payment yet. If you just paid, this can take a few seconds to update.",
+      "totalPrice": "Total Price"
+    }
+  },
+  "evisa": {
+    "hero": {
+      "label": "Azerbaijan e-Visa",
+      "title": "Get Your Azerbaijan e-Visa Online",
+      "applyButton": "Apply Now",
+      "trackButton": "Track Application",
+      "urgentLabel": "Urgent",
+      "urgentTime": "3 hours",
+      "standardLabel": "Standard",
+      "standardTime": "3 business days"
+    },
+    "steps": {
+      "title": "How It Works",
+      "items": [
+        {
+          "title": "Apply Online",
+          "desc": "Fill out our secure application form in just a few minutes from any device."
+        },
+        {
+          "title": "Secure Payment",
+          "desc": "Pay the processing fee securely using your credit card or other payment methods."
+        },
+        {
+          "title": "Get your e-Visa",
+          "desc": "Receive your official Azerbaijan e-Visa directly to your email once approved."
+        }
+      ]
+    },
+    "worldMap": {
+      "label": "Worldwide Access",
+      "title": "Apply From Anywhere in the World",
+      "description": "We process Azerbaijan e-Visa applications from travelers on every continent."
+    },
+    "nationality": {
+      "label": "Eligibility",
+      "title": "Check Your Nationality",
+      "description": "Find your country below to see your e-Visa fee and eligibility.",
+      "searchPlaceholder": "Search your country...",
+      "noResults": "No countries match \"{query}\".",
+      "fromPrice": "From ${price}",
+      "viewEligibility": "View eligibility",
+      "loadMore": "Load More"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": [
+        {
+          "q": "Who is eligible for the Azerbaijan e-Visa?",
+          "a": "Citizens of over 100 countries are eligible to apply for the Azerbaijan e-Visa online. Most European, North American, and Asian passport holders qualify."
+        },
+        {
+          "q": "How long does it take to get an Azerbaijan e-Visa?",
+          "a": "Standard processing takes 3 business days. Urgent processing delivers your approved e-Visa in just 3 hours for an additional fee."
+        },
+        {
+          "q": "How much does the Azerbaijan e-Visa cost?",
+          "a": "Pricing depends on your nationality and chosen processing speed — see the country list above for exact fees."
+        },
+        {
+          "q": "How long can I stay in Azerbaijan with an e-Visa?",
+          "a": "The Azerbaijan e-Visa allows a single entry with a maximum stay of 30 days, and is valid for 90 days from the date of issue."
+        },
+        {
+          "q": "What documents do I need to apply?",
+          "a": "A valid passport with at least 6 months of validity, a digital passport-sized photo, a valid email address, and a payment card."
+        },
+        {
+          "q": "Can I extend my Azerbaijan e-Visa?",
+          "a": "The e-Visa cannot be extended online. To stay longer, apply for a new visa or contact the State Migration Service of Azerbaijan."
+        }
+      ],
+      "stillHaveQuestions": "Still have questions?",
+      "contactSupport": "Contact our support team"
+    },
+    "guide": {
+      "title": "Azerbaijan e-Visa — Complete Guide",
+      "intro1": "Azerbaijan offers an electronic visa (e-Visa) to citizens of over 100 countries, making it easier than ever to visit this remarkable country at the crossroads of Europe and Asia.",
+      "intro2": "The entire process takes just a few minutes — fill in your personal and passport details, select your visa type, pay the government fee online, and receive your approved visa by email within 3 hours (urgent) or 3 business days (standard). Your e-Visa is valid for 90 days from the date of issue, allowing a stay of up to 30 days.",
+      "whyVisitTitle": "Why Visit Azerbaijan?",
+      "whyVisitText": "Baku, the capital, blends ultramodern architecture with a UNESCO-listed Old City. The country offers stunning natural landscapes — from the Caucasus mountains to the Caspian Sea coast — rich history, and a rapidly growing tourism infrastructure."
+    },
+    "blogs": {
+      "label": "e-Visa Guides",
+      "title": "Read Before You Apply"
+    },
+    "country": {
+      "breadcrumbHome": "Home",
+      "breadcrumbNationality": "Visa by Nationality",
+      "heroDescription": "Everything {country} citizens need to know about applying for the Azerbaijan e-Visa online.",
+      "overview": "{country} citizens need a visa to travel to Azerbaijan. The easiest way is to apply online for the Azerbaijan e-Visa — issued within 3 business days, allowing a 30-day stay, for ${fee} USD. No embassy visit required.",
+      "infoProcessingTime": "Processing Time",
+      "infoProcessingValue": "3 Business Days",
+      "infoStayDuration": "Stay Duration",
+      "infoStayValue": "Up to 30 Days",
+      "infoUrgent": "Urgent Service",
+      "infoUrgentValue": "3 Hours",
+      "infoEntryType": "Entry Type",
+      "infoEntryValue": "Single Entry",
+      "quickOverview": "Quick Overview",
+      "needVisaTitle": "Do {country} Citizens Need a Visa for Azerbaijan?",
+      "needVisaBody": "Yes — {country} passport holders must obtain a visa before traveling to Azerbaijan. The good news is that {country} citizens are eligible for the Azerbaijan e-Visa, which can be obtained entirely online without visiting an embassy or consulate.",
+      "evisaForTitle": "Azerbaijan e-Visa for {country} Citizens",
+      "evisaForBody": "The Azerbaijan e-Visa for {country} nationals is a single-entry electronic travel authorization, covering tourism, business, and transit purposes.",
+      "bullet1": "Apply online from anywhere, no embassy visit required",
+      "bullet2": "Receive your e-Visa by email in as little as 3 hours (urgent) or 3 business days (standard)",
+      "bullet3": "Fee: ${fee} USD, all processing charges included",
+      "bullet4": "Valid for a single entry, stay up to 30 days",
+      "requirementsTitle": "Requirements for {country} Citizens",
+      "requirementsIntro": "Before applying, make sure you have the following ready:",
+      "req1": "Valid {country} passport (at least 6 months validity beyond your stay)",
+      "req2": "A valid email address to receive your e-Visa",
+      "req3": "A credit or debit card for payment",
+      "req4": "A digital passport-style photo",
+      "validityTitle": "Validity & Entry Rules",
+      "validityBody": "The Azerbaijan e-Visa is valid for 90 days from the date of issue, allowing a single entry with a maximum stay of 30 days per visit.",
+      "costTitle": "Cost of the Azerbaijan e-Visa for {country} Citizens",
+      "costBody": "The standard processing fee is ${fee} USD, covering government and processing charges.",
+      "faqTitle": "Frequently Asked Questions",
+      "faqNeedVisaQ": "Do {country} citizens need a visa for Azerbaijan?",
+      "faqNeedVisaA": "Yes. {country} passport holders need a visa to enter Azerbaijan, but {country} citizens can apply for the Azerbaijan e-Visa entirely online — no embassy visit required.",
+      "faqTimeQ": "How long does the Azerbaijan e-Visa take to process?",
+      "faqTimeA": "Standard processing takes 3 business days. Urgent processing is available for an extra fee and is typically ready within 3 hours.",
+      "faqDocsQ": "What documents do {country} citizens need to apply?",
+      "faqDocsA": "A passport valid for at least 6 months beyond your intended stay, a digital passport-style photo, a valid email address, and a card for payment.",
+      "faqCostQ": "How much does the Azerbaijan e-Visa cost for {country} citizens?",
+      "faqCostA": "The current fee for {country} citizens is ${fee} USD, covering government and processing charges.",
+      "faqStayQ": "How long can I stay in Azerbaijan on an e-Visa?",
+      "faqStayA": "The e-Visa allows a single entry with a stay of up to 30 days, and is valid for 90 days from the date of issue.",
+      "faqExtendQ": "Can I extend my Azerbaijan e-Visa?",
+      "faqExtendA": "No, the e-Visa cannot be extended online. For a longer stay you'll need a new visa or to contact the State Migration Service of Azerbaijan directly.",
+      "stepsTitle": "How to Apply: Step-by-Step Guide",
+      "step1Title": "Check Your Eligibility",
+      "step1Desc": "Confirm {country} passport holders qualify for the Azerbaijan e-Visa — most nationalities do.",
+      "step2Title": "Prepare Your Documents",
+      "step2Desc": "Have your valid passport, a digital photo, and a payment card ready before you start.",
+      "step3Title": "Fill Out the Application",
+      "step3Desc": "Complete the online form with your personal and travel details — it takes about 5 minutes.",
+      "step4Title": "Pay the Visa Fee",
+      "step4Desc": "Pay the ${fee} USD fee securely online with a credit or debit card.",
+      "step5Title": "Receive Your e-Visa",
+      "step5Desc": "Your approved e-Visa arrives by email, usually within 3 business days (or 3 hours for urgent processing).",
+      "readyToApply": "Ready to Apply?",
+      "readyToApplyDesc": "Start your Azerbaijan e-Visa application now and get approved fast.",
+      "applyNow": "Apply Now",
+      "otherCountries": "Other Countries"
     }
   }
+}

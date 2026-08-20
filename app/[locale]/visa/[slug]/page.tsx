@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { CountryHero } from "@/components/features/evisa-country/CountryHero";
 import { InfoCards } from "@/components/features/evisa-country/InfoCards";
 import { CountryContent } from "@/components/features/evisa-country/CountryContent";
@@ -25,9 +26,10 @@ export default async function CountryVisaPage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const [country, allCountries] = await Promise.all([
+  const [country, allCountries, t] = await Promise.all([
     getPublicCountryBySlug(slug),
     getPublicCountries(),
+    getTranslations({ locale, namespace: "evisa.country" }),
   ]);
 
   if (!country) notFound();
@@ -37,10 +39,10 @@ export default async function CountryVisaPage({
   const applyLink = "https://apply.azerbaijantravel.com/";
 
   const infoCards = [
-    { label: "Processing Time", value: "3 Business Days" },
-    { label: "Stay Duration", value: "Up to 30 Days" },
-    { label: "Urgent Service", value: "3 Hours" },
-    { label: "Entry Type", value: "Single Entry" },
+    { label: t("infoProcessingTime"), value: t("infoProcessingValue") },
+    { label: t("infoStayDuration"), value: t("infoStayValue") },
+    { label: t("infoUrgent"), value: t("infoUrgentValue") },
+    { label: t("infoEntryType"), value: t("infoEntryValue") },
   ];
 
   const sidebarCountries = allCountries
@@ -52,13 +54,13 @@ export default async function CountryVisaPage({
     <main>
       <CountryHero
         country={name}
-        description={`Everything ${name} citizens need to know about applying for the Azerbaijan e-Visa online.`}
+        description={t("heroDescription", { country: name })}
         locale={locale}
       />
       <InfoCards cards={infoCards} />
       <CountryContent
         country={name}
-        overview={`${name} citizens need a visa to travel to Azerbaijan. The easiest way is to apply online for the Azerbaijan e-Visa — issued within 3 business days, allowing a 30-day stay, for $${fee} USD. No embassy visit required.`}
+        overview={t("overview", { country: name, fee })}
         fee={fee}
         applyLink={applyLink}
         sidebarCountries={sidebarCountries}

@@ -1,14 +1,25 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 import { EvisaHero } from '@/components/features/evisa/Hero'
 import { EvisaStepsSection } from '@/components/features/evisa/StepsSection'
 import { EvisaWorldMapSection } from '@/components/features/evisa/WorldMapSection'
 import { EvisaNationalitySection } from '@/components/features/evisa/NationalitySection'
 import { EvisaFAQSection } from '@/components/features/evisa/FAQSection'
+import { EvisaBlogsSection } from '@/components/features/evisa/BlogsSection'
 import { getPublicCountries } from '@/lib/actions/evisa'
+import { getBlogsByCategory } from '@/lib/actions/content'
 
-export const metadata: Metadata = {
-  title: 'Azerbaijan e-Visa — Apply for Official Electronic Visa Online | AzTravel',
-  description: 'Get your Azerbaijan e-Visa online in minutes. Fast electronic visa application, processing as fast as 3 hours.',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'evisa.hero' })
+  return {
+    title: `${t('title')} | AzTravel`,
+    description: t('label'),
+  }
 }
 
 export default async function EvisaPage({
@@ -17,7 +28,11 @@ export default async function EvisaPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const countries = await getPublicCountries()
+  const [countries, tGuide, { posts: blogPosts }] = await Promise.all([
+    getPublicCountries(),
+    getTranslations({ locale, namespace: 'evisa.guide' }),
+    getBlogsByCategory('evisa', locale as any),
+  ])
 
   const displayCountries = countries.map((c: any) => ({
     name: c.name?.[locale] || c.name?.en || c.code,
@@ -34,27 +49,23 @@ export default async function EvisaPage({
       <EvisaWorldMapSection />
       <EvisaNationalitySection countries={displayCountries} locale={locale} />
       <EvisaFAQSection />
+      <EvisaBlogsSection locale={locale} posts={blogPosts} />
 
       <div style={{ background: '#fff', padding: '48px 24px 64px', maxWidth: 860, margin: '0 auto' }}>
         <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#1a1a2e', marginBottom: 14 }}>
-          Azerbaijan e-Visa — Complete Guide
+          {tGuide('title')}
         </h2>
         <p style={{ marginBottom: 16, lineHeight: 1.7, color: '#4b5563' }}>
-          Azerbaijan offers an <strong>electronic visa (e-Visa)</strong> to citizens of over 100 countries, making it easier
-          than ever to visit this remarkable country at the crossroads of Europe and Asia.
+          {tGuide('intro1')}
         </p>
         <p style={{ marginBottom: 16, lineHeight: 1.7, color: '#4b5563' }}>
-          The entire process takes just a few minutes — fill in your personal and passport details, select your visa type,
-          pay the government fee online, and receive your approved visa by email within 3 hours (urgent) or 3 business days
-          (standard). Your e-Visa is valid for 90 days from the date of issue, allowing a stay of up to 30 days.
+          {tGuide('intro2')}
         </p>
         <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a2e', margin: '20px 0 10px' }}>
-          Why Visit Azerbaijan?
+          {tGuide('whyVisitTitle')}
         </h3>
         <p style={{ lineHeight: 1.7, color: '#4b5563' }}>
-          Baku, the capital, blends ultramodern architecture with a UNESCO-listed Old City. The country offers stunning
-          natural landscapes — from the Caucasus mountains to the Caspian Sea coast — rich history, and a rapidly growing
-          tourism infrastructure.
+          {tGuide('whyVisitText')}
         </p>
       </div>
     </main>

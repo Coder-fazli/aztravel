@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Search, ArrowRight } from "lucide-react";
 
 type Country = {
@@ -14,6 +15,7 @@ type Country = {
 const PAGE_SIZE = 16;
 
 export function EvisaNationalitySection({ countries, locale }: { countries: Country[]; locale: string }) {
+  const t = useTranslations("evisa.nationality");
   const [query, setQuery] = useState("");
   const [showing, setShowing] = useState(PAGE_SIZE);
 
@@ -28,12 +30,12 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
     <section className="bg-[#f4f6fa] py-20 px-5 md:px-12 lg:px-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-[11px] font-bold tracking-[3px] text-[#E8671A] uppercase mb-3">Eligibility</p>
+          <p className="text-[11px] font-bold tracking-[3px] text-[#E8671A] uppercase mb-3">{t("label")}</p>
           <h2 className="text-[28px] md:text-[38px] font-extrabold text-[#1a1a2e] leading-tight mb-3">
-            Check Your Nationality
+            {t("title")}
           </h2>
           <p className="text-gray-400 text-[15px] max-w-lg mx-auto leading-relaxed">
-            Find your country below to see your e-Visa fee and eligibility.
+            {t("description")}
           </p>
         </div>
 
@@ -43,7 +45,7 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
             type="text"
             value={query}
             onChange={(e) => { setQuery(e.target.value); setShowing(PAGE_SIZE); }}
-            placeholder="Search your country..."
+            placeholder={t("searchPlaceholder")}
             className="w-full pl-11 pr-5 py-4 rounded-2xl bg-white border border-gray-200
               text-[14px] text-gray-700 placeholder-gray-400
               shadow-[0_2px_20px_rgba(0,0,0,0.07)]
@@ -53,7 +55,7 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
         </div>
 
         {visible.length === 0 ? (
-          <p className="text-center text-gray-400 py-16 text-[15px]">No countries match &ldquo;{query}&rdquo;.</p>
+          <p className="text-center text-gray-400 py-16 text-[15px]">{t("noResults", { query })}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {visible.map((c) => (
@@ -80,7 +82,7 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
                     {c.name}
                   </p>
                   <p className="text-[12px] text-gray-400 mt-0.5">
-                    {c.baseFee ? `From $${c.baseFee}` : "View eligibility"}
+                    {c.baseFee ? t("fromPrice", { price: c.baseFee }) : t("viewEligibility")}
                   </p>
                 </div>
 
@@ -98,7 +100,7 @@ export function EvisaNationalitySection({ countries, locale }: { countries: Coun
                 border-2 border-[#E8671A] text-[#E8671A] font-bold text-[14px]
                 hover:bg-[#E8671A] hover:text-white transition-all duration-200"
             >
-              Load More
+              {t("loadMore")}
               <ArrowRight size={15} />
             </button>
           </div>
