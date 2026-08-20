@@ -154,7 +154,7 @@ textarea.inputText { height: auto; min-height: 100px; resize: vertical; }
 .successBanner { background: var(--base-1); border: 1px solid var(--base-5); border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); padding: 28px 32px; display: flex; align-items: center; gap: 18px; margin-bottom: 20px; flex-wrap: wrap; }
 .successIcon { width: 52px; height: 52px; border-radius: 50%; background: #e6faf0; color: #1a7a45; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .successTitle { font: 700 19px/24px var(--font-family); color: var(--base-13); margin: 0 0 3px; }
-.successSub { font: 400 13px/19px var(--font-family); color: var(--base-8); }
+.successSub { font: 500 15px/22px var(--font-family); color: var(--base-12); }
 .confRefBadge { margin-inline-start: auto; font-family: monospace; font-size: 16px; font-weight: 700; color: var(--primary-13); letter-spacing: 1px; padding: 10px 18px; background: #fef3f0; border: 1.5px solid var(--primary-13); border-radius: 10px; white-space: nowrap; }
 .confRefBadge strong { font-weight: 800; }
 .priceRow { display: flex; align-items: center; justify-content: space-between; background: var(--base-2); border-radius: 14px; padding: 14px 20px; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
