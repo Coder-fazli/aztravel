@@ -263,7 +263,7 @@
    ============================================================ */
 @media (max-width: 900px) {
   .page {
-    padding: 100px 24px 48px;
+    padding: 140px 24px 48px;
     gap: 24px;
   }
   .layout {

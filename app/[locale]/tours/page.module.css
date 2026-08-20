@@ -83,7 +83,7 @@
    ============================================================ */
 @media (max-width: 900px) {
   .page {
-    padding: 100px 24px 0;
+    padding: 140px 24px 0;
   }
   .layout {
     flex-direction: column;
@@ -100,7 +100,7 @@
    ============================================================ */
 @media (max-width: 480px) {
   .page {
-    padding: 90px 16px 0;
+    padding: 140px 16px 0;
   }
   .headline {
     flex-direction: column;

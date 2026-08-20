@@ -332,14 +332,14 @@
   .actionRow {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 20px;
   }
 
   /* decorative pointer scribble — beside the button, smaller on mobile */
   .pointer {
     position: static;
-    width: 96px;
-    height: 60px;
+    width: 68px;
+    height: 42px;
   }
 
   /* SLIDE INDICATORS — 4 straight vertical lines on the left (Figma x24) */
