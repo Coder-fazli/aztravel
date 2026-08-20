@@ -8,6 +8,11 @@ import { EvisaFAQSection } from '@/components/features/evisa/FAQSection'
 import { EvisaBlogsSection } from '@/components/features/evisa/BlogsSection'
 import { getPublicCountries } from '@/lib/actions/evisa'
 import { getBlogsByCategory } from '@/lib/actions/content'
+import { SITE_URL } from '@/lib/site'
+
+function localizedUrl(locale: string, path: string) {
+  return locale === 'en' ? `${SITE_URL}${path}` : `${SITE_URL}/${locale}${path}`
+}
 
 export async function generateMetadata({
   params,
@@ -16,9 +21,19 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'evisa.hero' })
+  const path = '/evisa'
   return {
     title: `${t('title')} | AzTravel`,
     description: t('label'),
+    alternates: {
+      canonical: localizedUrl(locale, path),
+      languages: {
+        en: localizedUrl('en', path),
+        es: localizedUrl('es', path),
+        ar: localizedUrl('ar', path),
+        'x-default': localizedUrl('en', path),
+      },
+    },
   }
 }
 
@@ -28,9 +43,10 @@ export default async function EvisaPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const [countries, tGuide, { posts: blogPosts }] = await Promise.all([
+  const [countries, tGuide, tFaq, { posts: blogPosts }] = await Promise.all([
     getPublicCountries(),
     getTranslations({ locale, namespace: 'evisa.guide' }),
+    getTranslations({ locale, namespace: 'evisa.faq' }),
     getBlogsByCategory('evisa', locale as any),
   ])
 
@@ -42,8 +58,41 @@ export default async function EvisaPage({
     baseFee: c.baseFee,
   }))
 
+  const faqItems = tFaq.raw('items') as { q: string; a: string }[]
+
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'AzTravel',
+    url: SITE_URL,
+    sameAs: [],
+  }
+
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Azerbaijan e-Visa',
+    description: tGuide('intro1'),
+    provider: { '@type': 'Organization', name: 'AzTravel', url: SITE_URL },
+    areaServed: 'Worldwide',
+  }
+
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }
+
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
       <EvisaHero locale={locale} />
       <EvisaStepsSection />
       <EvisaWorldMapSection />
