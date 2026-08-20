@@ -297,11 +297,24 @@
     z-index: 0;
   }
 
-  /* title — Figma: 132px into the photo, Heading 03 40/44 white, w317 */
-  .titleArea {
+  /* title + button — flex-stacked with a gap so the button always clears
+     the title, even when a longer title wraps to an extra line */
+  .mobileStack {
+    position: absolute;
     left: 49px;
     top: 240px;
     width: 317px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+    z-index: 2;
+  }
+
+  /* title — Figma: 132px into the photo, Heading 03 40/44 white, w317 */
+  .titleArea {
+    position: static;
+    width: 100%;
   }
   .title {
     font-size: 40px;
@@ -309,10 +322,9 @@
     width: 100%;
   }
 
-  /* explore button — Figma: 40px gap below the title */
+  /* explore button — now flows below the title instead of a fixed offset */
   .exploreBtn {
-    left: 49px;
-    top: 412px;
+    position: static;
   }
 
   /* decorative pointer scribble — beside the button */

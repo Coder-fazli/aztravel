@@ -67,6 +67,21 @@ export default function TourCard({
         {bookedLast24h && bookedLast24h > 5 ? (
           <span className={styles.bookedBadge}>Booked {bookedLast24h}x yesterday</span>
         ) : null}
+
+        {/* mobile-only overlay — the stacked mobile card mirrors the grid card:
+            offer badge top-left, heart top-right, type/theme tags bottom-left */}
+        {isSpecialOffer && (
+          <span className={`${styles.tag} ${styles.tagOffer} ${styles.imgOfferBadge}`}>Special offer</span>
+        )}
+        <button className={`${styles.heartBtn} ${styles.imgHeartBtn}`} aria-label="Add to favourites">
+          <HeartIcon />
+        </button>
+        {(typeTag || themeTag) && (
+          <div className={styles.imgTags}>
+            {typeTag  && <span className={`${styles.tag} ${styles.tagType}`}>{CATEGORY_LABELS[typeTag]}</span>}
+            {themeTag && <span className={`${styles.tag} ${styles.tagTheme}`}>{CATEGORY_LABELS[themeTag]}</span>}
+          </div>
+        )}
       </div>
 
       {/* content */}

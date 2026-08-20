@@ -6,6 +6,7 @@ import TourCardGrid      from '@/components/features/tours/TourCardGrid'
 import TourFilters       from '@/components/features/tours/TourFilters'
 import ToursPagination   from '@/components/features/tours/ToursPagination'
 import ViewToggle        from '@/components/features/tours/ViewToggle'
+import FilterButton      from '@/components/features/tours/FilterButton'
 import styles            from './page.module.css'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -76,6 +77,7 @@ export default async function ToursPage({
             <Suspense>
               <ViewToggle />
             </Suspense>
+            <FilterButton />
           </div>
 
           {/* tour list / grid */}

@@ -65,23 +65,27 @@ export default function HeroSection({ slides: input }: { slides?: HeroSlide[] })
       </picture>
       <div className={styles.slideOverlay} />
 
-      {/* TITLE — changes per slide, positioned at Figma: x=232, y=235 */}
-      <div className={styles.titleArea}>
-        <h1 className={styles.title}>{slides[active].title}</h1>
-      </div>
+      {/* TITLE + BUTTON — grouped so mobile can flex-stack them with a gap
+          instead of colliding when a title wraps to more lines than usual */}
+      <div className={styles.mobileStack}>
+        {/* TITLE — changes per slide, positioned at Figma: x=232, y=235 */}
+        <div className={styles.titleArea}>
+          <h1 className={styles.title}>{slides[active].title}</h1>
+        </div>
 
-      {/* EXPLORE BUTTON — per-slide text + link, opens in a new tab */}
-      {slides[active].buttonText && (
-        <a
-          href={slides[active].buttonLink || '#'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.exploreBtn}
-        >
-          <span>{slides[active].buttonText}</span>
-          <img src="/images/icon-arrow-right.svg" alt="" />
-        </a>
-      )}
+        {/* EXPLORE BUTTON — per-slide text + link, opens in a new tab */}
+        {slides[active].buttonText && (
+          <a
+            href={slides[active].buttonLink || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.exploreBtn}
+          >
+            <span>{slides[active].buttonText}</span>
+            <img src="/images/icon-arrow-right.svg" alt="" />
+          </a>
+        )}
+      </div>
 
       {/* DECORATIVE POINTER — static, Figma: x=375, y=493 */}
       <div className={styles.pointer}>

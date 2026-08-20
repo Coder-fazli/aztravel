@@ -13,16 +13,6 @@ const footerLinks = [
     ],
   },
   {
-    title: 'About',
-    items: [
-      { label: 'About us',  href: '#' },
-      { label: 'Blog',      href: '#' },
-      { label: 'Careers',   href: '#' },
-      { label: 'Jobs',      href: '#' },
-      { label: 'In Press',  href: '#' },
-    ],
-  },
-  {
     title: 'Support',
     items: [
       { label: 'Contact us',   href: '#' },
@@ -40,16 +30,6 @@ const footerLinks = [
       { label: 'Orders',            href: '#' },
       { label: 'Payments',          href: '#' },
       { label: 'Returns',           href: '#' },
-    ],
-  },
-  {
-    title: 'About',
-    items: [
-      { label: 'About us',  href: '#' },
-      { label: 'Blog',      href: '#' },
-      { label: 'Careers',   href: '#' },
-      { label: 'Jobs',      href: '#' },
-      { label: 'In Press',  href: '#' },
     ],
   },
 ]

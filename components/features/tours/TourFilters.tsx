@@ -1,7 +1,9 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import styles from './TourFilters.module.css'
+import { TOGGLE_TOUR_FILTERS_EVENT } from './FilterButton'
 
 const CATEGORIES = [
   { value: 'multi-day',       label: 'Multi day' },
@@ -36,6 +38,14 @@ export default function TourFilters() {
   const pathname   = usePathname()
   const searchParams = useSearchParams()
 
+  // mobile only — the sidebar is a hidden modal until FilterButton toggles it open
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    const toggle = () => setOpen(o => !o)
+    window.addEventListener(TOGGLE_TOUR_FILTERS_EVENT, toggle)
+    return () => window.removeEventListener(TOGGLE_TOUR_FILTERS_EVENT, toggle)
+  }, [])
+
   function getList(key: string) {
     return searchParams.get(key)?.split(',').filter(Boolean) ?? []
   }
@@ -68,7 +78,15 @@ export default function TourFilters() {
   const dateEnd          = searchParams.get('dateEnd') ?? ''
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${open ? styles.sidebarOpen : ''}`}>
+
+      {/* ── mobile modal header ── */}
+      <div className={styles.filterHeader}>
+        <p className={styles.filterHeaderTitle}>Filter</p>
+        <button type="button" className={styles.filterCloseBtn} onClick={() => setOpen(false)} aria-label="Close filters">
+          <CloseIcon />
+        </button>
+      </div>
 
       {/* ── Category ── */}
       <div className={styles.group}>
@@ -216,6 +234,16 @@ function CheckIcon() {
     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#fff" strokeWidth="1.8"
       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <polyline points="1.5 5 4 7.5 8.5 2" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#0f172a" strokeWidth="1.6"
+      strokeLinecap="round" aria-hidden="true">
+      <line x1="4" y1="4" x2="14" y2="14" />
+      <line x1="14" y1="4" x2="4" y2="14" />
     </svg>
   )
 }

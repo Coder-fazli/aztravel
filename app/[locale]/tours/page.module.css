@@ -76,3 +76,37 @@
   color: var(--base-8);
   margin: 0;
 }
+
+/* ============================================================
+   MOBILE / TABLET BREAKPOINT — sidebar stacks above content,
+   grid drops to 2 columns
+   ============================================================ */
+@media (max-width: 900px) {
+  .page {
+    padding: 100px 24px 0;
+  }
+  .layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ============================================================
+   SMALL PHONE BREAKPOINT — single column everywhere
+   ============================================================ */
+@media (max-width: 480px) {
+  .page {
+    padding: 90px 16px 0;
+  }
+  .headline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

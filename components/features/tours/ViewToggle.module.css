@@ -31,3 +31,11 @@
   background: var(--primary-13);
   color: #fff;
 }
+
+/* mobile cards are always shown in the grid card style, so the toggle is
+   redundant there — the filter icon takes its place */
+@media (max-width: 900px) {
+  .toggle {
+    display: none;
+  }
+}
