@@ -322,9 +322,11 @@
     width: 100%;
   }
 
-  /* explore button — now flows below the title instead of a fixed offset */
+  /* explore button — now flows below the title instead of a fixed offset,
+     narrower padding so there's room for the pointer beside it */
   .exploreBtn {
     position: static;
+    padding: 14px 16px;
   }
 
   /* button + pointer sit side by side, vertically centered, so the
@@ -335,11 +337,11 @@
     gap: 20px;
   }
 
-  /* decorative pointer scribble — beside the button, smaller on mobile */
+  /* decorative pointer scribble — beside the button */
   .pointer {
     position: static;
-    width: 68px;
-    height: 42px;
+    width: 96px;
+    height: 60px;
   }
 
   /* SLIDE INDICATORS — 4 straight vertical lines on the left (Figma x24) */
