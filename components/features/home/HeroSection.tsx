@@ -73,23 +73,27 @@ export default function HeroSection({ slides: input }: { slides?: HeroSlide[] })
           <h1 className={styles.title}>{slides[active].title}</h1>
         </div>
 
-        {/* EXPLORE BUTTON — per-slide text + link, opens in a new tab */}
-        {slides[active].buttonText && (
-          <a
-            href={slides[active].buttonLink || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.exploreBtn}
-          >
-            <span>{slides[active].buttonText}</span>
-            <img src="/images/icon-arrow-right.svg" alt="" />
-          </a>
-        )}
-      </div>
+        {/* EXPLORE BUTTON + decorative pointer — grouped so on mobile the
+            pointer sits beside the button instead of at a fixed offset that
+            drifts when the title wraps to a different number of lines */}
+        <div className={styles.actionRow}>
+          {slides[active].buttonText && (
+            <a
+              href={slides[active].buttonLink || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.exploreBtn}
+            >
+              <span>{slides[active].buttonText}</span>
+              <img src="/images/icon-arrow-right.svg" alt="" />
+            </a>
+          )}
 
-      {/* DECORATIVE POINTER — static, Figma: x=375, y=493 */}
-      <div className={styles.pointer}>
-        <img src="/images/hero-pointer.svg" alt="" />
+          {/* DECORATIVE POINTER — static, Figma: x=375, y=493 */}
+          <div className={styles.pointer}>
+            <img src="/images/hero-pointer.svg" alt="" />
+          </div>
+        </div>
       </div>
 
       {/* VERTICAL INDICATORS — left side */}

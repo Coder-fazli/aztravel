@@ -66,6 +66,25 @@
   letter-spacing: 0.2px;
 }
 
+/* the mobile-only overlay (2x2 grid) is hidden on desktop by default */
+.overlayMobile { display: none; }
+
+/* ── mobile — 2x2 grid instead of 2+3; 5th thumbnail drops, its "more
+   images" overlay moves to the 4th cell ── */
+@media (max-width: 900px) {
+  .gallery { gap: 12px; }
+  .row1,
+  .row2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    height: auto;
+  }
+  .imgWrap { aspect-ratio: 1 / 1; }
+  .row2Last { display: none; }
+  .overlayDesktop { display: none; }
+  .overlayMobile { display: flex; }
+}
+
 /* ── lightbox ── */
 .lightbox {
   position: fixed;

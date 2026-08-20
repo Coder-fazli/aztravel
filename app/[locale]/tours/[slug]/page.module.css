@@ -256,3 +256,36 @@
   color: var(--base-8);
   margin: 0;
 }
+
+/* ============================================================
+   MOBILE / TABLET BREAKPOINT — sidebar drops below content,
+   two-column grids stack to one
+   ============================================================ */
+@media (max-width: 900px) {
+  .page {
+    padding: 100px 24px 48px;
+    gap: 24px;
+  }
+  .layout {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .sidebar {
+    width: 100%;
+    position: static;
+  }
+  .title {
+    font-size: 22px;
+    line-height: 28px;
+  }
+  .meta {
+    gap: 12px;
+  }
+  .inExGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .highlights {
+    grid-template-columns: 1fr;
+  }
+}

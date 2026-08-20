@@ -7,14 +7,16 @@
   .btn {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
+    gap: 6px;
+    padding: 8px 14px;
     border-radius: 10px;
     border: none;
     background: var(--base-4);
-    color: var(--base-8);
+    color: var(--base-13);
     cursor: pointer;
     flex-shrink: 0;
+  }
+  .btn span {
+    font: 600 13px/18px var(--font-family);
   }
 }

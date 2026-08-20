@@ -327,12 +327,19 @@
     position: static;
   }
 
-  /* decorative pointer scribble — beside the button */
+  /* button + pointer sit side by side, vertically centered, so the
+     pointer always tracks the button instead of a fixed hero offset */
+  .actionRow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* decorative pointer scribble — beside the button, smaller on mobile */
   .pointer {
-    left: 203px;
-    top: 401px;
-    width: 136px;
-    height: 85px;
+    position: static;
+    width: 96px;
+    height: 60px;
   }
 
   /* SLIDE INDICATORS — 4 straight vertical lines on the left (Figma x24) */

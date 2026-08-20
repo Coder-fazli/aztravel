@@ -11,6 +11,8 @@ type Props = {
 export default function TourGallery({ images, title }: Props) {
   const filled = [...images, ...Array(5).fill('')].slice(0, 5)
   const extra  = Math.max(0, images.length - 5)
+  // mobile shows a 2x2 grid (4 thumbnails) instead of 2+3, so the "more" count differs
+  const extraMobile = Math.max(0, images.length - 4)
   const all    = images.length > 0 ? images : ['/images/tour-placeholder.jpg']
 
   const [open,  setOpen]  = useState(false)
@@ -54,14 +56,26 @@ export default function TourGallery({ images, title }: Props) {
           ))}
         </div>
 
-        {/* row 2 — 3 images, last has overlay */}
+        {/* row 2 — 3 images on desktop; mobile shows only 2 (a 2x2 grid
+            overall), so the "more" overlay shifts from index 4 to index 3 */}
         <div className={styles.row2}>
           {[2, 3, 4].map(i => (
-            <button key={i} type="button" className={styles.imgWrap} onClick={() => open_at(i)}>
+            <button
+              key={i}
+              type="button"
+              className={`${styles.imgWrap} ${i === 4 ? styles.row2Last : ''}`}
+              onClick={() => open_at(i)}
+            >
               <img src={filled[i] || '/images/tour-placeholder.jpg'} alt="" className={styles.img} />
               {i === 4 && extra > 0 && (
-                <div className={styles.overlay}>
+                <div className={`${styles.overlay} ${styles.overlayDesktop}`}>
                   <span className={styles.overlayCount}>{extra}+</span>
+                  <span className={styles.overlayLabel}>More images</span>
+                </div>
+              )}
+              {i === 3 && extraMobile > 0 && (
+                <div className={`${styles.overlay} ${styles.overlayMobile}`}>
+                  <span className={styles.overlayCount}>{extraMobile}+</span>
                   <span className={styles.overlayLabel}>More images</span>
                 </div>
               )}

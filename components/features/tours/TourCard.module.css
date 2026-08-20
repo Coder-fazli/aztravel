@@ -209,7 +209,9 @@
   .right {
     flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
     width: 100%;
+    padding: 0;
   }
 
   /* the desktop tags row + heart button are replaced by the image overlay */

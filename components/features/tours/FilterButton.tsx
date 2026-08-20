@@ -18,10 +18,10 @@ export default function FilterButton() {
     <button
       type="button"
       className={styles.btn}
-      aria-label="Filters"
       onClick={() => window.dispatchEvent(new Event(TOGGLE_TOUR_FILTERS_EVENT))}
     >
       <FunnelIcon />
+      <span>Filter</span>
     </button>
   )
 }
