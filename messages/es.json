@@ -101,6 +101,14 @@
       "confirmedBody": "Tu solicitud ahora está siendo procesada.",
       "pendingBody": "Aún no hemos recibido la confirmación del pago. Si acabas de pagar, esto puede tardar unos segundos en actualizarse.",
       "totalPrice": "Precio total"
+    },
+    "track": {
+      "title": "Rastrea tu solicitud",
+      "description": "Ingresa tu número de solicitud para consultar su estado actual.",
+      "placeholder": "ej. AZ-2026-00123",
+      "submit": "Consultar estado",
+      "errorEmpty": "Por favor ingresa tu número de solicitud.",
+      "hint": "Encontrarás tu número de solicitud en el correo de confirmación que te enviamos al solicitar."
     }
   },
   "evisa": {

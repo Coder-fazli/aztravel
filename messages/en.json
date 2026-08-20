@@ -101,6 +101,14 @@
       "confirmedBody": "Your application is now being processed.",
       "pendingBody": "We haven't received confirmation of payment yet. If you just paid, this can take a few seconds to update.",
       "totalPrice": "Total Price"
+    },
+    "track": {
+      "title": "Track Your Application",
+      "description": "Enter your application number to check its current status.",
+      "placeholder": "e.g. AZ-2026-00123",
+      "submit": "Check Status",
+      "errorEmpty": "Please enter your application number.",
+      "hint": "You'll find your application number in the confirmation email we sent you after you applied."
     }
   },
   "evisa": {

@@ -70,7 +70,7 @@ export function EvisaHero({ locale }: HeroProps) {
               <ArrowRight size={17} strokeWidth={2.5} />
             </a>
 
-            <a href={`/${locale}/my-bookings`} className={styles.secondaryButton}>
+            <a href={`/${locale}/apply/track`} className={styles.secondaryButton}>
               <Search size={18} />
               {t("trackButton")}
             </a>
